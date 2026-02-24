@@ -1,0 +1,14 @@
+# Keep the directory structure
+# Add your legal PDF files here
+*.pdf
+
+# Instructions:
+# 1. Download legal judgments/cases in PDF format
+# 2. Place them in this directory
+# 3. Run: python backend/app/embeddings.py
+# 4. The PDFs will be processed and uploaded to Qdrant
+
+# Recommended sources:
+# - Indian Kanoon: https://indiankanoon.org
+# - Supreme Court of India: https://main.sci.gov.in/judgments
+# - High Courts: https://districts.ecourts.gov.in/

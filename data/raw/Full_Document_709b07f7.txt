@@ -1,0 +1,1313 @@
+SOURCE: https://indiankanoon.org/doc/182141526/
+SCRAPED: 2026-02-18T10:27:28.800697
+TITLE: Full Document
+================================================================================
+
+[Cites
+31
+, Cited by
+0
+]
+Gujarat High Court
+Zee Entertainment Enterprises Ltd vs State Of Gujarat on 6 August, 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                              ORDER DATED: 06/08/2025
+
+                                                                                                           undefined
+
+
+
+
+                                    IN THE HIGH COURT OF GUJARAT AT AHMEDABAD
+
+                            R/CRIMINAL MISC.APPLICATION (FOR QUASHING & SET ASIDE
+                                          FIR/ORDER) NO. 12605 of 2013
+
+                       ==========================================================
+                                      ZEE ENTERTAINMENT ENTERPRISES LTD & ANR.
+                                                       Versus
+                                              STATE OF GUJARAT & ORS.
+                       ==========================================================
+                       Appearance:
+                       MR DIGANT M POPAT(5385) for the Applicant(s) No. 2
+                       MR. AADIT R SANJANWALA(9918) for the Applicant(s) No. 1
+                       MR DIPAN DESAI(2481) for the Respondent(s) No. 2
+                       MR. SOAHAM JOSHI, APP for the Respondent(s) No. 1
+                       RULE SERVED for the Respondent(s) No. 3
+                       ==========================================================
+
+                         CORAM:HONOURABLE MR. JUSTICE J. C. DOSHI
+
+                                                        Date : 06/08/2025
+
+                                                         ORAL ORDER
+1.     Heard learned advocate Mr. Aadit R. Sanjanwala for the
+                       petitioner, learned advocate Mr. Dipan Desai for respondent No.2,
+                       and the learned APP for the respondent-State.
+2.    By way of the present petition, petitioners have prayed for the
+                       following reliefs:-
+"a) YOUR LORDSHIPS may be pleased to exercise the
+                                       powers under
+Section 482
+of Code of Criminal Procedure,
+                                       1973 and thereby be pleased to quash Private Criminal Case
+                                       No.1 of 2013 filed by the Respondent No.2 before the
+                                       learned Metropolitan Magistrate, Court No.2, Ahmedabad
+                                       (Annexure A to the present petition) as well as the order
+                                       dated 1.2.2013 passed by the learned Metropolitan
+                                       Magistrate, Court No.2, Ahmedabad directing inquiry under
+Section 202
+of the Code of Criminal Procedure, 1973;
+(aa) YOUR LORDSHIPS may be pleased to quash and set
+                                       aside the order dated 2.8.2013 passed by the learned
+                                       Metropolitan Magistrate in Criminal Case No.85 of 2013
+Page 1 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                         Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                               ORDER DATED: 06/08/2025
+
+                                                                                                            undefined
+
+
+
+
+                                       whereby the learned Magistrate ordered issuance of Non-
+Bailable Warrants against the applicants;
+(b)During the pendency and final disposal of this
+                                       application, YOUR LORDSHIPS may be pleased to stay all
+                                       further proceedings in connection with Private Criminal
+                                       Case No.1 of 2013 filed by the Respondent No.2 before the
+                                       learned Metropolitan Magistrate, Court No.2, Ahmedabad,
+                                       and be further pleased to stay the operation, implementation
+                                       and execution of the order dated 1.2.2013 passed by the
+                                       learned Metropolitan Magistrate, Court No.2,
+                                       Ahmedabad;
+bb) During the pendency and final hearing of this petition,
+                                       YOUR LORDSHIPS may be pleased to stay the operation,
+                                       implementation and execution of the order dated 2.8.2013
+                                       passed by the learned Metropolitan Magistrate in Criminal
+                                       Case No.85 of 2013 whereby the learned Magistrate ordered
+                                       issuance of Non-Bailable Warrants against the applicants in
+                                       the facts and circumstances of the case;"
+BRIEF FACTS OF THE CASE ARE AS UNDER:-
+3.     The case has its genesis in an alleged purchase by Respondent
+                       No.2 in November 1993 of 1,600 equity shares of ₹10 each of the
+                       Applicant No.1 Company (subsequently subdivided into 16,000
+                       shares of ₹1 each) through a stockbroker, Tradeco International. The
+                       said shares, along with duly signed transfer deeds, were allegedly
+                       lost in transit, leading the Complainant - Respondent No.2 to
+                       institute Civil Suit No.451 of 1995 before the learned City Civil
+                       Court, Ahmedabad, seeking an injunction restraining the Company
+                       from transferring the shares. By order dated 14.07.1995, a permanent
+                       injunction was granted. Notably, prior to the suit and the injunction
+                       order, 100 of the said shares (post-subdivision, 1,000 shares of ₹1
+                       each - "suit shares") had already been transferred on 22.04.1994 to
+                       Respondent No.3 on the basis of a transfer deed stamped on
+Page 2 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                          Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                         ORDER DATED: 06/08/2025
+
+                                                                                                      undefined
+
+
+
+
+                       09.11.1993 and executed on 13.12.1993.
+3.1. Subsequent proceedings ensued, including Civil Suit No.2215
+                       of 1997 seeking issuance of duplicate shares, which was dismissed
+                       for want of jurisdiction. The Complainant thereafter approached the
+                       Company Law Board, Western Region Bench, Mumbai, culminating
+                       in a consent order dated 10.02.2006 for issuance of 13,000 shares to
+                       Respondent No.2, with 1,000 suit shares to remain in the safe
+                       custody of the Company pending adjudication of ownership. The
+                       petition filed by Respondent No.2 against Respondent No.3 in
+                       respect of the suit shares was dismissed by the CLB on 20.06.2007.
+                       The Complainant's OJ Appeal No.202 of 2007 before the High
+                       Court of Gujarat was withdrawn on 23.08.2012 to enable
+                       proceedings before the Bombay High Court, with the interim
+                       injunction continuing till 10.09.2012.
+3.2. Upon expiry of the interim protection and no further appeal
+                       being filed before the Bombay High Court, Respondent No.3 sought
+                       release of the suit shares. The Applicant No.1 Company, following
+                       due diligence, sought objections from Respondent No.2, who
+                       objected while stating that further legal proceedings were being
+                       initiated. When directed by the Company on 14.12.2012 to produce
+                       an appropriate court order by 31.12.2012 failing which the suit
+                       shares would be issued to Respondent No.3, Respondent No.2
+                       instead lodged Criminal Case No.1 of 2013 on 01.01.2013 alleging
+                       offences under
+Sections 406
+,
+409
+,
+420
+and
+120-B
+IPC. In the said
+                       complaint, process was issued and even a non-bailable warrant came
+                       to be passed, leading to the present petition under
+Section 482
+CrPC
+                       for quashing of the criminal proceedings.
+Page 3 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                    Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                          ORDER DATED: 06/08/2025
+
+                                                                                                       undefined
+
+
+
+
+                       SUBMISSION OF THE PETITIONER:-
+4.    Learned advocate for the petitioner submitted that the dispute
+                       in question is essentially a private civil dispute between respondent
+                       No.2 and respondent No.3. According to the complaint filed by
+                       respondent No.2 before the learned Trial Court, he had purchased
+                       1,600 equity shares of ₹10 each of Zee Entertainment Enterprises
+                       Ltd. & Anr. from open stock market. Subsequently, said shares,
+                       which have since appreciated to 16,000 shares due to corporate
+                       actions were sent for transfer with duly signed transfer form.
+4.1. It was contended that during the course of the transaction, a
+                       substantial portion of the shares were lost. Thereafter, a civil suit
+                       being Civil Suit No. 451 of 1995 was instituted by the complainant
+                       before the City Civil Court, Ahmedabad, seeking an injunction
+                       against the transfer of the shares allegedly lost in the transaction.
+                       The said court granted an interim injunction in favour of the
+                       complainant. In addition, proceedings were also initiated before the
+                       Company Law Board, Mumbai, being Company Petition No.
+                       21/111A/CLB/WR/2006 for issuance of duplicate share certificates.
+4.2. Learned advocate for the petitioner further submitted that a
+                       settlement was arrived at between the parties, whereby it was agreed
+                       that certain shares would be issued in favour of the petitioner as also
+                       to keep 1000 share in abeyance till ownership issue is not resolved.
+                       It is submitted that the entirety of the proceedings and documents on
+                       record clearly reveal that the dispute, in substance, is of a civil
+                       nature, and no element of criminality can be attributed to the
+                       petitioner, who is a public limited company, not a party to the
+                       original transaction, but merely a issuing company, shares of which
+                       were traded by a respondent No.2 and respondent No.3 and now
+Page 4 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                     Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                         ORDER DATED: 06/08/2025
+
+                                                                                                      undefined
+
+
+
+
+                       become pursuit of dispute.
+4.3. It is further submitted that the transaction in question
+                       essentially pertains to a commercial transfer of shares between
+                       respondent No.2 and respondent No.3. As per the terms of the
+                       settlement recorded before the Company Law Board, it was agreed
+                       that 14,000 equity shares of ₹1 each would be issued, of which
+                       13,000 shares were to be issued to the complainant, and 1,000 shares
+                       were retained in custody due to objections raised by Homi Mehta
+                       Sons Pvt. Ltd., claiming ownership of the shares. The retention of
+                       these shares was subject to adjudication in ongoing litigation.
+4.4. The learned advocate for the petitioner further referred to
+                       Annexure-D to demonstrate that the petitioner's claim was
+                       subsequently denied by the Company Law Board. In nutshell it is
+                       argued that petitioner company had not been entrusted any property
+                       by the respondent dominance of which lying with petitioner
+                       company. He would submit that on going dispute of ownership of
+                       share is fairly going between private respondents, which does not
+                       attract offence under
+Sections 406
+and
+420
+of the IPC.
+In support of
+                       his submissions, learned advocate placed reliance on the decision of
+                       the Hon'ble Supreme Court in
+Delhi Race Club (1940) Ltd. v.
+                       State of Uttar Pradesh
+[2024 INSC 626], and accordingly prayed
+                       that the present petition be allowed and the impugned criminal
+                       proceedings be quashed.
+SUBMISSION OF THE RESPONDENTS:-
+5.     On the other hand, learned advocate Mr. Dipan Desai for
+                       respondent No.2 opposed the submissions advanced on behalf of the
+                       petitioner. He took this Court through the sequence of litigation
+Page 5 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                    Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                         ORDER DATED: 06/08/2025
+
+                                                                                                      undefined
+
+
+
+
+                       between the parties and submitted that, as per the settlement deed,
+                       the complainant was assured the allotment of 14,000 equity shares.
+                       However, while 13,000 shares were admittedly issued, the remaining
+                       1,000 shares were not allotted by Zee Entertainment Enterprises
+                       Ltd., which reneged on the agreed terms.
+5.1. It was further submitted that when the complainant approached
+                       the Company Law Board seeking appropriate relief, he was
+                       informed that his claim was barred by the law of limitation. It is
+                       submitted that by settlement deed Zee Entertainment Enterprises
+                       Ltd. since agreed to issue 14000 equity shares, fell short to its
+                       promise by not issuing 1000 equity share, is an offence attracting
+                       criminal breach of trust and cheating. In view of the aforesaid, the
+                       learned advocate appearing for respondent No.2 urged that the
+                       present petition deserves to be dismissed.
+6.    Learned APP for the State while adopting the submissions
+                       advanced on behalf of respondent No.2, also prayed for dismissal of
+                       the petition.
+FINDINGS, ANALYSIS AND CONCLUSION OF THE
+                       COURT:-
+7.    I have heard the learned advocates appearing for both sides
+                       and, upon due consideration of the documents on record, the
+                       following facts emerges. According to the complainant, he had
+                       purchased 1,600 equity shares of ₹10/- each of Zee Entertainment
+                       Enterprises Ltd. & Anr., which have since been apportioned into
+                       16,000 equity shares of ₹1/- each, from the open market vide Bill
+                       No. 61. These shares were sent for transfer along with signed
+                       transfer form. However, they have been lost in transit
+Page 6 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                    Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                       7.1. Subsequently, Civil Suit No. 451 of 1995 came to be instituted
+                       before the City Civil Court, Ahmedabad by the petitioner. In the said
+                       proceedings, none appeared to contest the suit, and in the given facts
+                       and circumstances, the Civil Court granted an injunction restraining
+                       the transfer of the aforesaid 1,600 equity shares.
+7.2. Another suit was unsuccessfully filed by respondent No.2 to
+                       get back these shares. This suit is dismissed on the ground of lacking
+                       inherent jurisdiction.
+7.3. Being so advised, the complainant thereafter approached the
+                       Company Law Board, Mumbai. During the proceedings before the
+                       Company Law Board, a settlement came to be arrived at between
+                       Zee Entertainment Enterprises Ltd. & Anr. and M/s. Mittal
+                       Investment. Under the terms of the said settlement, it was agreed that
+                       14,000 equity shares of ₹1/- each shall be allotted to the petitioners.
+                       Of these, 13,000 shares were to be issued forthwith, whereas the
+                       issuance of the remaining 1,000 shares was to be kept in abeyance
+                       owing to a dispute regarding their ownership, an objection having
+                       been raised by Homi Mehta Sons Pvt. Ltd.
+8.      The Indenture of Settlement, inter alia, stipulates as under:--
+"1. ZTL has agreed to issue and MI has agreed to accept
+                                       duplicate share certificates for 14,000 Equity Shares of Re. 1
+                                       each of ZTL, including 1000 equity shares of Re.1 each on
+                                       which objection received from the one shareholder namely
+                                       M/s. Homi Mehta & Sons Pvt. Ltd., from ZTL as full and
+                                       final settlement of entire claims relating to lost shares being
+                                       1600 equity shares of ZTL of Rs. 10 each (which on sub-
+                                       division shall be converted to 16000 equity shares of Re. 1
+Page 7 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       each) of whatsoever nature now or in future from ZTL to
+                                       MI. The Mi shall acknowledges and accepts that out of the
+                                       said. 14000 equity shares of Re. 1 each issued in its favor of
+                                       MI, ZTL shall retain custody of 1000 equity shares of Re. 1
+                                       each on which objections were raised by M/s. Homi Mehta
+                                       & Sons Pvt. Ltd and mark stop transfer thereon, to enable
+                                       MI and M/s and Homi Mehta & Sons Pvt. Ltd to file suits/
+                                       petition for obtaining order confirming their ownership
+                                       thereon.
+2.    MI has agreed to waive off all claims, rights
+                                       whatsoever in connection with with balance 2000 Equity
+                                       Shares of Re.1 each of 2TL and shall not have any claim
+                                       against the said 2000 Equity Shares of Re. 1 each of
+                                       whatsoeve nature in respect thereof now or in future.
+3.     MI further indemnifies ZTL for all liabilities, cost,
+                                       charges, expenses and claims of whatsoever nature, now or
+                                       in future, that it may have to bear in connection with issue of
+                                       duplicate certificate for 1000 shares of Re. 1 each of ZTL on
+                                       which objection has been raised by M/s. Homi & Sons Pvt.
+Ltd MI shall immediately file consent terms/Withdrawal
+                                       Application and withdraw or get disposed off all the matters
+                                       filed before Hon'ble Company Law Board, Western Region
+                                       Bench; City Civil Court and High Court and /or any other
+                                       proceeding in any other Court, if pending on the same
+                                       subject matter. TL shall simultaneously upon the receipt of
+                                       the orders of withdrawal from all the concerned courts,
+                                       handover duplicate shares certificates for 13000 shares of
+                                       Re. 1 each along with dividends due thereon, not transferred
+                                       to Investor Education and Protection Fund in accordance
+                                       with the provisions of the
+Companies Act, 1956
+, to MI.
+4.      MI shall in accordance with terms of this agreement;
+                                       file consent terms/withdrawal application in Company Law
+                                       Board, City Civil Court, High Court and any other court
+                                       where proceedings have been initiated by MI and obtain
+                                       withdrawal orders or orders in accordance with. this consent
+                                       terms from Hon'ble Courts and Board. MI and his advocate
+                                       shall extend all their co-operation and support in disposing
+                                       off all the matters unconditionally.
+Page 8 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+5.     The issuance of the aforesaid Equity shares shall be in
+                                       satisfaction of all the costs, damages, interest, value of
+                                       shares and also the costs of filing the aforesaid
+                                       Suits/Petitions, if any, as claimed by MI against ZTL in any
+                                       suits)/ case(s)/ proceeding(s) and the same shall be waived
+                                       off by MI against ZTL on receipt of 14,000/- Equity Shares
+                                       of Re.1 each herein.
+7.     MI hereby agrees, assures and confirms TL that MI
+                                       shall not institute any further Suits(s), Petition(s),
+                                       Complaint(s), Appeal(s) or any legal proceeding(s) on
+                                       account of any claims or debts and / or damages, interest and
+                                       / or for any other reason relating to the aforesaid lost shares
+                                       against ZTL.
+8.     MI hereby further represent, assure and confirm that
+                                       save and except the aforesaid Cases before Company Law
+                                       Board, City Civil Court and High Court mentioned in this
+                                       agreement, they have not filed / instituted any other suits(s),
+                                       Petition(s), complaint(s), Appeal(s) and / or any legal
+                                       proceedings of whatsoever and howsoever nature and /or
+                                       pending adjudication against ZTL before any court(s) /
+                                       Tribunal (s) /Forum (s) as on date of the execution of this
+                                       agreement.
+9.     On receipt of transfer of 14,000 equity shares of Re.1
+                                       each, MI shall release TL from and against any claims, dues,
+                                       if any, and no disputes and / or differences exist between the
+                                       parties hereto in respect of the shares under any Complaints),
+                                       Application(s), Petition(s), Suit(s),:Appeals) or any other
+                                       Proceeding(s) and all such claims dues, disputes and / or
+                                       differences shall be deemed to have been fully and finally
+                                       settled between the parties hereto and this Settlement
+                                       Agreement shall supersede all previous communication(s),
+                                       affidavit(s), application(s) & complaints) etc: taken place
+                                       between the parties:
+10. The parties hereto do hereby agree to give full co-
+                                       operation and assistance to each other to give effect to the
+                                       terms and intents of this agreement and MI undertakes to
+Page 9 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                ORDER DATED: 06/08/2025
+
+                                                                                                             undefined
+
+
+
+
+                                       sign / file the necessary Consent Terms/withdrawal
+                                       applications before the aforesaid Hon'ble Court(s) in
+                                       accordance with the provisions of law in the aforementioned
+                                       case beforeCompany Law Board for withdrawal of the case."
+9.     The record indicates that since 1000 share kept in abeyance
+                       was not issued in favour of petitioner, vide Annexure-D, Company
+                       Petition No. 21/111A/CLB/WR/2006 came to be instituted by M/s.
+                       Mittal Investment. In paragraph 5 thereof, the learned Member of the
+                       Company Law Board has recorded the reasons for bringing the
+                       proceedings to a close by dismissing the same, which are reproduced
+                       hereinbelow:--
+"5. The case of the petitioner in the present petition is that it sent
+                               1600 shares (now 16,000 shares)to the Company alongwith the
+                               transfer deed for transfer in its name. The said transfer deeds
+                               alongwith the share certificates were lost in transit. However, the
+                               petitioner was not able to produce any copy of the fiR loda
+                               Wanteoice for lost in reque regarding purchase 1600 shares but
+                               there is nothing mentioned in the Bill which can show that the
+                               petitioner purchased the impugned shares since no distinctive
+                               numbers have been mentioned in the Bill. In C.P.No.28/111A/2005
+                               filed by the petitioner claiming over 2000 shares a consent term
+                               was filed between the petitioner and the Company to settle the
+                               dispute amicably. As per the settlement the Company was to issue
+                               13,000 shares to the petitioner and the petitioner was to withdraw
+                               the suit filed by it at Ahmedabad in the year 1995. As per the
+                               settlement the Company issued 13,000 equity shares to the
+                               petitioner and the petitioner withdrew all the proceedings against
+                               the Company Though the petitioner had claimed that it had
+                               purchased the impugned shares in T993 but it failed to file any
+                               petition before the CLB under
+Sec. 111A
+of the Companies Act
+                               within three years as provided under
+Article 137
+of the
+Limitation
+                               Act
+, from that date. The petitioner has also not filed any separate
+                               application to condone the delay in filing the present petition. As
+                               such I am of the view that the petition is barred by time. The
+                               Company has transferred the impugned shares in the year 1994
+Page 10 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                           Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                             ORDER DATED: 06/08/2025
+
+                                                                                                          undefined
+
+
+
+
+                               based on the transfer deed and other documents submitted by the
+                               Respondent No.2. The petitioner has not challenged this transfer
+                               for a long period. As such I am of the view that the Respondent No
+                               2 is the rightful owner of the impugned shares. The petition is
+                               accordingly dismissed and no order to cost."
+10. It is noteworthy that, apart from adverting to
+Article 137
+of the
+Limitation Act
+, the learned Member of the Company Law Board has
+                       also dealt with certain factual aspects while closing the proceedings.
+                       In the aforesaid backdrop, the private complaint came to be
+                       instituted. Even if the averments made in the said complaint are
+                       taken at their face value, they disclose nothing beyond a mere breach
+                       of the terms and conditions of the agreement. Such a breach, by
+                       itself, does not constitute a criminal offence so as to warrant the
+                       invocation of criminal jurisdiction. At the most, it may give rise to
+                       civil proceedings -- a remedy which the complainant has, in fact,
+                       already pursued.
+10.1. It is noticeable that the order passed by Company Law Board
+                       has been challenged by filing OJ Appeal No.202 of 2007 before
+                       Gujarat High Court. This Court has not entertained petition on the
+                       ground of lacking territorial jurisdiction. Petitioner thereafter did not
+                       pursue his litigation / remedy elsewhere but chooses to file criminal
+                       complaint. According to this Court, by filing criminal complaint,
+                       petitioner has converted civil litigation into criminal action. Filing of
+                       complaint by the petitioner is hopeless and malicious attempt after
+                       loosing dispute at all civil front.
+11. The Hon'ble Supreme Court in
+Radheshyam v. State of
+                       Rajasthan
+, 2024 SCC OnLine SC 2311 observed that breach of
+                       terms and conditions of agreement does not attract offence under
+Page 11 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                        Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                ORDER DATED: 06/08/2025
+
+                                                                                                             undefined
+Sections 406
+and
+420
+of the IPC, held as under:-
+"6. As already indicated above, a perusal of the complaint
+                                       which has been registered as the FIR does not spell out any
+                                       element or ingredient of cheating or breach of trust. Mere
+                                       non-performance of an Agreement to Sell by itself does not
+                                       amount to cheating and breach of trust. Respondent no. 2 has
+                                       adequate remedy of filing a Civil Suit for relief of specific
+                                       performance of a contract which he has already availed and
+                                       the suit is still pending. The FIR only appears to be an arm-
+                                       twisting mechanism to pressurise the appellants to execute
+                                       the Sale Deed or to extract money. Every civil wrong cannot
+                                       be converted into a criminal wrong. As we find in the
+                                       present case, respondent no. 2 is trying to abuse the criminal
+                                       machinery for ulterior motives. It is not his case that the
+                                       appellants duped him to pay the advance amount and entered
+                                       into an Agreement to Sell. The High Court fell in error in
+                                       recording a finding that the ingredients of offences under
+sections 420
+and
+406
+of IPC are present in the instant case.
+7.
+Section 420
+, IPC provides that:
+"Whoever cheats and thereby dishonestly induces the person
+                                       deceived to deliver any property to any person, or to make,
+                                       alter or destroy the whole or any part of a valuable security,
+                                       or anything which is signed or sealed, and which is capable
+                                       of being converted into a valuable security, shall be punished
+                                       with imprisonment of either description for a term which
+                                       may extend to seven years, and shall also be liable to fine."
+For an offence under
+Section 420
+, IPC, the following
+                                       ingredients must be present:
+i. Cheating as defined under
+Section 415
+, IPC, that is, there
+                                       should be a fraudulent or dishonest inducement of a person;
+                                       ii. An intention to deceive; and
+                                       iii. The person cheated must be dishonestly induced to
+                                       a. Deliver property to any person; or
+                                       b. Make, alter or destroy valuable security or anything
+                                       signed or sealed and capable of being converted into
+                                       valuable security.
+Page 12 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                           Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                ORDER DATED: 06/08/2025
+
+                                                                                                             undefined
+8. Thus, cheating forms an essential ingredient to constitute
+                                       and offence under
+Section 420
+, IPC. Further, to constitute
+                                       cheating as defined under
+Section 415
+, IPC, it is necessary
+                                       that a fraudulent or dishonest inducement is done and the
+                                       deceived person is made to deliver any property owing to the
+                                       fraud.
+Section 415
+, IPC, defines'cheating', as:
+"Whoever, by deceiving any person, fraudulently or
+                                       dishonestly induces the person so deceived to deliver any
+                                       property to any person, or to consent that any person shall
+                                       retain any property, or intentionally induces the person so
+                                       deceived to do or omit to do anything which he would not do
+                                       or omit if he were not so deceived, and which act or
+                                       omission causes or is likely to cause damage or harm to that
+                                       person in body, mind, reputation or property, is said to
+                                       "cheat"."
+9. From the bare perusal of the FIR, it is evident that there
+                                       was no act of cheating, that is, the complainant was nowhere
+                                       fraudulently induced or dishonestly deceived by the
+                                       appellants. A commercial transaction took place between the
+                                       parties during which the parties consensually agreed for the
+                                       sale of the property of the appellants and respondent no. 2
+                                       paid the part consideration. The default in payment of their
+                                       loan dues on part of the appellants is not reflective of their
+                                       deceitful intention towards the complainant. Mere non-
+                                       registration of the sale or its refusal cannot amount to
+                                       cheating. The delivery of the advance payment towards
+                                       consideration was made in furtherance of an Agreement to
+                                       Sell and it is not the case of the respondent that he was in
+                                       anyway deceived or duped to make such payments to the
+                                       appellants. It is a civil dispute and gives rise to the
+                                       complainant's right to resort to the remedies provided under
+                                       civil law by filing a suit for specific performance.
+10. Additionally, the appellants have also been accused of
+                                       committing the offence of criminal breach of trust under
+Section 406
+, IPC. This offence is defined under
+Section 405
+,
+                                       IPC as follows:
+Page 13 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                           Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       "Whoever, being in any manner entrusted with property, or
+                                       with any dominion over property, dishonestly
+                                       misappropriates or converts to his own use that property, or
+                                       dishonestly uses or disposes off that property in violation of
+                                       any direction of law prescribing the mode in which such
+                                       trust is to be discharged, or of any legal contract, express or
+                                       implied, which he has made touching the discharge of such
+                                       trust, or wilfully suffers any other person so to do, commits
+                                       "criminal breach of trust"."
+11. For an offence punishable under
+Section 406
+, IPC, the
+                                       following ingredients must exist:
+i. The accused was entrusted with property, or entrusted with
+                                       dominion over property;
+ii. The accused had dishonestly misappropriated or
+                                       converted to their own use that property, or dishonestly used
+                                       or disposed of that property or wilfully suffer any other
+                                       person to do so; and
+                                       iii. Such misappropriation, conversion, use or disposal
+                                       should be in violation of any direction of law prescribing the
+                                       mode in which such trust is to be discharged, or of any legal
+                                       contract which the person has made, touching the discharge
+                                       of such trust.
+12. In the present case, the appellants were not entrusted
+                                       with any property by respondent no. 2 - complainant. The
+                                       only delivery made was of part payment towards an
+                                       Agreement to Sell between the parties. The amount paid
+                                       towards consideration cannot be said to have been entrusted
+                                       with the appellants by respondent no. 2. Additionally,
+                                       merely because the appellants are refusing to register the
+                                       sale, it does not amount to misappropriation of the advance
+                                       payment. Since there was no entrustment of property, the
+                                       offence of misappropriation of such property and thereby
+                                       criminal breach of trust cannot be said to be made out."
+12. Hon'ble Apex Court recently examined the issue in the case of
+Delhi Race Club (1940) Ltd.
+(supra). The finding and observation
+Page 14 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                       of Hon'ble Apex Court are in para 24 to 41, which reads as under :
+"24. This Court in its decision in
+S.W. Palanitkar & Ors. v.
+                                       State of Bihar & Anr.
+reported in (2002) 1 SCC 241
+                                       expounded the difference in the ingredients required for
+                                       constituting an of offence of criminal breach of trust (
+Section
+                                       406
+IPC) viz-a-viz the offence of cheating (
+Section 420
+).
+                                       The relevant observations read as under: -
+"9. The ingredients in order to constitute a criminal breach of
+                                       trust are: (i) entrusting a person with property or with any
+                                       dominion over property, (ii) that person entrusted (a)
+                                       dishonestly misappropriating or converting that property to
+                                       his own use; or (b) dishonestly using or disposing of that
+                                       property or wilfully suffering any other person so to do in
+                                       violation (i) of any direction of law prescribing the mode in
+                                       which such trust is to be discharged, (ii) of any legal contract
+                                       made, touching the discharge of such trust.
+10. The ingredients of an offence of cheating are: (i) there
+                                       should be fraudulent or dishonest inducement of a person by
+                                       deceiving him, (ii)(a) the person so deceived should be
+                                       induced to deliver any property to any person, or to consent
+                                       that any person shall retain any property; or (b) the person so
+                                       deceived should be intentionally induced to do or omit to do
+                                       anything which he would not do or omit if he were not so
+                                       deceived; and (iii) in cases covered by (ii)(b), the act
+                                       of omission should be one which causes or is likely to cause
+                                       damage or harm to the person induced in body, mind,
+                                       reputation or property."
+25. What can be discerned from the above is that the
+                                       offences of criminal breach of trust (
+Section 406
+IPC) and
+                                       cheating (
+Section 420
+IPC) have specific ingredients. In
+                                       order to constitute a criminal breach of trust (
+Section
+                                       406
+IPC): -
+1) There must be entrustment with person for property or
+                                       dominion over the property, and
+2) The person entrusted: -
+Page 15 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+a) dishonestly misappropriated or converted property to his
+                                       own use, or
+b) dishonestly used or disposed of the property or willfully
+                                       suffers any other person so to do in violation of:
+i. any direction of law prescribing the method in which the
+                                       trust is discharged; or ii. legal contract touching the
+                                       discharge of trust (see:
+S.W.P. Palanitkar
+(supra).
+                                       Similarly, in respect of an offence under
+Section 420
+IPC,
+                                       the essential ingredients are: -
+1) deception of any person, either by making a false or
+                                       misleading representation or by other action or by omission;
+2) fraudulently or dishonestly inducing any person to deliver
+                                       any property, or
+3) the consent that any persons shall retain any property and
+                                       finally intentionally inducing that person to do or omit to do
+                                       anything which he would not do or omit (see:
+Harmanpreet
+                                       Singh Ahluwalia v. State of Punjab
+, (2009) 7 SCC 712 :
+                                       (2009) Cr.L.J. 3462 (SC))
+26. Further, in both the aforesaid sections, mens rea i.e.
+                                       intention to defraud or the dishonest intention must be
+                                       present, and in the case of cheating it must be there from the
+                                       very beginning or inception.
+27. In our view, the plain reading of the complaint fails to
+                                       spell out any of the aforesaid ingredients noted above. We
+                                       may only say, with a view to clear a serious misconception
+                                       of law in the mind of the police as well as the courts below,
+                                       that if it is a case of the complainant that offence of criminal
+                                       breach of trust as defined under
+Section 405
+of IPC,
+                                       punishable under
+Section 406
+of IPC, is committed by the
+                                       accused, then in the same breath it cannot be said that the
+                                       accused has also committed the offence of cheating as
+                                       defined and explained in
+Section 415
+of the IPC, punishable
+                                       under
+Section 420
+of the IPC.
+28. Every act of breach of trust may not result in a penal
+                                       offence of criminal breach of trust unless there is evidence of
+                                       manipulating act of fraudulent misappropriation. An act of
+                                       breach of trust involves a civil wrong in respect of which the
+Page 16 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                   ORDER DATED: 06/08/2025
+
+                                                                                                                undefined
+
+
+
+
+                                       person may seek his remedy for damages in civil courts but,
+                                       any breach of trust with a mens rea, gives rise to a criminal
+                                       prosecution as well. It has been held in
+Hari Prasad
+                                       Chamaria v. Bishun Kumar Surekha & Ors.
+, reported in
+                                       (1973) 2 SCC 823 as under:
+"4. We have heard Mr. Maheshwari on behalf of the
+                                       appellant and are of the opinion that no case has been made
+                                       out against the respondents under
+Section 420
+Penal Code,
+                                       1860. For the purpose of the present appeal, we would
+                                       assume that the various allegations of fact which have been
+                                       made in the complaint by the appellant are correct. Even
+                                       after making that allowance, we find that the complaint does
+                                       not disclose the commission of any offence on the part of the
+                                       respondents under
+Section 420
+Penal Code, 1860. There is
+                                       nothing in the complaint to show that the respondents had
+                                       dishonest or fraudulent intention at the time the appellant
+                                       parted with Rs. 35.000/- There is also nothing to indicate
+                                       that the respondents induced the appellant to pay them Rs.
+                                       35,000/- by deceiving him. It is further not the case of the
+                                       appellant that a representation was made, the respondents
+                                       knew the same to be false. The fact that the respondents
+                                       subsequently did not abide by their commitment that they
+                                       would show the appellant to be the proprietor of Drang
+                                       Transport Corporation and would also render accounts to
+                                       him in the month of December might create civil liability on
+                                       the respondents for the offence of cheating."
+29. To put it in other words, the case of cheating and
+                                       dishonest intention starts with the very inception of the
+                                       transaction. But in the case of criminal breach of trust, a
+                                       person who comes into possession of the movable property
+                                       and receives it legally, but illegally retains it or converts it to
+                                       his own use against the terms of the contract, then the
+                                       question is, in a case like this, whether the retention is with
+                                       dishonest intention or not, whether the retention involves
+                                       criminal breach of trust or only a civil liability would depend
+                                       upon the facts of each case.
+30. The distinction between mere breach of contract and the
+                                       offence of criminal breach of trust and cheating is a fine one.
+                                       In case of cheating, the intention of the accused at the time
+Page 17 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                              Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       of inducement should be looked into which may be judged
+                                       by a subsequent conduct, but for this, the subsequent
+                                       conduct is not the sole test. Mere breach of contract cannot
+                                       give rise to a criminal prosecution for cheating unless
+                                       fraudulent or dishonest intention is shown right from the
+                                       beginning of the transaction i.e. the time when the offence is
+                                       said to have been committed. Therefore, it is this intention,
+                                       which is the gist of the offence. Whereas, for the criminal
+                                       breach of trust, the property must have been entrusted to the
+                                       accused or he must have dominion over it. The property in
+                                       respect of which the offence of breach of trust has been
+                                       committed must be either the property of some person other
+                                       than the accused or the beneficial interest in or ownership' of
+                                       it must be of some other person. The accused must hold that
+                                       property on trust of such other person. Although the offence,
+                                       i.e. the offence of breach of trust and cheating involve
+                                       dishonest intention, yet they are mutually exclusive and
+                                       different in basic concept. There is a distinction between
+                                       criminal breach of trust and cheating. For cheating, criminal
+                                       intention is necessary at the time of making a false or
+                                       misleading representation i.e., since inception. In criminal
+                                       breach of trust, mere proof of entrustment is sufficient. Thus,
+                                       in case of criminal breach of trust, the offender is lawfully
+                                       entrusted with the property, and he dishonestly
+                                       misappropriated the same. Whereas, in case of cheating, the
+                                       offender fraudulently or dishonestly induces a person by
+                                       deceiving him to deliver any property. In such a situation,
+                                       both the offences cannot co-exist simultaneously.
+31. At the most, the court of the Additional Chief Judicial
+                                       Magistrate could have issued process for the offence
+                                       punishable under
+Section 420
+of the IPC i.e. cheating but in
+                                       any circumstances no case of criminal breach of trust is
+                                       made out. The reason being that indisputably there is no
+                                       entrustment of any property in the case at hand. It is not even
+                                       the case of the complainant that any property was lawfully
+                                       entrusted to the appellants and that the same has been
+                                       dishonestly misappropriated. The case of the complainant is
+                                       plain and simple. He says that the price of the goods sold by
+                                       him has not been paid. Once there is a sale,
+Section 406
+of
+                                       the IPC goes out of picture. According to the complainant,
+Page 18 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       the invoices raised by him were not cleared. No case worth
+                                       the name of cheating is also made out.
+32. Even if the Magistrate would have issued process for the
+                                       offence punishable under
+Section 420
+of the IPC, i.e.,
+                                       cheating the same would have been liable to be quashed and
+                                       set aside, as none of the ingredients to constitute the offence
+                                       of cheating are disclosed from the materials on record.
+33. It has been held in
+State of Gujarat v. Jaswantlal
+                                       Nathalal
+reported in (1968) 2 SCR 408, "The term
+                                       "entrusted" found in
+Section 405
+IPC governs not only the
+                                       words "with the property" immediately following it but also
+                                       the words "or with any dominion over the property"
+occurring thereafter--see
+Velji Raghvaji Patel v. State of
+                                       Maharashtra
+[(1965) 2 SCR 429]. Before there can be any
+                                       entrustment there must be a trust meaning thereby an
+                                       obligation annexed to the ownership of property and a
+                                       confidence reposed in and accepted by the owner or declared
+                                       and accepted by him for the benefit of another or of another
+                                       and the owner.
+But that does not mean that such an
+                                       entrustment need conform to all the technicalities of the law
+                                       of trust -- see
+Jaswantrai Manilal Akhaney v. State of
+                                       Bombay
+[1956 SCR 483]. The expression "entrustment"
+carries with it the implication that the person handing over
+                                       any property or on whose behalf that property is handed over
+                                       to another, continues to be its owner. Further the person
+                                       handing over the property must have confidence in the
+                                       person taking the property so as to create a fiduciary
+                                       relationship between them. A mere transaction of sale cannot
+                                       amount to an "entrustment"".
+34. Similarly, in
+Central Bureau of Investigation, SPE,
+                                       SIU(X), New Delhi v. Duncans Agro Industries Ltd.,
+                                       Calcutta
+reported in (1996) 5 SCC 591 this Court held that
+                                       the expression "entrusted with property" used in
+Section
+                                       405
+of the IPC connotes that the property in respect of which
+                                       criminal breach of trust can be committed must necessarily
+                                       be the property of some person other than the accused or that
+                                       the beneficial interest in or ownership thereof must be in the
+                                       other person and the offender must hold such property in
+Page 19 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       trust for such other person or for his benefit. The relevant
+                                       observations read as under: -
+"27. In the instant case, a serious dispute has been raised by
+                                       the learned counsel appearing for the respective parties as to
+                                       whether on the face of the allegations, an offence of criminal
+                                       breach of trust is constituted or not. In our view, the
+                                       expression "entrusted with property" or "with any dominion
+                                       over property" has been used in a wide sense in
+Section
+                                       405
+IPC. Such expression includes all cases in which goods
+                                       are entrusted, that is, voluntarily handed over for a specific
+                                       purpose and dishonestly disposed of in violation of law or in
+                                       violation of contract. The expression 'entrusted' appearing
+                                       in
+Section 405
+IPC is not necessarily a term of law. It has
+                                       wide and different implications in different contexts. It is,
+                                       however, necessary that the ownership or beneficial interest
+                                       in the ownership of the property entrusted in respect of
+                                       which offence is alleged to have been committed must be in
+                                       some person other than the accused and the latter must hold
+                                       it on account of some person or in some way for his benefit.
+                                       The expression 'trust' in
+Section 405
+IPC is a
+                                       comprehensive expression and has been used to denote
+                                       various kinds of relationships like the relationship of trustee
+                                       and beneficiary, bailor and bailee, master and servant,
+                                       pledger and pledgee. When some goods are hypothecated by
+                                       a person to another person, the ownership of the goods still
+                                       remains with the person who has hypothecated such goods.
+                                       The property in respect of which criminal breach of trust can
+                                       be committed must necessarily be the property of some
+                                       person other than the accused or the beneficial interest in or
+                                       ownership of it must be in the other person and the offender
+                                       must hold such property in trust for such other person or for
+                                       his benefit. In a case of pledge, the pledged article belongs to
+                                       some other person but the same is kept in trust by the
+                                       pledgee. [...]" (Emphasis supplied)
+35. The aforesaid exposition of law makes it clear that there
+                                       should be some entrustment of property to the accused
+                                       wherein the ownership is not transferred to the accused. In
+                                       case of sale of movable property, although the payment may
+                                       be deferred yet the property in the goods passes on delivery
+Page 20 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                                       as per
+Sections 20
+and
+24
+respectively of the
+Sale of Goods
+                                       Act, 1930
+.
+"20. Specific goods in a deliverable state. -- Where there is
+                                       an unconditional contract for the sale of specific goods in a
+                                       deliverable state, the property in the goods passes to the
+                                       buyer when the contract is made and it is immaterial whether
+                                       the time of payment of the price or the time of delivery of
+                                       goods, or both, is postponed.
+xxx xxx xxx
+24. Goods sent on approval or "on sale or return". -- When
+                                       goods are delivered to the buyer on approval or "on sale or
+                                       return" or other similar terms, the property therein passes to
+                                       the buyer--(a) when he signifies his approval or acceptance
+                                       to the seller or does any other act adopting the transaction;
+(b) if he does not signify his approval or acceptance to the
+                                       seller but retains the goods without giving notice of
+                                       rejection, then, if a time has been fixed for the return of the
+                                       goods on the expiration of such time, and, if no time has
+                                       been fixed, on the expiration of a reasonable time."
+36. From the aforesaid, there is no manner of any doubt
+                                       whatsoever that in case of sale of goods, the property passes
+                                       to the purchaser from the seller when the goods are
+                                       delivered. Once the property in the goods passes to the
+                                       purchaser, it cannot be said that the purchaser was entrusted
+                                       with the property of the seller. Without entrustment of
+                                       property, there cannot be any criminal breach of trust. Thus,
+                                       prosecution of cases on charge of criminal breach of trust,
+                                       for failure to pay the consideration amount in case of sale of
+                                       goods is flawed to the core. There can be civil remedy for
+                                       the non-payment of the consideration amount, but no
+                                       criminal case will be maintainable for it. [See :
+Lalit
+                                       Chaturvedi and Others v. State of Uttar Pradesh and
+                                       Another
+: 2024
+SCC OnLine SC 171 & Mideast Integrated
+                                       Steels Ltd. (MESCO Steel Ltd.) and Others v. State of
+                                       Jharkhand and Another
+:2023 SCC OnLine Jhar 301]
+37. The case at hand falls in category No. 1 as laid in Smt.
+                                       Nagawwa (supra) referred to in para 7 of this judgment.
+Page 21 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                  ORDER DATED: 06/08/2025
+
+                                                                                                               undefined
+38. If it is the case of the complainant that a particular
+                                       amount is due and payable to him then he should have filed a
+                                       civil suit for recovery of the amount against the appellants
+                                       herein. But he could not have gone to the court of Additional
+                                       Chief Judicial Magistrate by filing a complaint of cheating
+                                       and criminal breach of trust.
+39. It appears that till this date, the complainant has not filed
+                                       any civil suit for recovery of the amount which according to
+                                       him is due and payable to him by the appellants. He seems to
+                                       have prima facie lost the period of limitation for filing such a
+                                       civil suit.
+40. In such circumstances referred to above, the continuation
+                                       of the criminal proceeding would be nothing but abuse of the
+                                       process of law.
+41. Before we close this matter, we would like to say
+                                       something as regards the casual approach of the courts
+                                       below in cases like the one at hand. The
+Indian Penal
+                                       Code
+(
+IPC
+) was the official Criminal Code in the Republic
+                                       of India inherited from the British India after independence.
+                                       The
+IPC
+came into force in the sub-continent during the
+                                       British rule in 1862. The
+IPC
+remained in force for almost a
+                                       period of 162 years until it was repealed and replaced by the
+                                       Bharatiya Nyaya Sanhita ("BNS") in December 2023 which
+                                       came into effect on 1st July 2024. It is indeed very sad to
+                                       note that even after these many years, the courts have not
+                                       been able to understand the fine distinction between criminal
+                                       breach of trust and cheating."
+13. In the recent judgment in the case of Ashok kumar Jain v/s.
+                       State of Gujarat [SLP Criminal No.1850 of 2020] while
+                       discussing the essential ingredients of offence under
+Section 406
+,
+420
+of the IPC, the Hon'ble Apex Court has held as under:-
+9.1 This court, while discussing the expression "entrustment" in
+Rashmi Kumar v. Mahesh Kumar Bhada
+; (1997) 2 SCC 397,
+                               observed that it carries with it the implication that the person
+                               handing over any property or on whose behalf that property is
+                               handed over to another, continues to be its owner. Entrustment is
+Page 22 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                             Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                 ORDER DATED: 06/08/2025
+
+                                                                                                              undefined
+
+
+
+
+                               not necessarily a term of law. It may have different implications in
+                               different contexts. In its most general significance, all its imports is
+                               handing over the possession for some purpose which may not
+                               imply the conferment of any proprietary right therein. The
+                               ownership or beneficial interest in the property in respect of which
+                               criminal breach of trust is alleged to have been committed, must be
+                               in some person other than the accused and the latter must hold it on
+                               account of some person or in some way for his benefit.
+9.2 Further, in
+Hridaya Ranjan Prasad Verma v. State of Bihar
+;
+(2000) 4 SCC 168, this court observed as follows:
+"15. In determining the question it has to be kept in mind that
+                                   the distinction between mere breach of contract and the offence
+                                   of cheating is a fine one. It depends upon the intention of the
+                                   accused at the time of inducement which may be judged by his
+                                   subsequent conduct but for this subsequent conduct is not the
+                                   sole test. Mere breach of contract cannot give rise to criminal
+                                   prosecution for cheating unless fraudulent or dishonest intention
+                                   is shown right at
+                                   the beginning of the transaction, that is the time when the
+                                   offence is said to have been committed. Therefore it is the
+                                   intention which is the gist of the offence. To hold a person
+                                   guilty of cheating it is necessary to show that he had fraudulent
+                                   or dishonest intention at the time of making the promise. From
+                                   his mere failure to keep up promise subsequently such a
+                                   culpable intention right at the beginning, that is, when he made
+                                   the promise cannot be
+                                   presumed."
+(Emphasis supplied)
+
+                               9.3 The ingredients to constitute an offence under sections 415 read
+                               with 420 of
+IPC
+have been considered and
+laid down by
+this court
+                               in
+Prof. R.K. Vijayasarathy and Anr v. Sudha Seetharam and
+                               Anr.
+; (2019) 16 SCC 739, as under:
+"16. The ingredients to constitute an offence of cheating are
+                               as follows:
+16.1. There should be fraudulent or dishonest inducement of a
+                               person by deceiving him:
+Page 23 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                            Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                                ORDER DATED: 06/08/2025
+
+                                                                                                             undefined
+
+
+
+
+                               16.1.1. The person so induced should be intentionally induced to
+                               deliver any property to any person or to consent that any person
+                               shall retain any property, or
+
+                               16.1.2. The person so induced should be intentionally induced to
+                               do or to omit to do anything which he would not do or omit if he
+                               were not so deceived; and
+
+                               16.2. In cases covered by 16.1.2. above, the act or omission should
+                               be one which caused or is likely to cause damage or harm to the
+                               person induced in body, mind, reputation or property.
+17. A fraudulent or dishonest inducement is an essential ingredient
+                               of the offence. A person who dishonestly induces another person to
+                               deliver any property is liable for the offence of cheating.
+18.                              xxx xxx xxx
+19. The ingredients to constitute an offence under
+Section 420
+are
+                               as follows:
+19.1 A person must commit the offence of cheating under
+                               Section 415; and
+
+                               19.2 The person cheated must be dishonestly induced to:
+(a) deliver property to any person; or
+(b) make, alter or destroy valuable security or anything
+                               signed or sealed and capable of being converted into
+                               valuable security."
+(Emphasis supplied)
+14. Applying the ratio aforesaid what could be noticed that the
+                       complainant lost the battle on civil side now chooses to fight the
+                       battle on a criminal side against the petitioner. It is a vexatious
+                       attempt on the part of the complainant to convert the civil litigation
+                       into criminal litigation by filing a criminal complaint.
+Page 24 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                           Downloaded on : Fri Aug 15 23:29:12 IST 2025
+NEUTRAL CITATION
+
+
+
+
+                            R/CR.MA/12605/2013                          ORDER DATED: 06/08/2025
+
+                                                                                                       undefined
+15. In view of the foregoing discussion present petition deserves
+                       consideration and is accordingly ALLOWED. The Criminal Case
+                       No. 1 of 2013, before the Court of learned Metropolitan Magistrate,
+                       Court No.2, Ahmedabad, together with all pre and consequential
+                       proceedings arising therefrom, is hereby quashed and set aside. Rule
+                       is made absolute. Direct service is permitted.
+(J. C. DOSHI,J)
+                       MANISH MISHRA
+Page 25 of 25
+Uploaded by MANISH MISHRA(HC01776) on Thu Aug 14 2025                     Downloaded on : Fri Aug 15 23:29:12 IST 2025
