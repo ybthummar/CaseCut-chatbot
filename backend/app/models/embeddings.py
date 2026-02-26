@@ -2,51 +2,41 @@
 Embedding model wrapper.
 Re-exports SentenceTransformer with a consistent interface.
 Also contains: create_collection(), chunk_text(), process_and_upload()
+
+Uses centralized config from app.core.config.
 """
 
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct, PayloadSchemaType
-from sentence_transformers import SentenceTransformer
 import os
 import hashlib
 import time
-from dotenv import load_dotenv
+from typing import Optional
+
+from qdrant_client.models import Distance, VectorParams, PointStruct, PayloadSchemaType
+
+from app.core.config import qdrant_client, embedder, COLLECTION, CHUNK_SIZE, CHUNK_OVERLAP, logger
 from app.utils.parser import parse_document
 
-load_dotenv()
-
 DATA_RAW = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw")
-
-qdrant = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_KEY"),
-    timeout=60,
-)
-embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-COLLECTION = "legal_cases"
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
 
 
 def create_collection():
     """Create Qdrant collection (run once)."""
     try:
-        qdrant.create_collection(
+        qdrant_client.create_collection(
             collection_name=COLLECTION,
             vectors_config=VectorParams(size=384, distance=Distance.COSINE),
         )
-        print("✅ Collection created successfully!")
+        logger.info("✅ Collection created successfully!")
     except Exception as e:
-        print(f"Collection exists or error: {e}")
+        logger.info("Collection exists or error: %s", e)
     for field in ["topics", "court", "ipc_sections", "outcome"]:
         try:
-            qdrant.create_payload_index(
+            qdrant_client.create_payload_index(
                 collection_name=COLLECTION,
                 field_name=field,
                 field_schema=PayloadSchemaType.KEYWORD,
             )
-            print(f"   ✅ Index created: {field}")
+            logger.info("   ✅ Index created: %s", field)
         except Exception:
             pass
 
@@ -64,14 +54,14 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVE
     return chunks
 
 
-def process_and_upload(pdf_dir: str = None):
+def process_and_upload(pdf_dir: Optional[str] = None):
     """Process all raw documents, embed, and upload to Qdrant with metadata."""
     if pdf_dir is None:
         pdf_dir = DATA_RAW
 
     if not os.path.exists(pdf_dir):
         os.makedirs(pdf_dir, exist_ok=True)
-        print(f"Created {pdf_dir} — add PDFs/text files here")
+        logger.info("Created %s — add PDFs/text files here", pdf_dir)
         return
 
     files = [
@@ -79,10 +69,10 @@ def process_and_upload(pdf_dir: str = None):
         if f.endswith((".pdf", ".txt")) and not f.startswith(".")
     ]
     if not files:
-        print(f"⚠️  No documents found in {pdf_dir}")
+        logger.warning("⚠️  No documents found in %s", pdf_dir)
         return
 
-    print(f"📄 Processing {len(files)} documents for embedding...")
+    logger.info("📄 Processing %d documents for embedding...", len(files))
     points = []
     total_chunks = 0
 
@@ -124,10 +114,10 @@ def process_and_upload(pdf_dir: str = None):
 
             total_chunks += len(chunks)
             sections = ", ".join(parsed.get("ipc_sections", [])[:3]) or "none"
-            print(f"   ✅ {filename}: {len(chunks)} chunks | IPC: {sections}")
+            logger.info("   ✅ %s: %d chunks | IPC: %s", filename, len(chunks), sections)
 
         except Exception as e:
-            print(f"   ❌ Error processing {filename}: {e}")
+            logger.error("   ❌ Error processing %s: %s", filename, e)
 
     if points:
         batch_size = 50
@@ -135,20 +125,20 @@ def process_and_upload(pdf_dir: str = None):
             batch = points[i : i + batch_size]
             for attempt in range(3):
                 try:
-                    qdrant.upsert(collection_name=COLLECTION, points=batch)
-                    print(f"   📤 Uploaded batch {i // batch_size + 1} ({len(batch)} points)")
+                    qdrant_client.upsert(collection_name=COLLECTION, points=batch)
+                    logger.info("   📤 Uploaded batch %d (%d points)", i // batch_size + 1, len(batch))
                     time.sleep(0.5)
                     break
                 except Exception as e:
                     if attempt < 2:
-                        print(f"   ⚠️  Batch {i // batch_size + 1} retry {attempt + 1}: {e}")
+                        logger.warning("   ⚠️  Batch %d retry %d: %s", i // batch_size + 1, attempt + 1, e)
                         time.sleep(3 * (attempt + 1))
                     else:
-                        print(f"   ❌ Batch {i // batch_size + 1} failed after 3 attempts: {e}")
+                        logger.error("   ❌ Batch %d failed after 3 attempts: %s", i // batch_size + 1, e)
 
-        print(f"\n✅ Total: {len(points)} embeddings uploaded to Qdrant")
+        logger.info("✅ Total: %d embeddings uploaded to Qdrant", len(points))
     else:
-        print("⚠️  No valid chunks to upload")
+        logger.warning("⚠️  No valid chunks to upload")
 
 
 if __name__ == "__main__":

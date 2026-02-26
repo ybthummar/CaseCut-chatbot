@@ -25,7 +25,6 @@ export const models = [
     provider: 'huggingface',
     description: 'Facebook — abstractive summarization',
     capabilities: ['summarize'],
-    hfModel: 'facebook/bart-large-cnn',
   },
   {
     id: 'hf-legal-led',
@@ -33,7 +32,6 @@ export const models = [
     provider: 'huggingface',
     description: 'Long-document legal summarization',
     capabilities: ['summarize'],
-    hfModel: 'nsi319/legal-led-base-16384',
   },
   {
     id: 'hf-falconsai',
@@ -41,7 +39,6 @@ export const models = [
     provider: 'huggingface',
     description: 'Lightweight text summarization',
     capabilities: ['summarize'],
-    hfModel: 'Falconsai/text_summarization',
   },
 ];
 

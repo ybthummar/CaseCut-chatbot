@@ -6,30 +6,22 @@ RAG orchestration — the central pipeline.
 Keeps all heavy logic out of the routers.
 """
 
-import os
-from groq import Groq
-import google.generativeai as genai
-from qdrant_client import QdrantClient
+from app.core.config import (
+    groq_client,
+    gemini_model,
+    qdrant_client,
+    embedder,
+    logger,
+    COLLECTION,
+    PDF_SMART_THRESHOLD,
+)
 from qdrant_client.models import FieldCondition, MatchAny, Filter
-from sentence_transformers import SentenceTransformer
 
 from app.core.prompts import build_rag_prompt, ROLE_RETRIEVAL_BIAS
 from app.models.ranker import rank_cases
 
-# ── Lazy singletons (initialised once at import time) ────────────────
-
-_groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-_gemini = genai.GenerativeModel("gemini-2.0-flash")
-
-_qdrant = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_KEY"),
-)
-
-_embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-COLLECTION = "legal_cases"
+# Re-export for backward compatibility (health endpoint uses _qdrant)
+_qdrant = qdrant_client
 
 
 # ── Public interface ─────────────────────────────────────────────────
@@ -47,8 +39,10 @@ def run_query(query: str, role: str = "lawyer", topic: str = "all", k: int = 5) 
             total_retrieved: int,
         }
     """
+    logger.info("RAG query  │ role=%s │ topic=%s │ k=%d │ %s", role, topic, k, query[:80])
+
     # 1 — Embed query
-    q_vector = _embedder.encode(query).tolist()
+    q_vector = embedder.encode(query).tolist()
 
     # 2 — Optional topic filter
     search_filter = None
@@ -58,7 +52,7 @@ def run_query(query: str, role: str = "lawyer", topic: str = "all", k: int = 5) 
         )
 
     # 3 — Vector search  (retrieve 2x, then re-rank down to k)
-    results = _qdrant.search(
+    results = qdrant_client.search(
         collection_name=COLLECTION,
         query_vector=q_vector,
         query_filter=search_filter,
@@ -133,6 +127,7 @@ def run_query(query: str, role: str = "lawyer", topic: str = "all", k: int = 5) 
     prompt = build_rag_prompt(role, query, context)
     summary, source = _generate_summary(prompt)
 
+    logger.info("RAG done   │ source=%s │ cases=%d", source, len(response_cases))
     return {
         "cases": response_cases,
         "summary": summary,
@@ -144,16 +139,76 @@ def run_query(query: str, role: str = "lawyer", topic: str = "all", k: int = 5) 
 
 # ── Summarisation for uploaded text / PDFs ───────────────────────────
 
-def summarize_document(text: str, model_id: str = "casecut-legal") -> str:
+def _extract_key_points(text: str) -> str:
     """
-    General-purpose document summarisation.
-    Routes locally – HuggingFace routing is done on the frontend.
+    Extract key points from a long legal document before sending to LLM.
+    This reduces token usage and focuses the LLM on important content.
     """
     prompt = (
-        "You are a legal document summariser. Provide a concise, structured "
-        "summary of the following text, highlighting key facts, legal issues, "
-        "and outcomes.\n\n"
-        f"TEXT:\n{text[:6000]}\n\n"
+        "You are a legal document analyst. Extract the **key points** from the "
+        "following legal text. Focus on:\n"
+        "- Core legal issues\n"
+        "- Important facts\n"
+        "- Court holdings / decisions\n"
+        "- Relevant IPC / BNS sections cited\n"
+        "- Final outcome\n\n"
+        "Return a concise bullet-point summary (max 1500 words).\n\n"
+        f"TEXT:\n{text[:8000]}\n\n"
+        "KEY POINTS:"
+    )
+    result, _ = _generate_summary(prompt)
+    return result
+
+
+def summarize_document(text: str, model_id: str = "casecut-legal", mode: str = "lawyer") -> str:
+    """
+    General-purpose document summarisation with intelligent processing.
+
+    If text is long (> PDF_SMART_THRESHOLD), extract key points first,
+    then summarize the condensed version using mode-aware prompting.
+    """
+    logger.info(
+        "Summarize  │ model=%s │ mode=%s │ text_len=%d",
+        model_id, mode, len(text),
+    )
+
+    # Intelligent processing: condense long documents first
+    if len(text) > PDF_SMART_THRESHOLD:
+        logger.info("Summarize  │ Long document detected, extracting key points first")
+        condensed = _extract_key_points(text)
+        source_text = condensed
+    else:
+        source_text = text
+
+    # Mode-aware summarization prompt
+    mode_instructions = {
+        "judge": (
+            "Summarize this legal document from a **judicial perspective**. "
+            "Focus on ratio decidendi, precedent alignment, and legal reasoning. "
+            "Use an authoritative, neutral tone."
+        ),
+        "lawyer": (
+            "Summarize this legal document for a **practicing lawyer**. "
+            "Highlight applicable legal principles, strategic implications, "
+            "and key IPC/BNS sections. Use precise legal terminology."
+        ),
+        "student": (
+            "Summarize this legal document for a **law student**. "
+            "Explain key concepts simply, define legal terms, and highlight "
+            "why this case matters as a precedent. Use accessible language."
+        ),
+        "summary": (
+            "Provide a **concise executive summary** of this legal document. "
+            "Use bullet points for key facts, legal issues, holdings, and outcome. "
+            "Keep it brief and scannable."
+        ),
+    }
+
+    instruction = mode_instructions.get(mode, mode_instructions["lawyer"])
+
+    prompt = (
+        f"{instruction}\n\n"
+        f"TEXT:\n{source_text[:6000]}\n\n"
         "SUMMARY:"
     )
     summary, _ = _generate_summary(prompt)
@@ -165,7 +220,7 @@ def summarize_document(text: str, model_id: str = "casecut-legal") -> str:
 def _generate_summary(prompt: str) -> tuple[str, str]:
     """Try Groq → fallback Gemini. Returns (text, source)."""
     try:
-        resp = _groq.chat.completions.create(
+        resp = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=800,
@@ -174,7 +229,8 @@ def _generate_summary(prompt: str) -> tuple[str, str]:
         return resp.choices[0].message.content, "groq"
     except Exception:
         try:
-            resp = _gemini.generate_content(prompt)
+            resp = gemini_model.generate_content(prompt)
             return resp.text, "gemini"
         except Exception as e:
+            logger.error("LLM error: %s", e)
             return f"Error generating summary: {e}", "error"

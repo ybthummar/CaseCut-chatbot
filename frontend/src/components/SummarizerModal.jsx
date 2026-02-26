@@ -6,7 +6,9 @@ import {
 } from 'lucide-react'
 import { getModelsByCapability } from '../config/models'
 import { uploadPDF, saveSummaryMetadata } from '../services/storageService'
-import { summarizeText } from '../services/summarizerService'
+import { summarizeText as apiSummarizeText, summarizeFile as apiSummarizeFile } from '../api/summarizeApi'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function SummarizerModal({ isOpen, onClose, userId }) {
   const summarizeModels = getModelsByCapability('summarize')
@@ -35,10 +37,14 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
       if (mode === 'pdf') {
         if (!file) throw new Error('Please select a PDF file')
         fileUrl = await uploadPDF(userId, file, setUploadProgress)
-        resultSummary = await summarizeText(fileUrl, selectedModel, 'pdf')
+        // Route through backend — backend calls HuggingFace if needed
+        const result = await apiSummarizeFile(fileUrl, selectedModel, 'summary')
+        resultSummary = result.summary
       } else {
         if (!text.trim()) throw new Error('Please enter text to summarize')
-        resultSummary = await summarizeText(text, selectedModel, 'text')
+        // Route through backend — backend handles all providers
+        const result = await apiSummarizeText(text, selectedModel, 'summary')
+        resultSummary = result.summary
       }
 
       setSummary(resultSummary)
@@ -326,9 +332,11 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
                     {copied ? 'Copied' : 'Copy'}
                   </button>
                 </div>
-                <p className="text-sm text-[#c0c0c5] leading-relaxed whitespace-pre-wrap">
-                  {summary}
-                </p>
+                <div className="markdown-body text-sm text-[#c0c0c5] leading-relaxed">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {summary}
+                  </ReactMarkdown>
+                </div>
               </div>
             )}
           </div>

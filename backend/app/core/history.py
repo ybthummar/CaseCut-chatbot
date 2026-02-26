@@ -2,10 +2,10 @@
 User history persistence.
 
 Stores session history to disk at  user_history/{user_id}/*.jsonl
-Optionally syncs to Google Drive (if configured).
 """
 
 import os
+import re
 import json
 from datetime import datetime
 from typing import Optional
@@ -13,8 +13,14 @@ from typing import Optional
 HISTORY_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "user_history")
 
 
+def _sanitize_user_id(uid: str) -> str:
+    """Prevent path traversal by stripping non-alphanumeric chars."""
+    return re.sub(r'[^a-zA-Z0-9_\-]', '', uid) or "anonymous"
+
+
 def _user_dir(user_id: str) -> str:
-    d = os.path.join(HISTORY_DIR, user_id)
+    safe_id = _sanitize_user_id(user_id)
+    d = os.path.join(HISTORY_DIR, safe_id)
     os.makedirs(d, exist_ok=True)
     return d
 
@@ -51,7 +57,8 @@ def get_history(user_id: str, limit: int = 50) -> list[dict]:
     if not os.path.exists(filepath):
         return []
 
-    lines = open(filepath, "r", encoding="utf-8").readlines()
+    with open(filepath, "r", encoding="utf-8") as f:
+        lines = f.readlines()
     entries = [json.loads(l) for l in lines if l.strip()]
     return entries[-limit:]
 

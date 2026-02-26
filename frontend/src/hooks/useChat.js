@@ -6,12 +6,12 @@ import {
   subscribeToChatMessages,
   deleteChat,
 } from '../services/chatService';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { sendQuery as apiSendQuery } from '../api/chatApi';
 
 /**
  * Custom hook — manages chat list, active chat, messages, and API calls.
  * All data kept in sync via Firestore onSnapshot listeners.
+ * Uses the centralized API client for backend calls.
  */
 export function useChat(user) {
   const [chatList, setChatList] = useState([]);
@@ -58,33 +58,42 @@ export function useChat(user) {
           isFirstMessage: isNew,
         });
 
-        // Call backend
-        const res = await fetch(`${API_URL}/query`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: text, role, topic, k: 5 }),
-        });
-
-        if (!res.ok) throw new Error('API request failed');
-        const data = await res.json();
+        // Call backend via centralized API client
+        const data = await apiSendQuery(text, role, topic, 5);
 
         // Persist assistant reply
         await addMessage(user.uid, chatId, {
           role: 'assistant',
-          text: data.summary,
+          text: data.summary || 'No summary returned.',
           cases: data.cases || [],
-          model: 'casecut-legal',
+          model: `casecut-legal (${data.source || 'unknown'})`,
         });
+
       } catch (err) {
         console.error('sendMessage error:', err);
 
-        // Write an error-reply so the user sees feedback in the chat
+        // Build a user-visible error message
+        let errorText = '**⚠️ Error**\n\n';
+        if (err.status === 0 || err.isNetworkError) {
+          errorText += 'Cannot reach the backend server.\n\n';
+          errorText += '**Fix:** Run `cd backend && python -m uvicorn app.main:app --reload`';
+        } else if (err.status === 500) {
+          errorText += `**Server Error:** ${err.message}\n\n`;
+          errorText += '**Fix:** Check the backend terminal for the full traceback.';
+        } else if (err.status === 422) {
+          errorText += `**Validation Error:** ${err.message}\n\n`;
+          errorText += 'The request format may be incorrect.';
+        } else {
+          errorText += err.message || 'Unable to process your request.';
+        }
+
+        // Write error reply so user sees feedback in chat
         const chatId = activeChatId;
         if (chatId) {
           try {
             await addMessage(user.uid, chatId, {
               role: 'assistant',
-              text: 'Unable to process your request. Please check your connection and try again.',
+              text: errorText,
             });
           } catch (_) {
             /* swallow nested error */

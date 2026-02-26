@@ -1,10 +1,11 @@
 """
 CaseCut AI – Role-aware prompt templates.
 
-Three personas:
+Four personas:
   • Judge   → ratio decidendi, authoritative stance, neutral
   • Lawyer  → persuasive, strategic citations, argument chains
   • Student → educational, simplified, case-study format
+  • Summary → concise executive summary, bullet-point format
 """
 
 # ─── System-level role instructions ──────────────────────────────────
@@ -26,6 +27,11 @@ ROLE_SYSTEM_PROMPTS = {
         "You are a distinguished law professor teaching Indian law. Explain cases like a "
         "case study — covering history, important facts, legal principles, and outcomes. "
         "Simplify complex arguments and use examples a first-year law student would grasp."
+    ),
+    "summary": (
+        "You are a legal document summariser specialising in Indian law. Produce concise, "
+        "scannable executive summaries. Use bullet points, highlight key holdings, cite "
+        "specific sections, and keep the output brief and actionable."
     ),
 }
 
@@ -52,6 +58,13 @@ Be thorough, cite specifics, and use precise legal terminology.""",
 - Why these cases are important as precedents
 - How they connect to the topic under study
 Use accessible language, define legal terms, and give real-world analogies.""",
+
+    "summary": """Provide a concise executive summary including:
+- Key facts (2-3 bullet points)
+- Core legal issues identified
+- Court holdings and reasoning (brief)
+- Final outcome and implications
+Keep it scannable. Use bullet points and bold for emphasis.""",
 }
 
 
@@ -72,6 +85,11 @@ ROLE_RETRIEVAL_BIAS = {
         "prefer_courts": ["Supreme Court of India", "High Court"],
         "prefer_outcomes": None,
         "court_weight_boost": 0.10,       # slight bias to well-known courts
+    },
+    "summary": {
+        "prefer_courts": None,
+        "prefer_outcomes": None,
+        "court_weight_boost": 0.0,        # neutral — pure semantic relevance
     },
 }
 

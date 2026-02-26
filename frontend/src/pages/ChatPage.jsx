@@ -2,14 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useChat } from '../hooks/useChat'
+import { sendFeedback } from '../api/chatApi'
 import SummarizerModal from '../components/SummarizerModal'
 import {
   SendHorizontal, Menu, LogOut, User, Plus, MessageSquare,
   ChevronDown, Scale, Briefcase, GraduationCap, Loader2,
   BookOpen, X, ThumbsUp, ThumbsDown, Filter, Sparkles,
-  Home, Trash2,
+  Home, Trash2, FileText,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import '../App.css'
 import logo from '../../assets/Logo.svg'
 
 export default function ChatPage() {
@@ -58,6 +62,7 @@ export default function ChatPage() {
     { id: 'lawyer', name: 'Lawyer', icon: <Briefcase className="size-4" />, description: 'Detailed legal analysis' },
     { id: 'judge', name: 'Judge', icon: <Scale className="size-4" />, description: 'Judicial perspective' },
     { id: 'student', name: 'Student', icon: <GraduationCap className="size-4" />, description: 'Educational explanations' },
+    { id: 'summary', name: 'Summary', icon: <FileText className="size-4" />, description: 'Concise executive summary' },
   ]
 
   const selectedRole = roles.find((r) => r.id === role) || roles[0]
@@ -106,13 +111,9 @@ export default function ChatPage() {
     setInput('')
   }
 
-  const sendFeedback = async (queryText, rating) => {
+  const handleFeedback = async (queryText, rating) => {
     try {
-      await fetch(`${API_URL}/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryText, rating, role }),
-      })
+      await sendFeedback(queryText, rating, role)
     } catch (err) {
       console.error('Feedback error:', err)
     }
@@ -384,7 +385,15 @@ export default function ChatPage() {
                         : 'bg-[#1a1a1e] text-[#e0e0e5] border border-white/[0.06]'
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    {msg.role === 'assistant' ? (
+                      <div className="markdown-body text-sm leading-relaxed">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {msg.text || ''}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    )}
 
                     {/* Case citations */}
                     {msg.cases && msg.cases.length > 0 && (
@@ -412,14 +421,14 @@ export default function ChatPage() {
                       <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center gap-2">
                         <span className="text-[10px] text-[#5a5a5f]">Helpful?</span>
                         <button
-                          onClick={() => sendFeedback(messages[i - 1]?.text || '', 1)}
+                          onClick={() => handleFeedback(messages[i - 1]?.text || '', 1)}
                           className="p-1 rounded hover:bg-green-500/10 text-[#5a5a5f] hover:text-green-400 transition-colors"
                           title="Helpful"
                         >
                           <ThumbsUp className="size-3.5" />
                         </button>
                         <button
-                          onClick={() => sendFeedback(messages[i - 1]?.text || '', -1)}
+                          onClick={() => handleFeedback(messages[i - 1]?.text || '', -1)}
                           className="p-1 rounded hover:bg-red-500/10 text-[#5a5a5f] hover:text-red-400 transition-colors"
                           title="Not helpful"
                         >
