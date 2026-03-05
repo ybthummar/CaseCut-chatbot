@@ -6,18 +6,19 @@ import {
   subscribeToChatMessages,
   deleteChat,
 } from '../services/chatService';
-import { sendQuery as apiSendQuery } from '../api/chatApi';
+import { sendQuery as apiSendQuery, chatWithPDF as apiChatWithPDF } from '../api/chatApi';
 
 /**
  * Custom hook — manages chat list, active chat, messages, and API calls.
  * All data kept in sync via Firestore onSnapshot listeners.
- * Uses the centralized API client for backend calls.
+ * Supports: RAG search, PDF chat, conversation history, strategic mode.
  */
 export function useChat(user) {
   const [chatList, setChatList] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pdfDocument, setPdfDocument] = useState(null); // uploaded PDF text for chat
 
   // ── Real-time: chat list ───────────────────────────────────────────
   useEffect(() => {
@@ -36,6 +37,15 @@ export function useChat(user) {
     return unsub;
   }, [user, activeChatId]);
 
+  // ── Build conversation history from recent messages ────────────────
+  const getConversationHistory = useCallback(() => {
+    if (!messages || messages.length === 0) return null;
+    return messages.slice(-6).map(m => ({
+      role: m.role,
+      text: typeof m.text === 'string' ? m.text.slice(0, 500) : '',
+    }));
+  }, [messages]);
+
   // ── Send a message (creates chat if needed) ────────────────────────
   const sendMessage = useCallback(
     async (text, role, topic) => {
@@ -47,7 +57,10 @@ export function useChat(user) {
         const isNew = !chatId;
 
         if (isNew) {
-          chatId = await createChat(user.uid, text.slice(0, 80), role);
+          const chatTitle = pdfDocument
+            ? `📄 ${pdfDocument.filename || 'PDF'}: ${text.slice(0, 60)}`
+            : text.slice(0, 80);
+          chatId = await createChat(user.uid, chatTitle, role);
           setActiveChatId(chatId);
         }
 
@@ -58,21 +71,45 @@ export function useChat(user) {
           isFirstMessage: isNew,
         });
 
-        // Call backend via centralized API client
-        const data = await apiSendQuery(text, role, topic, 5);
+        // Get conversation history for context
+        const history = getConversationHistory();
 
-        // Persist assistant reply
-        await addMessage(user.uid, chatId, {
-          role: 'assistant',
-          text: data.summary || 'No summary returned.',
-          cases: data.cases || [],
-          model: `casecut-legal (${data.source || 'unknown'})`,
-        });
+        let data;
+
+        if (pdfDocument && pdfDocument.full_text) {
+          // ── PDF Chat mode ─────────────────────────────────────
+          data = await apiChatWithPDF(
+            text,
+            pdfDocument.full_text,
+            role,
+            history,
+          );
+
+          // Persist assistant reply for PDF chat
+          await addMessage(user.uid, chatId, {
+            role: 'assistant',
+            text: data.answer || 'No answer returned.',
+            cases: data.citations || [],
+            model: `casecut-legal (${data.source || 'unknown'})`,
+            confidence: data.confidence || null,
+            isPdfChat: true,
+          });
+        } else {
+          // ── Standard RAG mode ─────────────────────────────────
+          data = await apiSendQuery(text, role, topic, 5, history);
+
+          await addMessage(user.uid, chatId, {
+            role: 'assistant',
+            text: data.summary || 'No summary returned.',
+            cases: data.cases || [],
+            model: `casecut-legal (${data.source || 'unknown'})`,
+            confidence: data.confidence || null,
+          });
+        }
 
       } catch (err) {
         console.error('sendMessage error:', err);
 
-        // Build a user-visible error message
         let errorText = '**⚠️ Error**\n\n';
         if (err.status === 0 || err.isNetworkError) {
           errorText += 'Cannot reach the backend server.\n\n';
@@ -87,7 +124,6 @@ export function useChat(user) {
           errorText += err.message || 'Unable to process your request.';
         }
 
-        // Write error reply so user sees feedback in chat
         const chatId = activeChatId;
         if (chatId) {
           try {
@@ -103,17 +139,19 @@ export function useChat(user) {
         setLoading(false);
       }
     },
-    [user, activeChatId]
+    [user, activeChatId, pdfDocument, getConversationHistory]
   );
 
   // ── Chat management ────────────────────────────────────────────────
   const startNewChat = useCallback(() => {
     setActiveChatId(null);
     setMessages([]);
+    setPdfDocument(null);
   }, []);
 
   const selectChat = useCallback((chatId) => {
     setActiveChatId(chatId);
+    setPdfDocument(null); // clear PDF when switching chats
   }, []);
 
   const removeChat = useCallback(
@@ -124,6 +162,7 @@ export function useChat(user) {
         if (chatId === activeChatId) {
           setActiveChatId(null);
           setMessages([]);
+          setPdfDocument(null);
         }
       } catch (err) {
         console.error('removeChat error:', err);
@@ -131,6 +170,15 @@ export function useChat(user) {
     },
     [user, activeChatId]
   );
+
+  // ── PDF management ─────────────────────────────────────────────────
+  const setPdfForChat = useCallback((parsedDocument) => {
+    setPdfDocument(parsedDocument);
+  }, []);
+
+  const clearPdf = useCallback(() => {
+    setPdfDocument(null);
+  }, []);
 
   return {
     chatList,
@@ -141,5 +189,8 @@ export function useChat(user) {
     startNewChat,
     selectChat,
     removeChat,
+    pdfDocument,
+    setPdfForChat,
+    clearPdf,
   };
 }

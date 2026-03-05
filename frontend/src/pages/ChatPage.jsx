@@ -2,13 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useChat } from '../hooks/useChat'
-import { sendFeedback } from '../api/chatApi'
+import { sendFeedback, uploadPDFToBackend } from '../api/chatApi'
 import SummarizerModal from '../components/SummarizerModal'
 import {
   SendHorizontal, Menu, LogOut, User, Plus, MessageSquare,
   ChevronDown, Scale, Briefcase, GraduationCap, Loader2,
   BookOpen, X, ThumbsUp, ThumbsDown, Filter, Sparkles,
-  Home, Trash2, FileText,
+  Home, Trash2, FileText, Upload, Shield, AlertTriangle,
+  CheckCircle, Info,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
@@ -30,6 +31,9 @@ export default function ChatPage() {
     startNewChat,
     selectChat,
     removeChat,
+    pdfDocument,
+    setPdfForChat,
+    clearPdf,
   } = useChat(user)
 
   // ── Local UI state ────────────────────────────────────────────────
@@ -40,8 +44,10 @@ export default function ChatPage() {
   const [topic, setTopic] = useState('all')
   const [topicDropdownOpen, setTopicDropdownOpen] = useState(false)
   const [summarizerOpen, setSummarizerOpen] = useState(false)
+  const [pdfUploading, setPdfUploading] = useState(false)
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
+  const pdfInputRef = useRef(null)
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -62,17 +68,25 @@ export default function ChatPage() {
     { id: 'lawyer', name: 'Lawyer', icon: <Briefcase className="size-4" />, description: 'Detailed legal analysis' },
     { id: 'judge', name: 'Judge', icon: <Scale className="size-4" />, description: 'Judicial perspective' },
     { id: 'student', name: 'Student', icon: <GraduationCap className="size-4" />, description: 'Educational explanations' },
+    { id: 'strategy', name: 'Strategy', icon: <Shield className="size-4" />, description: 'Strategic legal advice' },
     { id: 'summary', name: 'Summary', icon: <FileText className="size-4" />, description: 'Concise executive summary' },
   ]
 
   const selectedRole = roles.find((r) => r.id === role) || roles[0]
 
-  const suggestedPrompts = [
-    'What is Section 420 IPC?',
-    'Explain breach of contract under Indian law',
-    'Landmark judgments on Right to Privacy',
-    'What are grounds for anticipatory bail?',
-  ]
+  const suggestedPrompts = pdfDocument
+    ? [
+        'What are the key facts of this case?',
+        'What legal sections are cited in this document?',
+        'What was the court\'s final decision?',
+        'Summarize the legal arguments presented.',
+      ]
+    : [
+        'What is Section 420 IPC?',
+        'Explain breach of contract under Indian law',
+        'Landmark judgments on Right to Privacy',
+        'What are grounds for anticipatory bail?',
+      ]
 
   // ── Side effects ──────────────────────────────────────────────────
   useEffect(() => {
@@ -86,6 +100,29 @@ export default function ChatPage() {
       ta.style.height = `${Math.min(ta.scrollHeight, 200)}px`
     }
   }, [input])
+
+  // ── PDF Upload Handler ────────────────────────────────────────────
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.name.toLowerCase().endsWith('.pdf') && !file.name.toLowerCase().endsWith('.txt')) {
+      alert('Please select a PDF or TXT file.')
+      return
+    }
+
+    setPdfUploading(true)
+    try {
+      const parsed = await uploadPDFToBackend(file, user?.uid || 'anonymous')
+      setPdfForChat(parsed)
+      startNewChat()
+    } catch (err) {
+      console.error('PDF upload error:', err)
+      alert(`Upload failed: ${err.message}`)
+    } finally {
+      setPdfUploading(false)
+      if (pdfInputRef.current) pdfInputRef.current.value = ''
+    }
+  }
 
   // ── Handlers ──────────────────────────────────────────────────────
   const handleSend = () => {
@@ -117,6 +154,29 @@ export default function ChatPage() {
     } catch (err) {
       console.error('Feedback error:', err)
     }
+  }
+
+  // ── Confidence badge helper ───────────────────────────────────────
+  const ConfidenceBadge = ({ confidence }) => {
+    if (!confidence) return null
+    const colors = {
+      high: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      medium: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+      low: 'text-red-400 bg-red-500/10 border-red-500/20',
+    }
+    const icons = {
+      high: <CheckCircle className="size-3" />,
+      medium: <Info className="size-3" />,
+      low: <AlertTriangle className="size-3" />,
+    }
+    return (
+      <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium border ${colors[confidence.level] || colors.medium}`}
+           title={confidence.explanation}>
+        {icons[confidence.level]}
+        <span>Confidence: {confidence.level}</span>
+        {confidence.score > 0 && <span>({(confidence.score * 100).toFixed(0)}%)</span>}
+      </div>
+    )
   }
 
   // ── Render ────────────────────────────────────────────────────────
@@ -241,6 +301,28 @@ export default function ChatPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* PDF Upload */}
+            <input
+              ref={pdfInputRef}
+              type="file"
+              accept=".pdf,.txt"
+              onChange={handlePdfUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => pdfInputRef.current?.click()}
+              disabled={pdfUploading}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all duration-200 border border-emerald-500/20 disabled:opacity-50"
+              title="Upload PDF to chat with it"
+            >
+              {pdfUploading ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Upload className="size-3.5" />
+              )}
+              <span className="hidden sm:inline">{pdfUploading ? 'Uploading…' : 'Upload PDF'}</span>
+            </button>
+
             {/* Summarizer */}
             <button
               onClick={() => setSummarizerOpen(true)}
@@ -335,15 +417,47 @@ export default function ChatPage() {
             <div className="flex flex-col items-center justify-center h-full px-4">
               <div className="max-w-2xl w-full text-center">
                 <img src={logo} alt="CaseCut" className="h-16 w-16 mx-auto mb-6 opacity-60" />
+
+                {/* PDF Chat indicator */}
+                {pdfDocument && (
+                  <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-left max-w-md mx-auto">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+                        <FileText className="size-4" />
+                        <span>PDF Loaded for Chat</span>
+                      </div>
+                      <button
+                        onClick={clearPdf}
+                        className="p-1 rounded text-emerald-400/50 hover:text-red-400 transition-colors"
+                        title="Remove PDF"
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-emerald-400/70 mt-1 truncate">{pdfDocument.filename}</p>
+                    <p className="text-[10px] text-[#6a6a6f] mt-1">
+                      {pdfDocument.page_count} pages • {pdfDocument.text_length?.toLocaleString()} chars
+                      {pdfDocument.court && pdfDocument.court !== 'Unknown' && ` • ${pdfDocument.court}`}
+                    </p>
+                  </div>
+                )}
+
                 <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">
-                  What would you like to{' '}
-                  <span className="bg-gradient-to-b from-[#4da5fc] via-[#4da5fc] to-white bg-clip-text text-transparent italic">
-                    research
-                  </span>
-                  ?
+                  {pdfDocument ? 'Ask about your document' : (
+                    <>
+                      What would you like to{' '}
+                      <span className="bg-gradient-to-b from-[#4da5fc] via-[#4da5fc] to-white bg-clip-text text-transparent italic">
+                        research
+                      </span>
+                      ?
+                    </>
+                  )}
                 </h1>
                 <p className="text-[#8a8a8f] text-base mb-8">
-                  AI-powered legal research for Indian courts and judgments.
+                  {pdfDocument
+                    ? 'Your document is loaded. Ask questions and get citation-backed answers.'
+                    : 'AI-powered legal research for Indian courts and judgments.'
+                  }
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6 max-w-xl mx-auto">
@@ -398,19 +512,47 @@ export default function ChatPage() {
                     {/* Case citations */}
                     {msg.cases && msg.cases.length > 0 && (
                       <div className="mt-4 pt-3 border-t border-white/[0.08] space-y-2">
-                        <p className="text-xs font-semibold text-[#8a8a8f] uppercase tracking-wide">Case Citations</p>
+                        <p className="text-xs font-semibold text-[#8a8a8f] uppercase tracking-wide flex items-center gap-2">
+                          📎 Supporting Sources
+                          {msg.confidence && <ConfidenceBadge confidence={msg.confidence} />}
+                        </p>
                         {msg.cases.map((c, j) => (
                           <details key={j} className="text-xs group">
                             <summary className="cursor-pointer text-[#4da5fc] hover:text-[#6ab8ff] transition-colors font-medium">
-                              Case {j + 1} {c.court && `(${c.court})`}{' '}
-                              {c.ipc_sections?.length > 0 && `- IPC ${c.ipc_sections.slice(0, 2).join(', ')}`}
+                              {c.approximate_page ? (
+                                /* PDF chat citation */
+                                <>Section ~Page {c.approximate_page}, Chunk {c.chunk_index + 1} (Relevance: {(c.similarity * 100).toFixed(0)}%)</>
+                              ) : (
+                                /* RAG case citation */
+                                <>
+                                  Case {j + 1} {c.court && `(${c.court})`}
+                                  {c.date && ` — ${c.date}`}
+                                  {c.ipc_sections?.length > 0 && ` — IPC ${c.ipc_sections.slice(0, 3).join(', ')}`}
+                                </>
+                              )}
                             </summary>
-                            <p className="mt-2 pl-3 text-[11px] text-[#8a8a8f] leading-relaxed border-l-2 border-white/[0.06]">
-                              {c.text}
-                            </p>
-                            {c.outcome && c.outcome !== 'unknown' && (
-                              <p className="mt-1 pl-3 text-[10px] text-emerald-400/70">Outcome: {c.outcome}</p>
-                            )}
+                            <div className="mt-2 pl-3 border-l-2 border-white/[0.06] space-y-1">
+                              <p className="text-[11px] text-[#8a8a8f] leading-relaxed">
+                                {c.text}
+                              </p>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {c.outcome && c.outcome !== 'unknown' && (
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
+                                    Outcome: {c.outcome}
+                                  </span>
+                                )}
+                                {c.file && (
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
+                                    Source: {c.file}
+                                  </span>
+                                )}
+                                {c.rank_score > 0 && (
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">
+                                    Relevance: {(c.rank_score * 100).toFixed(0)}%
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </details>
                         ))}
                       </div>
@@ -478,13 +620,30 @@ export default function ChatPage() {
         {/* ── Input area ───────────────────────────────────────── */}
         <div className="p-4 bg-[#0f0f0f]">
           <div className="max-w-3xl mx-auto">
+            {/* PDF active indicator strip */}
+            {pdfDocument && (
+              <div className="flex items-center gap-2 mb-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                <FileText className="size-4 text-blue-400 shrink-0" />
+                <span className="text-xs text-blue-300 truncate flex-1">
+                  Chatting with: <span className="font-medium">{pdfDocument.filename}</span>
+                  {pdfDocument.page_count && ` (${pdfDocument.page_count} pages)`}
+                </span>
+                <button
+                  onClick={clearPdf}
+                  className="text-blue-400/60 hover:text-blue-300 transition-colors p-0.5"
+                  title="Exit PDF chat"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
+            )}
             <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)]">
               <textarea
                 ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about bail, IPC sections, precedents…"
+                placeholder={pdfDocument ? `Ask about "${pdfDocument.filename}"…` : "Ask about bail, IPC sections, precedents…"}
                 disabled={loading}
                 className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-4 pb-2 focus:outline-none min-h-[56px] max-h-[200px]"
                 style={{ height: '56px' }}
@@ -492,8 +651,8 @@ export default function ChatPage() {
               <div className="flex items-center justify-between px-3 pb-3">
                 <div className="flex items-center gap-1">
                   <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-[#5a5a5f]">
-                    <BookOpen className="size-3.5" />
-                    <span>Indian Law</span>
+                    {pdfDocument ? <FileText className="size-3.5 text-blue-400" /> : <BookOpen className="size-3.5" />}
+                    <span>{pdfDocument ? 'PDF Chat' : 'Indian Law'}</span>
                   </div>
                 </div>
                 <button
@@ -501,7 +660,7 @@ export default function ChatPage() {
                   disabled={!input.trim() || loading}
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
                 >
-                  <span className="hidden sm:inline">Search</span>
+                  <span className="hidden sm:inline">{pdfDocument ? 'Ask' : 'Search'}</span>
                   <SendHorizontal className="size-4" />
                 </button>
               </div>

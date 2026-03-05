@@ -1,11 +1,30 @@
 """
-CaseCut AI – Role-aware prompt templates.
+CaseCut AI – Role-aware prompt templates with hallucination guardrails.
 
-Four personas:
-  • Judge   → ratio decidendi, authoritative stance, neutral
-  • Lawyer  → persuasive, strategic citations, argument chains
-  • Student → educational, simplified, case-study format
-  • Summary → concise executive summary, bullet-point format
+Five personas:
+  • Judge    → ratio decidendi, authoritative stance, neutral
+  • Lawyer   → persuasive, strategic citations, argument chains
+  • Student  → educational, simplified, case-study format
+  • Summary  → concise executive summary, bullet-point format
+  • Strategy → deep strategic legal advice, outcomes & risks
+"""
+
+# ─── Hallucination guardrail block (injected into EVERY prompt) ──────
+
+GUARDRAIL_BLOCK = """
+CRITICAL RULES — You MUST follow these strictly:
+1. ONLY use information present in the CONTEXT / CASES provided below. Do NOT fabricate, invent, or assume any legal facts, case names, dates, or holdings.
+2. If the answer is NOT found in the provided context, respond EXACTLY: "⚠️ The requested information was not found in the available documents. Please try rephrasing your query or uploading the relevant document."
+3. ALWAYS cite your sources using the format shown below. Every factual claim must have a supporting reference.
+4. NEVER generate fictitious case names, section numbers, or legal provisions.
+5. Prefer QUOTING relevant passages from the context over paraphrasing when accuracy matters.
+6. If you are only partially confident, say so explicitly and indicate which parts are supported by the context.
+
+CITATION FORMAT (use this for every response):
+At the end of your answer, include a "📎 Sources" section:
+📎 **Sources:**
+- [Case from <Court>] — IPC Section <X> — Outcome: <outcome>
+- [Case from <Court>] — Relevant excerpt: "<quote>"
 """
 
 # ─── System-level role instructions ──────────────────────────────────
@@ -32,6 +51,14 @@ ROLE_SYSTEM_PROMPTS = {
         "You are a legal document summariser specialising in Indian law. Produce concise, "
         "scannable executive summaries. Use bullet points, highlight key holdings, cite "
         "specific sections, and keep the output brief and actionable."
+    ),
+    "strategy": (
+        "You are a senior legal strategist and advisor specialising in Indian law. "
+        "Provide deep strategic analysis of legal situations including possible outcomes, "
+        "strengths and weaknesses of each position, recommended litigation strategies, "
+        "and precedent relevance. Your analysis should be thorough and actionable. "
+        "IMPORTANT: Clearly state that your analysis is for informational purposes only "
+        "and does not constitute legal counsel."
     ),
 }
 
@@ -65,6 +92,32 @@ Use accessible language, define legal terms, and give real-world analogies.""",
 - Court holdings and reasoning (brief)
 - Final outcome and implications
 Keep it scannable. Use bullet points and bold for emphasis.""",
+
+    "strategy": """Provide a comprehensive strategic legal analysis including:
+
+**1. Situation Assessment:**
+- Core legal issues at stake
+- Applicable laws, sections, and precedents from the context
+
+**2. Strengths & Weaknesses:**
+- Strong points that favour the position
+- Vulnerabilities or risks to be aware of
+
+**3. Possible Legal Outcomes:**
+- Most likely outcome based on precedent
+- Best-case and worst-case scenarios
+- Probability assessment (high / medium / low confidence)
+
+**4. Recommended Strategy:**
+- Suggested legal approach and argumentation strategy
+- Key precedents to leverage
+- Potential counter-arguments to prepare for
+
+**5. Precedent Relevance:**
+- How each cited case supports or challenges the position
+- Distinguishing factors from the current situation
+
+⚠️ *This analysis is for informational and research purposes only. It does not constitute legal advice. Consult a qualified legal professional for specific legal matters.*""",
 }
 
 
@@ -91,17 +144,28 @@ ROLE_RETRIEVAL_BIAS = {
         "prefer_outcomes": None,
         "court_weight_boost": 0.0,        # neutral — pure semantic relevance
     },
+    "strategy": {
+        "prefer_courts": ["Supreme Court of India", "High Court"],
+        "prefer_outcomes": None,
+        "court_weight_boost": 0.15,
+    },
 }
 
 
-def build_rag_prompt(role: str, query: str, context_block: str) -> str:
+def build_rag_prompt(
+    role: str,
+    query: str,
+    context_block: str,
+    conversation_history: list[dict] | None = None,
+) -> str:
     """
     Assemble the final prompt sent to the LLM.
 
     Args:
-        role:          'judge' | 'lawyer' | 'student'
-        query:         user's raw question
-        context_block: newline-joined case excerpts from retrieval
+        role:                 'judge' | 'lawyer' | 'student' | 'strategy'
+        query:                user's raw question
+        context_block:        newline-joined case excerpts from retrieval
+        conversation_history: optional list of {role, text} dicts for context
 
     Returns:
         Full prompt string ready for the chat model.
@@ -109,10 +173,25 @@ def build_rag_prompt(role: str, query: str, context_block: str) -> str:
     system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
     output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
 
+    # Build conversation context if available
+    history_block = ""
+    if conversation_history:
+        turns = []
+        for turn in conversation_history[-6:]:  # last 3 exchanges max
+            prefix = "USER" if turn.get("role") == "user" else "ASSISTANT"
+            turns.append(f"{prefix}: {turn['text'][:300]}")
+        history_block = (
+            "\n\nPREVIOUS CONVERSATION (for context only):\n"
+            + "\n".join(turns)
+            + "\n"
+        )
+
     return f"""{system}
 
-{output}
+{GUARDRAIL_BLOCK}
 
+{output}
+{history_block}
 Based on the following retrieved legal cases, respond to the user's query.
 
 CASES:
@@ -120,4 +199,51 @@ CASES:
 
 USER QUERY: {query}
 
-Provide a clear, structured response."""
+Provide a clear, structured response with citations."""
+
+
+def build_pdf_chat_prompt(
+    role: str,
+    query: str,
+    document_context: str,
+    conversation_history: list[dict] | None = None,
+) -> str:
+    """
+    Build a prompt for chatting with an uploaded PDF document.
+
+    Args:
+        role:                 persona to use
+        query:                user's question about the document
+        document_context:     extracted text chunks from the PDF
+        conversation_history: optional prior turns
+
+    Returns:
+        Full prompt string.
+    """
+    system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
+    output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
+
+    history_block = ""
+    if conversation_history:
+        turns = []
+        for turn in conversation_history[-6:]:
+            prefix = "USER" if turn.get("role") == "user" else "ASSISTANT"
+            turns.append(f"{prefix}: {turn['text'][:300]}")
+        history_block = (
+            "\n\nPREVIOUS CONVERSATION:\n" + "\n".join(turns) + "\n"
+        )
+
+    return f"""{system}
+
+{GUARDRAIL_BLOCK}
+
+{output}
+{history_block}
+The user has uploaded a legal document. Answer their question using ONLY the document content below.
+
+DOCUMENT CONTENT:
+{document_context}
+
+USER QUESTION: {query}
+
+Provide a clear, structured answer with references to specific parts of the document."""

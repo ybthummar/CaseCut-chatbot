@@ -41,16 +41,34 @@ def create_collection():
             pass
 
 
-def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list:
-    """Split text into overlapping chunks."""
+def chunk_text(
+    text: str,
+    chunk_size: int = CHUNK_SIZE,
+    overlap: int = CHUNK_OVERLAP,
+) -> list[str]:
+    """
+    Split text into overlapping chunks.
+
+    Args:
+        text:       input text
+        chunk_size: number of characters per chunk (default 500)
+        overlap:    overlap between chunks (default 100)
+
+    Returns:
+        List of text chunks.
+    """
     chunks = []
     start = 0
-    while start < len(text):
+    text_len = len(text)
+    while start < text_len:
         end = start + chunk_size
         chunk = text[start:end].strip()
         if chunk:
             chunks.append(chunk)
-        start += chunk_size - overlap
+        step = chunk_size - overlap
+        if step <= 0:
+            step = chunk_size  # prevent infinite loop
+        start += step
     return chunks
 
 

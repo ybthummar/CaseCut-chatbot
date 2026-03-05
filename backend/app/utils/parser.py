@@ -33,20 +33,28 @@ TOPIC_KEYWORDS = {
 }
 
 
-def extract_text_from_file(filepath: str) -> str:
+def extract_text_from_file(filepath: str) -> tuple[str, int]:
+    """Extract text and page count from a file.
+    Returns (text, page_count).
+    """
     if filepath.endswith(".pdf"):
         try:
             doc = fitz.open(filepath)
-            text = "\n".join([page.get_text() for page in doc])
+            pages = []
+            for page in doc:
+                pages.append(page.get_text())
+            page_count = len(doc)
             doc.close()
-            return text
+            return "\n".join(pages), page_count
         except Exception as e:
             print(f"   ❌ PDF error: {e}")
-            return ""
+            return "", 0
     elif filepath.endswith(".txt"):
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
-            return f.read()
-    return ""
+            text = f.read()
+        # Estimate pages for text files (~3000 chars per page)
+        return text, max(1, len(text) // 3000)
+    return "", 0
 
 
 def extract_ipc_sections(text: str) -> list:
@@ -126,7 +134,7 @@ def extract_facts_summary(text: str) -> str:
 
 
 def parse_document(filepath: str) -> dict | None:
-    text = extract_text_from_file(filepath)
+    text, page_count = extract_text_from_file(filepath)
     if not text or len(text) < 100:
         return None
 
@@ -144,6 +152,7 @@ def parse_document(filepath: str) -> dict | None:
         "facts": extract_facts_summary(text),
         "full_text": text,
         "text_length": len(text),
+        "page_count": page_count,
         "parsed_at": datetime.now().isoformat(),
     }
 
