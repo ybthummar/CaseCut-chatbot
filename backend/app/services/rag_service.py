@@ -11,6 +11,7 @@ import logging
 import re
 
 from app.services import llm_service, qdrant_service
+from app.services.reranker_service import rerank_with_llm
 from app.core.prompts import (
     build_rag_prompt,
     build_pdf_chat_prompt,
@@ -80,7 +81,10 @@ def run_query(
     q_vector = qdrant_service.embed_query(clean_query)
 
     # 2 — Vector search (with retry + min similarity)
-    results = qdrant_service.search(q_vector, topic=topic, limit=k * 2)
+    #     Retrieve more candidates (up to 20) so the LLM reranker has
+    #     a richer pool to evaluate for legal relevance.
+    retrieval_limit = max(k * 4, 20)
+    results = qdrant_service.search(q_vector, topic=topic, limit=retrieval_limit)
 
     if not results:
         return {
@@ -110,6 +114,7 @@ def run_query(
                 "section_title": r.payload.get("section_title", ""),
                 "doc_id": r.payload.get("doc_id", ""),
                 "chunk_id": r.payload.get("chunk_id", ""),
+                "source_url": r.payload.get("source_url", ""),
             },
         })
         sim_scores.append(r.score)
@@ -117,7 +122,10 @@ def run_query(
     # 4 — Compute retrieval confidence
     confidence = _compute_confidence(sim_scores, len(results))
 
-    # 5 — Role-aware ranking
+    # 5 — LLM Reranker (with feature-based fallback)
+    #     The LLM reranker evaluates each passage for legal relevance,
+    #     IPC section alignment, court reasoning, and outcome matching.
+    #     Falls back to the feature-based ranker if the LLM call fails.
     bias = ROLE_RETRIEVAL_BIAS.get(role, {})
     custom_weights = None
     if bias.get("court_weight_boost"):
@@ -129,8 +137,14 @@ def run_query(
             "recency": 0.10 - bias["court_weight_boost"],
         }
 
-    ranked = rank_cases(cases, clean_query, similarity_scores=sim_scores, weights=custom_weights)
-    top_cases = ranked[:k]
+    top_cases, used_llm_reranker = rerank_with_llm(
+        query=clean_query,
+        cases=cases,
+        top_k=k,
+        fallback_ranker=rank_cases,
+        similarity_scores=sim_scores,
+        custom_weights=custom_weights,
+    )
 
     # 6 — Format response cases with enhanced citation metadata
     response_cases = []
@@ -149,6 +163,7 @@ def run_query(
             "section_title": p.get("section_title", ""),
             "doc_id": p.get("doc_id", ""),
             "chunk_id": p.get("chunk_id", ""),
+            "source_url": p.get("source_url", ""),
             "rank_score": c.get("rank_score", 0),
             "similarity": round(sim_scores[0], 3) if sim_scores else 0,
         })
@@ -159,7 +174,8 @@ def run_query(
         f"(File: {c.get('file', 'N/A')}) "
         f"(IPC: {', '.join(c['ipc_sections'][:3]) or 'N/A'}) "
         f"(Date: {c.get('date', 'N/A')}) "
-        f"(Outcome: {c['outcome']})\n{c['text']}"
+        f"(Outcome: {c['outcome']}) "
+        f"(Source: {c.get('source_url', 'N/A')})\n{c['text']}"
         for c in response_cases
     )
 
@@ -167,14 +183,16 @@ def run_query(
     prompt = build_rag_prompt(role, clean_query, context, conversation_history)
     summary, source, duration = llm_service.generate(prompt)
 
-    logger.info("RAG done   │ source=%s │ cases=%d │ confidence=%s │ %dms",
-                source, len(response_cases), confidence["level"], duration)
+    logger.info("RAG done   │ source=%s │ cases=%d │ confidence=%s │ reranker=%s │ %dms",
+                source, len(response_cases), confidence["level"],
+                "llm" if used_llm_reranker else "feature", duration)
 
     return {
         "cases": response_cases,
         "summary": summary,
         "source": source,
         "ranked": True,
+        "reranker": "llm" if used_llm_reranker else "feature",
         "total_retrieved": len(results),
         "llm_time_ms": duration,
         "confidence": confidence,

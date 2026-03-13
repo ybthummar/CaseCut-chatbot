@@ -24,7 +24,10 @@ data/processed/
 data/feedback.jsonl
 user_history/
 .downloaded_hashes.json
-
+backend/data/raw/*.txt
+backend/data/embeddings/
+backend/data/processed/
+backend/data/feedback.jsonl
 # IDE
 .vscode/
 .idea/

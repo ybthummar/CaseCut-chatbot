@@ -10,20 +10,30 @@ import { sendQuery as apiSendQuery, chatWithPDF as apiChatWithPDF } from '../api
 
 /**
  * Custom hook — manages chat list, active chat, messages, and API calls.
- * All data kept in sync via Firestore onSnapshot listeners.
- * Supports: RAG search, PDF chat, conversation history, strategic mode.
+ *
+ * Data is kept in sync via Firestore onSnapshot listeners when available.
+ * If Firestore fails (permission-denied, offline), the hook falls back to
+ * in-memory state so the user always sees their messages and error feedback.
  */
 export function useChat(user) {
   const [chatList, setChatList] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [pdfDocument, setPdfDocument] = useState(null); // uploaded PDF text for chat
+  const [pdfDocument, setPdfDocument] = useState(null);
+  const [firestoreOk, setFirestoreOk] = useState(true);
 
   // ── Real-time: chat list ───────────────────────────────────────────
   useEffect(() => {
     if (!user) return;
-    const unsub = subscribeToChatList(user.uid, setChatList);
+    const unsub = subscribeToChatList(user.uid, (chats) => {
+      setChatList(chats);
+      setFirestoreOk(true);
+    });
+
+    // subscribeToChatList returns an unsubscribe fn from onSnapshot.
+    // onSnapshot accepts an error callback as a second arg — but our
+    // chatService wraps it without one, so we patch below.
     return unsub;
   }, [user]);
 
@@ -33,9 +43,36 @@ export function useChat(user) {
       setMessages([]);
       return;
     }
-    const unsub = subscribeToChatMessages(user.uid, activeChatId, setMessages);
+    const unsub = subscribeToChatMessages(user.uid, activeChatId, (msgs) => {
+      setMessages(msgs);
+      setFirestoreOk(true);
+    });
     return unsub;
   }, [user, activeChatId]);
+
+  // ── Helper: add a message to local state (in-memory fallback) ──────
+  const addLocalMessage = useCallback((msg) => {
+    const localMsg = {
+      id: `local_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: new Date(),
+      ...msg,
+    };
+    setMessages((prev) => [...prev, localMsg]);
+    return localMsg;
+  }, []);
+
+  // ── Helper: try Firestore, fall back to local ─────────────────────
+  const trySaveMessage = useCallback(async (userId, chatId, msg) => {
+    try {
+      await addMessage(userId, chatId, msg);
+      return true;
+    } catch (err) {
+      console.warn('Firestore write failed, using local state:', err.message);
+      setFirestoreOk(false);
+      addLocalMessage(msg);
+      return false;
+    }
+  }, [addLocalMessage]);
 
   // ── Build conversation history from recent messages ────────────────
   const getConversationHistory = useCallback(() => {
@@ -52,24 +89,37 @@ export function useChat(user) {
       if (!user || !text.trim()) return;
       setLoading(true);
 
+      // Always show the user's message immediately in local state
+      addLocalMessage({ role: 'user', text });
+
       try {
         let chatId = activeChatId;
         const isNew = !chatId;
 
+        // Try to create chat in Firestore
         if (isNew) {
-          const chatTitle = pdfDocument
-            ? `📄 ${pdfDocument.filename || 'PDF'}: ${text.slice(0, 60)}`
-            : text.slice(0, 80);
-          chatId = await createChat(user.uid, chatTitle, role);
-          setActiveChatId(chatId);
+          try {
+            const chatTitle = pdfDocument
+              ? `📄 ${pdfDocument.filename || 'PDF'}: ${text.slice(0, 60)}`
+              : text.slice(0, 80);
+            chatId = await createChat(user.uid, chatTitle, role);
+            setActiveChatId(chatId);
+          } catch (fsErr) {
+            console.warn('Firestore createChat failed:', fsErr.message);
+            setFirestoreOk(false);
+            chatId = `local_${Date.now()}`;
+            setActiveChatId(chatId);
+          }
         }
 
-        // Persist user message
-        await addMessage(user.uid, chatId, {
-          role: 'user',
-          text,
-          isFirstMessage: isNew,
-        });
+        // Try to persist user message to Firestore
+        if (firestoreOk) {
+          await trySaveMessage(user.uid, chatId, {
+            role: 'user',
+            text,
+            isFirstMessage: isNew,
+          });
+        }
 
         // Get conversation history for context
         const history = getConversationHistory();
@@ -85,38 +135,62 @@ export function useChat(user) {
             history,
           );
 
-          // Persist assistant reply for PDF chat
-          await addMessage(user.uid, chatId, {
+          const assistantMsg = {
             role: 'assistant',
             text: data.answer || 'No answer returned.',
             cases: data.citations || [],
             model: `casecut-legal (${data.source || 'unknown'})`,
             confidence: data.confidence || null,
             isPdfChat: true,
-          });
+          };
+
+          // Show in local state immediately
+          addLocalMessage(assistantMsg);
+
+          // Try Firestore persist (non-blocking)
+          if (firestoreOk) {
+            trySaveMessage(user.uid, chatId, assistantMsg).catch(() => {});
+          }
+
         } else {
           // ── Standard RAG mode ─────────────────────────────────
           data = await apiSendQuery(text, role, topic, 5, history);
 
-          await addMessage(user.uid, chatId, {
+          const assistantMsg = {
             role: 'assistant',
             text: data.summary || 'No summary returned.',
             cases: data.cases || [],
             model: `casecut-legal (${data.source || 'unknown'})`,
             confidence: data.confidence || null,
-          });
+          };
+
+          // Show in local state immediately
+          addLocalMessage(assistantMsg);
+
+          // Try Firestore persist (non-blocking)
+          if (firestoreOk) {
+            trySaveMessage(user.uid, chatId, assistantMsg).catch(() => {});
+          }
         }
 
       } catch (err) {
         console.error('sendMessage error:', err);
 
         let errorText = '**⚠️ Error**\n\n';
-        if (err.status === 0 || err.isNetworkError) {
+
+        // Detect Firebase permission errors
+        if (err.code === 'permission-denied' || err.message?.includes('permission')) {
+          errorText += '**Firestore Permission Denied**\n\n';
+          errorText += 'Your Firebase security rules are blocking access.\n\n';
+          errorText += '**Fix:** Go to [Firebase Console](https://console.firebase.google.com) → Firestore → Rules, and set:\n\n';
+          errorText += '```\nrules_version = \'2\';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /users/{userId}/{document=**} {\n      allow read, write: if request.auth != null\n                         && request.auth.uid == userId;\n    }\n  }\n}\n```';
+          setFirestoreOk(false);
+        } else if (err.status === 0 || err.isNetworkError || err.message?.includes('Failed to fetch')) {
           errorText += 'Cannot reach the backend server.\n\n';
-          errorText += '**Fix:** Run `cd backend && python -m uvicorn app.main:app --reload`';
+          errorText += '**Fix:** Make sure the backend is running:\n```\ncd backend && python -m uvicorn app.main:app --reload\n```';
         } else if (err.status === 500) {
           errorText += `**Server Error:** ${err.message}\n\n`;
-          errorText += '**Fix:** Check the backend terminal for the full traceback.';
+          errorText += 'Check the backend terminal for the full traceback.';
         } else if (err.status === 422) {
           errorText += `**Validation Error:** ${err.message}\n\n`;
           errorText += 'The request format may be incorrect.';
@@ -124,22 +198,18 @@ export function useChat(user) {
           errorText += err.message || 'Unable to process your request.';
         }
 
-        const chatId = activeChatId;
-        if (chatId) {
-          try {
-            await addMessage(user.uid, chatId, {
-              role: 'assistant',
-              text: errorText,
-            });
-          } catch (_) {
-            /* swallow nested error */
-          }
-        }
+        // Always show error in local state (never depend on Firestore for errors)
+        addLocalMessage({
+          role: 'assistant',
+          text: errorText,
+          isError: true,
+        });
+
       } finally {
         setLoading(false);
       }
     },
-    [user, activeChatId, pdfDocument, getConversationHistory]
+    [user, activeChatId, pdfDocument, firestoreOk, getConversationHistory, addLocalMessage, trySaveMessage]
   );
 
   // ── Chat management ────────────────────────────────────────────────
@@ -151,7 +221,7 @@ export function useChat(user) {
 
   const selectChat = useCallback((chatId) => {
     setActiveChatId(chatId);
-    setPdfDocument(null); // clear PDF when switching chats
+    setPdfDocument(null);
   }, []);
 
   const removeChat = useCallback(
@@ -192,5 +262,6 @@ export function useChat(user) {
     pdfDocument,
     setPdfForChat,
     clearPdf,
+    firestoreOk,
   };
 }

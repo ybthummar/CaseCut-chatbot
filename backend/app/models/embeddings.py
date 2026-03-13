@@ -26,7 +26,7 @@ def create_collection():
             collection_name=COLLECTION,
             vectors_config=VectorParams(size=384, distance=Distance.COSINE),
         )
-        logger.info("✅ Collection created successfully!")
+        logger.info("[OK] Collection created successfully!")
     except Exception as e:
         logger.info("Collection exists or error: %s", e)
     for field in ["topics", "court", "ipc_sections", "outcome"]:
@@ -36,7 +36,7 @@ def create_collection():
                 field_name=field,
                 field_schema=PayloadSchemaType.KEYWORD,
             )
-            logger.info("   ✅ Index created: %s", field)
+            logger.info("   [OK] Index created: %s", field)
         except Exception:
             pass
 
@@ -87,10 +87,10 @@ def process_and_upload(pdf_dir: Optional[str] = None):
         if f.endswith((".pdf", ".txt")) and not f.startswith(".")
     ]
     if not files:
-        logger.warning("⚠️  No documents found in %s", pdf_dir)
+        logger.warning("[WARN] No documents found in %s", pdf_dir)
         return
 
-    logger.info("📄 Processing %d documents for embedding...", len(files))
+    logger.info("[INFO] Processing %d documents for embedding...", len(files))
     points = []
     total_chunks = 0
 
@@ -103,7 +103,7 @@ def process_and_upload(pdf_dir: Optional[str] = None):
 
             all_chunks = chunk_text(parsed["full_text"])
             chunks = [(i, c) for i, c in enumerate(all_chunks) if len(c.strip()) >= 30]
-            chunks = chunks[:200]
+            chunks = chunks[:500]  # up to 500 chunks per doc for full coverage
             if not chunks:
                 continue
 
@@ -126,16 +126,17 @@ def process_and_upload(pdf_dir: Optional[str] = None):
                             "topics": parsed.get("topics", []),
                             "outcome": parsed.get("outcome", "unknown"),
                             "doc_id": parsed.get("id", ""),
+                            "source_url": parsed.get("source_url", ""),
                         },
                     )
                 )
 
             total_chunks += len(chunks)
             sections = ", ".join(parsed.get("ipc_sections", [])[:3]) or "none"
-            logger.info("   ✅ %s: %d chunks | IPC: %s", filename, len(chunks), sections)
+            logger.info("   [OK] %s: %d chunks | IPC: %s", filename, len(chunks), sections)
 
         except Exception as e:
-            logger.error("   ❌ Error processing %s: %s", filename, e)
+            logger.error("   [ERR] Error processing %s: %s", filename, e)
 
     if points:
         batch_size = 50
@@ -144,19 +145,19 @@ def process_and_upload(pdf_dir: Optional[str] = None):
             for attempt in range(3):
                 try:
                     qdrant_client.upsert(collection_name=COLLECTION, points=batch)
-                    logger.info("   📤 Uploaded batch %d (%d points)", i // batch_size + 1, len(batch))
+                    logger.info("   [UPLOAD] Uploaded batch %d (%d points)", i // batch_size + 1, len(batch))
                     time.sleep(0.5)
                     break
                 except Exception as e:
                     if attempt < 2:
-                        logger.warning("   ⚠️  Batch %d retry %d: %s", i // batch_size + 1, attempt + 1, e)
+                        logger.warning("   [WARN] Batch %d retry %d: %s", i // batch_size + 1, attempt + 1, e)
                         time.sleep(3 * (attempt + 1))
                     else:
-                        logger.error("   ❌ Batch %d failed after 3 attempts: %s", i // batch_size + 1, e)
+                        logger.error("   [ERR] Batch %d failed after 3 attempts: %s", i // batch_size + 1, e)
 
-        logger.info("✅ Total: %d embeddings uploaded to Qdrant", len(points))
+        logger.info("[OK] Total: %d embeddings uploaded to Qdrant", len(points))
     else:
-        logger.warning("⚠️  No valid chunks to upload")
+        logger.warning("[WARN] No valid chunks to upload")
 
 
 if __name__ == "__main__":

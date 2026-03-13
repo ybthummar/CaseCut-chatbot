@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useChat } from '../hooks/useChat'
 import { sendFeedback, uploadPDFToBackend } from '../api/chatApi'
 import SummarizerModal from '../components/SummarizerModal'
+import ToolsDropdown from '../components/ToolsDropdown'
 import {
   SendHorizontal, Menu, LogOut, User, Plus, MessageSquare,
   ChevronDown, Scale, Briefcase, GraduationCap, Loader2,
@@ -34,6 +35,7 @@ export default function ChatPage() {
     pdfDocument,
     setPdfForChat,
     clearPdf,
+    firestoreOk,
   } = useChat(user)
 
   // ── Local UI state ────────────────────────────────────────────────
@@ -42,12 +44,10 @@ export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false)
   const [topic, setTopic] = useState('all')
-  const [topicDropdownOpen, setTopicDropdownOpen] = useState(false)
   const [summarizerOpen, setSummarizerOpen] = useState(false)
   const [pdfUploading, setPdfUploading] = useState(false)
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
-  const pdfInputRef = useRef(null)
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -120,7 +120,7 @@ export default function ChatPage() {
       alert(`Upload failed: ${err.message}`)
     } finally {
       setPdfUploading(false)
-      if (pdfInputRef.current) pdfInputRef.current.value = ''
+      if (e?.target) e.target.value = ''
     }
   }
 
@@ -281,8 +281,29 @@ export default function ChatPage() {
       {/* ═══════════════════════ MAIN AREA ══════════════════════ */}
       <div className="flex-1 flex flex-col min-w-0">
 
+        {/* Firestore warning banner */}
+        {!firestoreOk && (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center gap-2">
+            <AlertTriangle className="size-4 text-amber-400 shrink-0" />
+            <p className="text-xs text-amber-300 flex-1">
+              <span className="font-medium">Firestore permissions error.</span>{' '}
+              Chat history won't persist. Update your{' '}
+              <a
+                href="https://console.firebase.google.com"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-amber-200"
+              >
+                Firestore security rules
+              </a>{' '}
+              to fix this.
+            </p>
+          </div>
+        )}
+
         {/* ── Header ───────────────────────────────────────────── */}
         <header className="h-14 flex items-center justify-between px-4 border-b border-white/[0.06] bg-[#0f0f0f]">
+          {/* Left: sidebar toggle + logo */}
           <div className="flex items-center gap-3">
             {!sidebarOpen && (
               <button
@@ -294,119 +315,114 @@ export default function ChatPage() {
             )}
             {!sidebarOpen && (
               <div className="flex items-center gap-2.5">
-                <img src={logo} alt="CaseCut" className="h-8 w-8" />
-                <span className="text-lg font-bold text-white">CaseCut AI</span>
+                <img src={logo} alt="CaseCut" className="h-7 w-7" />
+                <span className="text-base font-semibold text-white tracking-tight">CaseCut AI</span>
+              </div>
+            )}
+
+            {/* Active topic badge (when non-default) */}
+            {topic !== 'all' && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+                <Filter className="size-3 text-blue-400" />
+                <span className="text-[11px] font-medium text-blue-400">
+                  {topics.find((t) => t.id === topic)?.name}
+                </span>
+                <button
+                  onClick={() => setTopic('all')}
+                  className="p-0.5 rounded-full hover:bg-blue-500/20 text-blue-400/60 hover:text-blue-300 transition-colors"
+                >
+                  <X className="size-3" />
+                </button>
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* PDF Upload */}
-            <input
-              ref={pdfInputRef}
-              type="file"
-              accept=".pdf,.txt"
-              onChange={handlePdfUpload}
-              className="hidden"
+          {/* Right: + tools · role selector · user avatar */}
+          <div className="flex items-center gap-1.5">
+            {/* + Tools dropdown */}
+            <ToolsDropdown
+              onUploadPdf={handlePdfUpload}
+              onOpenSummarizer={() => setSummarizerOpen(true)}
+              topic={topic}
+              setTopic={setTopic}
+              topics={topics}
+              pdfUploading={pdfUploading}
             />
-            <button
-              onClick={() => pdfInputRef.current?.click()}
-              disabled={pdfUploading}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all duration-200 border border-emerald-500/20 disabled:opacity-50"
-              title="Upload PDF to chat with it"
-            >
-              {pdfUploading ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <Upload className="size-3.5" />
-              )}
-              <span className="hidden sm:inline">{pdfUploading ? 'Uploading…' : 'Upload PDF'}</span>
-            </button>
 
-            {/* Summarizer */}
-            <button
-              onClick={() => setSummarizerOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all duration-200 border border-purple-500/20"
-            >
-              <Sparkles className="size-3.5" />
-              <span className="hidden sm:inline">Summarizer</span>
-            </button>
+            {/* Divider */}
+            <div className="h-5 w-px bg-white/[0.08] mx-1" />
 
-            {/* Topic Filter */}
-            <div className="relative">
-              <button
-                onClick={() => setTopicDropdownOpen(!topicDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-[#8a8a8f] hover:text-white hover:bg-white/5 transition-all duration-200 border border-white/[0.08]"
-              >
-                <Filter className="size-3.5" />
-                <span>{topics.find((t) => t.id === topic)?.name || 'All Topics'}</span>
-                <ChevronDown className={`size-3 transition-transform duration-200 ${topicDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {topicDropdownOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setTopicDropdownOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] bg-[#1a1a1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden max-h-64 overflow-y-auto">
-                    <div className="p-1.5">
-                      <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#5a5a5f]">
-                        Filter by Topic
-                      </div>
-                      {topics.map((t) => (
-                        <button
-                          key={t.id}
-                          onClick={() => { setTopic(t.id); setTopicDropdownOpen(false) }}
-                          className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-left transition-all duration-150 ${
-                            topic === t.id ? 'bg-white/10 text-white' : 'text-[#a0a0a5] hover:bg-white/5 hover:text-white'
-                          }`}
-                        >
-                          <span className="text-sm font-medium">{t.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Role Selector */}
+            {/* Role selector */}
             <div className="relative">
               <button
                 onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-[#8a8a8f] hover:text-white hover:bg-white/5 transition-all duration-200 border border-white/[0.08]"
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium
+                  transition-all duration-200
+                  ${roleDropdownOpen
+                    ? 'bg-white/10 text-white ring-1 ring-white/20'
+                    : 'text-[#8a8a8f] hover:text-white hover:bg-white/5'
+                  }
+                `}
               >
                 {selectedRole.icon}
-                <span>{selectedRole.name}</span>
+                <span className="hidden sm:inline">{selectedRole.name}</span>
                 <ChevronDown className={`size-3 transition-transform duration-200 ${roleDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {roleDropdownOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setRoleDropdownOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 z-50 min-w-[200px] bg-[#1a1a1e]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden">
-                    <div className="p-1.5">
-                      <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#5a5a5f]">
-                        Select Role
+              <AnimatePresence>
+                {roleDropdownOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setRoleDropdownOpen(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      className="absolute right-0 top-full mt-2 z-50 w-[240px] origin-top-right bg-[#1a1a1e]/98 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden"
+                    >
+                      <div className="p-2">
+                        <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#5a5a5f]">
+                          AI Perspective
+                        </div>
+                        {roles.map((r) => (
+                          <button
+                            key={r.id}
+                            onClick={() => { setRole(r.id); setRoleDropdownOpen(false) }}
+                            className={`
+                              w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-150
+                              ${role === r.id
+                                ? 'bg-white/10 text-white'
+                                : 'text-[#a0a0a5] hover:bg-white/5 hover:text-white'
+                              }
+                            `}
+                          >
+                            <div className="flex-shrink-0 size-8 rounded-lg bg-white/[0.04] ring-1 ring-white/[0.06] flex items-center justify-center">
+                              {r.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-[13px] font-medium block leading-tight">{r.name}</span>
+                              <span className="text-[11px] text-[#6a6a6f] leading-tight">{r.description}</span>
+                            </div>
+                            {role === r.id && (
+                              <span className="text-[10px] text-blue-400">✓</span>
+                            )}
+                          </button>
+                        ))}
                       </div>
-                      {roles.map((r) => (
-                        <button
-                          key={r.id}
-                          onClick={() => { setRole(r.id); setRoleDropdownOpen(false) }}
-                          className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-left transition-all duration-150 ${
-                            role === r.id ? 'bg-white/10 text-white' : 'text-[#a0a0a5] hover:bg-white/5 hover:text-white'
-                          }`}
-                        >
-                          <div className="flex-shrink-0">{r.icon}</div>
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium block">{r.name}</span>
-                            <span className="text-[11px] text-[#6a6a6f]">{r.description}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
+
+            {/* User avatar */}
+            <button
+              className="size-8 rounded-xl bg-gradient-to-br from-[#1488fc] to-[#7c5df0] flex items-center justify-center text-white text-xs font-bold ring-1 ring-white/10 hover:ring-white/25 transition-all duration-200"
+              title={user?.email || 'User'}
+            >
+              {user?.email?.[0]?.toUpperCase() || 'U'}
+            </button>
           </div>
         </header>
 
@@ -512,10 +528,10 @@ export default function ChatPage() {
                     {/* Case citations */}
                     {msg.cases && msg.cases.length > 0 && (
                       <div className="mt-4 pt-3 border-t border-white/[0.08] space-y-2">
-                        <p className="text-xs font-semibold text-[#8a8a8f] uppercase tracking-wide flex items-center gap-2">
+                        <div className="text-xs font-semibold text-[#8a8a8f] uppercase tracking-wide flex items-center gap-2">
                           📎 Supporting Sources
                           {msg.confidence && <ConfidenceBadge confidence={msg.confidence} />}
-                        </p>
+                        </div>
                         {msg.cases.map((c, j) => (
                           <details key={j} className="text-xs group">
                             <summary className="cursor-pointer text-[#4da5fc] hover:text-[#6ab8ff] transition-colors font-medium">
@@ -545,6 +561,16 @@ export default function ChatPage() {
                                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
                                     Source: {c.file}
                                   </span>
+                                )}
+                                {c.source_url && (
+                                  <a
+                                    href={c.source_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors"
+                                  >
+                                    View Full Judgment
+                                  </a>
                                 )}
                                 {c.rank_score > 0 && (
                                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">

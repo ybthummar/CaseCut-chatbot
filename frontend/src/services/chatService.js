@@ -80,15 +80,29 @@ export const deleteChat = async (userId, chatId) => {
 /** Subscribe to the user's chat list (most recent first). Returns unsubscribe fn. */
 export const subscribeToChatList = (userId, callback) => {
   const q = query(userChatsCol(userId), orderBy('updatedAt', 'desc'), limit(50));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    },
+    (error) => {
+      console.warn('Firestore chat list listener error:', error.code, error.message);
+      // Don't crash — the hook will keep working with local state
+    },
+  );
 };
 
 /** Subscribe to a single chat's messages (chronological). Returns unsubscribe fn. */
 export const subscribeToChatMessages = (userId, chatId, callback) => {
   const q = query(chatMessagesCol(userId, chatId), orderBy('timestamp', 'asc'));
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    },
+    (error) => {
+      console.warn('Firestore messages listener error:', error.code, error.message);
+      // Don't crash — the hook will keep working with local state
+    },
+  );
 };

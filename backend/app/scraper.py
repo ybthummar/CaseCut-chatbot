@@ -35,7 +35,7 @@ def main():
     ]
     for q in queries:
         try:
-            count = scrape_indian_kanoon(query=q, max_results=10)
+            count = scrape_indian_kanoon(query=q, max_results=15, max_pages=2)
             total += count
         except Exception as e:
             print(f"⚠️  Kanoon scraper error for '{q}': {e}")

@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── User chat data ──────────────────────────────────────────
+    // Each user can only read/write their own chats and messages.
+    match /users/{userId}/chats/{chatId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Messages subcollection inherits the same user check
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // ── Default: deny everything else ───────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

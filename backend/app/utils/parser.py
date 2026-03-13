@@ -33,6 +33,14 @@ TOPIC_KEYWORDS = {
 }
 
 
+def extract_source_url(text: str) -> str:
+    """Extract SOURCE: URL from the header of a scraped text file."""
+    for line in text.split("\n")[:5]:
+        if line.startswith("SOURCE:"):
+            return line[len("SOURCE:"):].strip()
+    return ""
+
+
 def extract_text_from_file(filepath: str) -> tuple[str, int]:
     """Extract text and page count from a file.
     Returns (text, page_count).
@@ -47,7 +55,7 @@ def extract_text_from_file(filepath: str) -> tuple[str, int]:
             doc.close()
             return "\n".join(pages), page_count
         except Exception as e:
-            print(f"   ❌ PDF error: {e}")
+            print(f"   [ERR] PDF error: {e}")
             return "", 0
     elif filepath.endswith(".txt"):
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
@@ -141,6 +149,8 @@ def parse_document(filepath: str) -> dict | None:
     filename = os.path.basename(filepath)
     doc_hash = hashlib.md5(text[:5000].encode()).hexdigest()[:12]
 
+    source_url = extract_source_url(text)
+
     return {
         "id": doc_hash,
         "filename": filename,
@@ -153,6 +163,7 @@ def parse_document(filepath: str) -> dict | None:
         "full_text": text,
         "text_length": len(text),
         "page_count": page_count,
+        "source_url": source_url,
         "parsed_at": datetime.now().isoformat(),
     }
 
@@ -160,22 +171,22 @@ def parse_document(filepath: str) -> dict | None:
 def process_all():
     os.makedirs(DATA_PROCESSED, exist_ok=True)
     if not os.path.exists(DATA_RAW):
-        print(f"❌ No raw data directory: {DATA_RAW}")
+        print(f"[ERR] No raw data directory: {DATA_RAW}")
         return []
 
     files = [f for f in os.listdir(DATA_RAW) if f.endswith((".pdf", ".txt")) and not f.startswith(".")]
     if not files:
-        print(f"⚠️  No documents in {DATA_RAW}")
+        print(f"[WARN] No documents in {DATA_RAW}")
         return []
 
-    print(f"📄 Processing {len(files)} documents...")
+    print(f"[INFO] Processing {len(files)} documents...")
     results = []
     for filename in files:
         filepath = os.path.join(DATA_RAW, filename)
         try:
             parsed = parse_document(filepath)
             if parsed is None:
-                print(f"   ⏭️  Skipping {filename} (too short)")
+                print(f"   [SKIP] Skipping {filename} (too short)")
                 continue
 
             json_name = f"case_{parsed['id']}.json"
@@ -186,11 +197,11 @@ def process_all():
 
             results.append(parsed)
             sections_str = ", ".join(parsed["ipc_sections"][:5]) if parsed["ipc_sections"] else "none"
-            print(f"   ✅ {filename} → {json_name} | Court: {parsed['court']} | IPC: {sections_str}")
+            print(f"   [OK] {filename} -> {json_name} | Court: {parsed['court']} | IPC: {sections_str}")
         except Exception as e:
-            print(f"   ❌ Error processing {filename}: {e}")
+            print(f"   [ERR] Error processing {filename}: {e}")
 
-    print(f"\n📊 Processed {len(results)}/{len(files)} documents")
+    print(f"\n[DONE] Processed {len(results)}/{len(files)} documents")
     return results
 
 

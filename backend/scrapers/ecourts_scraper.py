@@ -45,7 +45,7 @@ def scrape_sci_judgments(max_results: int = 10) -> int:
     new_count = 0
     base_url = "https://main.sci.gov.in"
 
-    print(f"\n🔍 Checking Supreme Court of India...")
+    print(f"\n[SEARCH] Checking Supreme Court of India...")
     try:
         resp = requests.get(f"{base_url}/judgments", headers=HEADERS, timeout=15)
         resp.raise_for_status()
@@ -77,14 +77,14 @@ def scrape_sci_judgments(max_results: int = 10) -> int:
                     f.write(pdf_resp.content)
                 downloaded_hashes.add(h)
                 new_count += 1
-                print(f"   ✅ [{new_count}] {filename}")
+                print(f"   [OK] [{new_count}] {filename}")
             except Exception as e:
-                print(f"   ❌ Error: {e}")
+                print(f"   [ERR] Error: {e}")
     except Exception as e:
-        print(f"   ⚠️  SCI portal may be unavailable: {e}")
+        print(f"   [WARN] SCI portal may be unavailable: {e}")
 
     _save_hashes(downloaded_hashes)
-    print(f"📊 Downloaded {new_count} new PDFs from SCI")
+    print(f"[DONE] Downloaded {new_count} new PDFs from SCI")
     return new_count
 
 
