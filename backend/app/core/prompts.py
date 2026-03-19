@@ -60,6 +60,11 @@ ROLE_SYSTEM_PROMPTS = {
         "IMPORTANT: Clearly state that your analysis is for informational purposes only "
         "and does not constitute legal counsel."
     ),
+    "precedent": (
+        "You are an expert legal researcher specialising in finding and analyzing Indian case precedents. "
+        "Your goal is to extract the most relevant prior cases matching the user's query and explain exactly "
+        "how they act as binding or persuasive precedents."
+    ),
 }
 
 # ─── Structured output instructions per role ─────────────────────────
@@ -118,6 +123,13 @@ Keep it scannable. Use bullet points and bold for emphasis.""",
 - Distinguishing factors from the current situation
 
 ⚠️ *This analysis is for informational and research purposes only. It does not constitute legal advice. Consult a qualified legal professional for specific legal matters.*""",
+
+    "precedent": """Provide a detailed precedent analysis including:
+- A clear list of relevant precedent cases from the context
+- The core legal principles established by each case
+- The factual similarities between the precedents and the query
+- The final outcome of the referenced cases
+Structure your response as a formal legal research memo.""",
 }
 
 
@@ -148,6 +160,11 @@ ROLE_RETRIEVAL_BIAS = {
         "prefer_courts": ["Supreme Court of India", "High Court"],
         "prefer_outcomes": None,
         "court_weight_boost": 0.15,
+    },
+    "precedent": {
+        "prefer_courts": ["Supreme Court of India", "High Court"],
+        "prefer_outcomes": None,
+        "court_weight_boost": 0.20,
     },
 }
 

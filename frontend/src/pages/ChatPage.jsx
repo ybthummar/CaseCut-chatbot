@@ -66,6 +66,7 @@ export default function ChatPage() {
 
   const roles = [
     { id: 'lawyer', name: 'Lawyer', icon: <Briefcase className="size-4" />, description: 'Detailed legal analysis' },
+    { id: 'precedent', name: 'Precedent Search', icon: <BookOpen className="size-4" />, description: 'Find relevant case laws (RAG)' },
     { id: 'judge', name: 'Judge', icon: <Scale className="size-4" />, description: 'Judicial perspective' },
     { id: 'student', name: 'Student', icon: <GraduationCap className="size-4" />, description: 'Educational explanations' },
     { id: 'strategy', name: 'Strategy', icon: <Shield className="size-4" />, description: 'Strategic legal advice' },
@@ -337,21 +338,8 @@ export default function ChatPage() {
             )}
           </div>
 
-          {/* Right: + tools · role selector · user avatar */}
+          {/* Right: role selector · user avatar */}
           <div className="flex items-center gap-1.5">
-            {/* + Tools dropdown */}
-            <ToolsDropdown
-              onUploadPdf={handlePdfUpload}
-              onOpenSummarizer={() => setSummarizerOpen(true)}
-              topic={topic}
-              setTopic={setTopic}
-              topics={topics}
-              pdfUploading={pdfUploading}
-            />
-
-            {/* Divider */}
-            <div className="h-5 w-px bg-white/[0.08] mx-1" />
-
             {/* Role selector */}
             <div className="relative">
               <button
@@ -663,32 +651,45 @@ export default function ChatPage() {
                 </button>
               </div>
             )}
-            <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)]">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={pdfDocument ? `Ask about "${pdfDocument.filename}"…` : "Ask about bail, IPC sections, precedents…"}
-                disabled={loading}
-                className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-4 pb-2 focus:outline-none min-h-[56px] max-h-[200px]"
-                style={{ height: '56px' }}
-              />
-              <div className="flex items-center justify-between px-3 pb-3">
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-[#5a5a5f]">
-                    {pdfDocument ? <FileText className="size-3.5 text-blue-400" /> : <BookOpen className="size-3.5" />}
-                    <span>{pdfDocument ? 'PDF Chat' : 'Indian Law'}</span>
+            <div className="relative flex items-end gap-3 rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)] px-4">
+              <div className="mb-3 shrink-0 relative">
+                <ToolsDropdown
+                  onUploadPdf={handlePdfUpload}
+                  onOpenSummarizer={() => setSummarizerOpen(true)}
+                  topic={topic}
+                  setTopic={setTopic}
+                  topics={topics}
+                  pdfUploading={pdfUploading}
+                  placement="bottom"
+                />
+              </div>
+              <div className="flex-1 flex flex-col min-w-0">
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={pdfDocument ? `Ask about "${pdfDocument.filename}"…` : "Ask about bail, IPC sections, precedents…"}
+                  disabled={loading}
+                  className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] pt-4 pb-2 focus:outline-none min-h-[56px] max-h-[200px]"
+                  style={{ height: '56px' }}
+                />
+                <div className="flex items-center justify-between pb-3">
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-[#5a5a5f]">
+                      {pdfDocument ? <FileText className="size-3.5 text-blue-400" /> : <BookOpen className="size-3.5" />}
+                      <span>{pdfDocument ? 'PDF Chat' : 'Indian Law'}</span>
+                    </div>
                   </div>
+                  <button
+                    onClick={handleSend}
+                    disabled={!input.trim() || loading}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
+                  >
+                    <span className="hidden sm:inline">{pdfDocument ? 'Ask' : 'Search'}</span>
+                    <SendHorizontal className="size-4" />
+                  </button>
                 </div>
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim() || loading}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
-                >
-                  <span className="hidden sm:inline">{pdfDocument ? 'Ask' : 'Search'}</span>
-                  <SendHorizontal className="size-4" />
-                </button>
               </div>
             </div>
           </div>

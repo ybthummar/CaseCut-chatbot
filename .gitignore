@@ -11,6 +11,9 @@ ENV/
 *.egg-info/
 .pytest_cache/
 .coverage
+backend/__pycache__/
+backend/*.pyc
+backend/.venv310
 
 # Environment variables
 .env

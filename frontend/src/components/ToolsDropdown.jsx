@@ -87,6 +87,7 @@ export default function ToolsDropdown({
   setTopic,
   topics,
   pdfUploading,
+  placement = 'top' // 'top' for top-right down, 'bottom' for bottom-left up
 }) {
   const [open, setOpen] = useState(false)
   const [showTopics, setShowTopics] = useState(false)
@@ -185,7 +186,11 @@ export default function ToolsDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute right-0 top-full mt-2 z-50 w-[320px] origin-top-right"
+            className={`absolute z-50 w-[320px] ${
+              placement === 'bottom' 
+                ? 'bottom-[calc(100%+8px)] left-0 origin-bottom-left' 
+                : 'top-full mt-2 right-0 origin-top-right'
+            }`}
           >
             <div className="bg-[#1a1a1e]/98 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden">
 
