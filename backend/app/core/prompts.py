@@ -60,6 +60,12 @@ ROLE_SYSTEM_PROMPTS = {
         "IMPORTANT: Clearly state that your analysis is for informational purposes only "
         "and does not constitute legal counsel."
     ),
+    "firm": (
+        "You are the legal intelligence desk of a top-tier law firm in India. "
+        "Provide practical, high-confidence, client-ready analysis with clear issue framing, "
+        "risk exposure, legal strategy options, and execution priorities. "
+        "Use precise legal language and concise sectioning suitable for partner review."
+    ),
     "precedent": (
         "You are an expert legal researcher specialising in finding and analyzing Indian case precedents. "
         "Your goal is to extract the most relevant prior cases matching the user's query and explain exactly "
@@ -124,6 +130,26 @@ Keep it scannable. Use bullet points and bold for emphasis.""",
 
 ⚠️ *This analysis is for informational and research purposes only. It does not constitute legal advice. Consult a qualified legal professional for specific legal matters.*""",
 
+    "firm": """Provide a firm-grade legal output with this structure:
+
+**1. Executive Brief:**
+- 3-5 bullet points on what matters most for decision-makers
+
+**2. Legal Positioning:**
+- Applicable legal provisions and precedents from the provided context
+- How strongly each authority supports the position
+
+**3. Risk Matrix:**
+- Litigation / compliance risks (high / medium / low)
+- Key uncertainties and evidence gaps
+
+**4. Recommended Action Plan:**
+- Immediate next steps
+- Alternative strategy if primary argument fails
+
+**5. Sources:**
+- Explicitly map each major claim to a cited source section""",
+
     "precedent": """Provide a detailed precedent analysis including:
 - A clear list of relevant precedent cases from the context
 - The core legal principles established by each case
@@ -161,6 +187,11 @@ ROLE_RETRIEVAL_BIAS = {
         "prefer_outcomes": None,
         "court_weight_boost": 0.15,
     },
+    "firm": {
+        "prefer_courts": ["Supreme Court of India", "High Court"],
+        "prefer_outcomes": None,
+        "court_weight_boost": 0.20,
+    },
     "precedent": {
         "prefer_courts": ["Supreme Court of India", "High Court"],
         "prefer_outcomes": None,
@@ -169,11 +200,45 @@ ROLE_RETRIEVAL_BIAS = {
 }
 
 
+INTENT_OUTPUT_PROFILES = {
+    "brief": "Respond in 5-8 concise bullet points. Keep answer under 180 words.",
+    "deep": "Respond with a detailed structured analysis between 350-700 words with headings.",
+    "compare": "Respond in a side-by-side comparison format using a table or clearly separated bullets.",
+    "steps": "Respond as an ordered action plan with practical next steps.",
+    "explain": "Explain concepts progressively: plain language first, then legal detail.",
+    "default": "Balance clarity and depth. Keep response practical and clearly structured.",
+}
+
+
+ROLE_LENGTH_HINT = {
+    "student": "Prefer short, clear explanations with examples and minimal jargon.",
+    "lawyer": "Provide moderate-to-detailed legal depth with precise terminology.",
+    "judge": "Prefer disciplined, reasoned analysis with authoritative tone.",
+    "firm": "Keep executive-ready structure with concise but high-value detail.",
+    "summary": "Keep output compact and highly scannable.",
+    "strategy": "Include scenario planning and trade-offs where relevant.",
+}
+
+
+def build_response_profile(role: str, intent: str | None = None) -> str:
+    """Build adaptive formatting instructions using role + detected user intent."""
+    resolved_intent = intent or "default"
+    intent_rule = INTENT_OUTPUT_PROFILES.get(resolved_intent, INTENT_OUTPUT_PROFILES["default"])
+    role_rule = ROLE_LENGTH_HINT.get(role, ROLE_LENGTH_HINT["lawyer"])
+    return (
+        "ADAPTIVE OUTPUT PROFILE:\n"
+        f"- Role alignment: {role_rule}\n"
+        f"- Intent alignment: {intent_rule}\n"
+        "- If user asks for short output, prioritize brevity. If user asks for details, expand with structure."
+    )
+
+
 def build_rag_prompt(
     role: str,
     query: str,
     context_block: str,
     conversation_history: list[dict] | None = None,
+    response_profile: str | None = None,
 ) -> str:
     """
     Assemble the final prompt sent to the LLM.
@@ -189,6 +254,7 @@ def build_rag_prompt(
     """
     system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
     output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
+    profile_block = response_profile or build_response_profile(role)
 
     # Build conversation context if available
     history_block = ""
@@ -208,6 +274,7 @@ def build_rag_prompt(
 {GUARDRAIL_BLOCK}
 
 {output}
+{profile_block}
 {history_block}
 Based on the following retrieved legal cases, respond to the user's query.
 
@@ -224,6 +291,7 @@ def build_pdf_chat_prompt(
     query: str,
     document_context: str,
     conversation_history: list[dict] | None = None,
+    response_profile: str | None = None,
 ) -> str:
     """
     Build a prompt for chatting with an uploaded PDF document.
@@ -239,6 +307,7 @@ def build_pdf_chat_prompt(
     """
     system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
     output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
+    profile_block = response_profile or build_response_profile(role)
 
     history_block = ""
     if conversation_history:
@@ -255,6 +324,7 @@ def build_pdf_chat_prompt(
 {GUARDRAIL_BLOCK}
 
 {output}
+{profile_block}
 {history_block}
 The user has uploaded a legal document. Answer their question using ONLY the document content below.
 

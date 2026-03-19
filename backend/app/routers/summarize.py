@@ -30,14 +30,15 @@ class SummarizeRequest(BaseModel):
     file_url: Optional[str] = None
     model_id: str = "casecut-legal"
     mode: str = "lawyer"
+    intent: str = "summarize"
 
 
 @router.post("/summarize")
 async def summarize(req: SummarizeRequest):
     """Summarize text or a document via URL."""
     logger.info(
-        "📥 /summarize │ model=%s │ mode=%s │ text_len=%d │ file_url=%s",
-        req.model_id, req.mode, len(req.text or ""), bool(req.file_url),
+        "📥 /summarize │ model=%s │ mode=%s │ intent=%s │ text_len=%d │ file_url=%s",
+        req.model_id, req.mode, req.intent, len(req.text or ""), bool(req.file_url),
     )
 
     text = req.text
@@ -66,6 +67,7 @@ async def summarize(req: SummarizeRequest):
             text=text,
             model_id=req.model_id,
             mode=req.mode,
+            intent=req.intent,
         )
         logger.info("📤 /summarize │ provider=%s │ summary_len=%d", result["provider"], len(result["summary"]))
         return ok(result)

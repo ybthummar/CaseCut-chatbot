@@ -15,6 +15,7 @@ from app.services.reranker_service import rerank_with_llm
 from app.core.prompts import (
     build_rag_prompt,
     build_pdf_chat_prompt,
+    build_response_profile,
     ROLE_RETRIEVAL_BIAS,
 )
 from app.models.ranker import rank_cases
@@ -59,6 +60,22 @@ def _compute_confidence(sim_scores: list[float], num_results: int) -> dict:
             "score": round(top_sim, 3),
             "explanation": f"Weak match (top: {top_sim:.2f}). Results may not directly address your query.",
         }
+
+
+def _infer_intent(query: str) -> str:
+    """Infer a coarse response intent from user phrasing."""
+    q = (query or "").lower()
+    if any(k in q for k in ["brief", "short", "in short", "quick summary", "tldr"]):
+        return "brief"
+    if any(k in q for k in ["detail", "detailed", "in depth", "elaborate", "comprehensive"]):
+        return "deep"
+    if any(k in q for k in ["compare", "difference", "vs", "versus"]):
+        return "compare"
+    if any(k in q for k in ["steps", "how to", "next step", "what should i do", "action plan"]):
+        return "steps"
+    if any(k in q for k in ["explain", "what is", "why"]):
+        return "explain"
+    return "default"
 
 
 def run_query(
@@ -180,7 +197,9 @@ def run_query(
     )
 
     # 8 — Generate role-aware summary with conversation history
-    prompt = build_rag_prompt(role, clean_query, context, conversation_history)
+    intent = _infer_intent(clean_query)
+    profile = build_response_profile(role, intent)
+    prompt = build_rag_prompt(role, clean_query, context, conversation_history, profile)
     summary, source, duration = llm_service.generate(prompt)
 
     logger.info("RAG done   │ source=%s │ cases=%d │ confidence=%s │ reranker=%s │ %dms",
@@ -249,11 +268,13 @@ def chat_with_pdf(
     top_scores = []
     for idx in top_indices:
         if similarities[idx] >= 0.2:  # minimum relevance threshold
+            idx_int = int(idx)
+            approx_page = int(max(1, (idx_int * 500) // 3000 + 1))
             top_chunks.append({
-                "text": chunks[idx],
-                "chunk_index": int(idx),
+                "text": chunks[idx_int],
+                "chunk_index": idx_int,
                 "similarity": round(float(similarities[idx]), 3),
-                "approximate_page": max(1, (idx * 500) // 3000 + 1),  # rough page estimate
+                "approximate_page": approx_page,  # rough page estimate
             })
             top_scores.append(float(similarities[idx]))
 
@@ -277,7 +298,9 @@ def chat_with_pdf(
     )
 
     # 7 — Generate answer
-    prompt = build_pdf_chat_prompt(role, clean_query, doc_context, conversation_history)
+    intent = _infer_intent(clean_query)
+    profile = build_response_profile(role, intent)
+    prompt = build_pdf_chat_prompt(role, clean_query, doc_context, conversation_history, profile)
     answer, source, duration = llm_service.generate(prompt)
 
     logger.info("PDF Chat done │ source=%s │ chunks=%d │ confidence=%s │ %dms",

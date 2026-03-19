@@ -32,6 +32,7 @@ def summarize(
     text: str,
     model_id: str = "casecut-legal",
     mode: str = "lawyer",
+    intent: str = "summarize",
 ) -> dict:
     """
     Summarize text using the requested model.
@@ -40,17 +41,29 @@ def summarize(
         {"summary": str, "model_id": str, "mode": str, "provider": str}
     """
     logger.info(
-        "Summarize  │ model=%s │ mode=%s │ text_len=%d",
-        model_id, mode, len(text),
+        "Summarize  │ model=%s │ mode=%s │ intent=%s │ text_len=%d",
+        model_id, mode, intent, len(text),
     )
 
     if model_id in HF_MODELS:
         summary = _summarize_huggingface(text, model_id)
-        return {"summary": summary, "model_id": model_id, "mode": mode, "provider": "huggingface"}
+        return {
+            "summary": summary,
+            "model_id": model_id,
+            "mode": mode,
+            "intent": intent,
+            "provider": "huggingface",
+        }
 
     # Default: use the CaseCut LLM pipeline (Groq → Gemini)
-    summary = _summarize_local(text, mode)
-    return {"summary": summary, "model_id": model_id, "mode": mode, "provider": "local"}
+    summary = _summarize_local(text, mode, intent)
+    return {
+        "summary": summary,
+        "model_id": model_id,
+        "mode": mode,
+        "intent": intent,
+        "provider": "local",
+    }
 
 
 # ── Local LLM summarization ─────────────────────────────────────────
@@ -73,7 +86,7 @@ def _extract_key_points(text: str) -> str:
     return result
 
 
-def _summarize_local(text: str, mode: str) -> str:
+def _summarize_local(text: str, mode: str, intent: str = "summarize") -> str:
     """Summarize using Groq/Gemini with intelligent processing for long docs."""
 
     # Condense long documents first
@@ -102,10 +115,36 @@ def _summarize_local(text: str, mode: str) -> str:
             "Provide a **concise executive summary** of this legal document. "
             "Use bullet points for key facts, legal issues, holdings, and outcome."
         ),
+        "firm": (
+            "Summarize this legal document for a **law firm strategy team**. "
+            "Prioritize executive clarity, risk exposure, actionable recommendations, "
+            "and litigation/compliance implications."
+        ),
+    }
+
+    intent_instructions = {
+        "summarize": (
+            "Task: Produce a structured summary with key facts, legal issues, holding, and outcome."
+        ),
+        "case_prediction": (
+            "Task: Provide reasoned case-outcome prediction grounded only in the provided text and cited precedents. "
+            "Include likely outcome, confidence (high/medium/low), and decisive factors."
+        ),
+        "ipc_detection": (
+            "Task: Extract and list IPC/BNS sections that are explicitly present or strongly implied. "
+            "For each section, provide a one-line justification from document facts."
+        ),
     }
 
     instruction = mode_instructions.get(mode, mode_instructions["lawyer"])
-    prompt = f"{instruction}\n\nTEXT:\n{source_text[:6000]}\n\nSUMMARY:"
+    task_instruction = intent_instructions.get(intent, intent_instructions["summarize"])
+    prompt = (
+        f"{instruction}\n"
+        f"{task_instruction}\n"
+        "Adapt output length and depth to user intent: short request => concise bullets, detailed request => structured depth.\n\n"
+        f"TEXT:\n{source_text[:6000]}\n\n"
+        "RESPONSE:"
+    )
 
     result, _, _ = llm_service.generate(prompt)
     return result

@@ -19,7 +19,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import chat, summarize, pdf, feedback
+from app.routers import chat, summarize, pdf, feedback, learning
 from app.middleware.error_handler import ErrorHandlerMiddleware
 
 logger = logging.getLogger("casecut")
@@ -106,6 +106,7 @@ app.include_router(chat.router)
 app.include_router(summarize.router)
 app.include_router(pdf.router)
 app.include_router(feedback.router)
+app.include_router(learning.router)
 
 
 # ── Lightweight inline endpoints ─────────────────────────────────────

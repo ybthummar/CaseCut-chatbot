@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import AboutPage from './pages/AboutPage';
 import ChatPage from './pages/ChatPage.jsx';
+import LearningHubPage from './pages/LearningHubPage.jsx';
 import './index.css';
 
 // Protected Route Component
@@ -28,6 +29,7 @@ function Main() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/learning" element={<LearningHubPage />} />
           <Route
             path="/login"
             element={
@@ -44,14 +46,7 @@ function Main() {
               </PublicRoute>
             }
           />
-          <Route
-            path="/chat"
-            element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/chat" element={<ChatPage />} />
         </Routes>
       </AuthProvider>
     </Router>
