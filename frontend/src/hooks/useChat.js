@@ -86,7 +86,7 @@ export function useChat(user) {
   // ── Send a message (creates chat if needed) ────────────────────────
   const sendMessage = useCallback(
     async (text, role, topic) => {
-      if (!user || !text.trim()) return;
+      if (!text.trim()) return;
       setLoading(true);
 
       // Always show the user's message immediately in local state
@@ -98,22 +98,27 @@ export function useChat(user) {
 
         // Try to create chat in Firestore
         if (isNew) {
-          try {
-            const chatTitle = pdfDocument
-              ? `📄 ${pdfDocument.filename || 'PDF'}: ${text.slice(0, 60)}`
-              : text.slice(0, 80);
-            chatId = await createChat(user.uid, chatTitle, role);
-            setActiveChatId(chatId);
-          } catch (fsErr) {
-            console.warn('Firestore createChat failed:', fsErr.message);
-            setFirestoreOk(false);
+          if (user) {
+            try {
+              const chatTitle = pdfDocument
+                ? `📄 ${pdfDocument.filename || 'PDF'}: ${text.slice(0, 60)}`
+                : text.slice(0, 80);
+              chatId = await createChat(user.uid, chatTitle, role);
+              setActiveChatId(chatId);
+            } catch (fsErr) {
+              console.warn('Firestore createChat failed:', fsErr.message);
+              setFirestoreOk(false);
+              chatId = `local_${Date.now()}`;
+              setActiveChatId(chatId);
+            }
+          } else {
             chatId = `local_${Date.now()}`;
             setActiveChatId(chatId);
           }
         }
 
         // Try to persist user message to Firestore
-        if (firestoreOk) {
+        if (user && firestoreOk) {
           await trySaveMessage(user.uid, chatId, {
             role: 'user',
             text,
@@ -148,7 +153,7 @@ export function useChat(user) {
           addLocalMessage(assistantMsg);
 
           // Try Firestore persist (non-blocking)
-          if (firestoreOk) {
+          if (user && firestoreOk) {
             trySaveMessage(user.uid, chatId, assistantMsg).catch(() => {});
           }
 
@@ -168,7 +173,7 @@ export function useChat(user) {
           addLocalMessage(assistantMsg);
 
           // Try Firestore persist (non-blocking)
-          if (firestoreOk) {
+          if (user && firestoreOk) {
             trySaveMessage(user.uid, chatId, assistantMsg).catch(() => {});
           }
         }

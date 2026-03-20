@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Github, Mail, Zap, Database, Shield, Clock, Brain, Server, Globe, BookOpen } from 'lucide-react';
+import { ArrowLeft, Globe, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logo from '../../assets/Logo.svg';
 
@@ -85,53 +85,6 @@ export default function AboutPage() {
           </div>
         </motion.section>
 
-        {/* Technology */}
-        <motion.section {...fadeUp} className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold mb-3">Technology Stack</h2>
-            <p className="text-[#6a6a6f]">Built with modern, production-grade infrastructure</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                icon: <Brain className="size-5 text-[#4da5fc]" />,
-                title: 'AI Models',
-                items: ['Large Language Model (70B)', 'Embedding Models', 'Multi-modal AI']
-              },
-              {
-                icon: <Database className="size-5 text-[#7c5df0]" />,
-                title: 'Infrastructure',
-                items: ['Vector Database', 'Cloud Hosting', 'Edge Deployment', 'Auth & Storage']
-              },
-              {
-                icon: <Zap className="size-5 text-emerald-400" />,
-                title: 'Performance',
-                items: ['300+ tokens/sec', '< 5s response', 'High-dim vectors']
-              },
-              {
-                icon: <Shield className="size-5 text-amber-400" />,
-                title: 'Cost',
-                items: ['100% free tier', '14,400 queries/day', '1GB vector storage']
-              }
-            ].map((card, i) => (
-              <div key={i} className="p-5 rounded-xl border border-white/[0.06] bg-[#141416] hover:border-white/[0.1] transition-colors">
-                <div className="flex items-center gap-2 mb-4">
-                  {card.icon}
-                  <h3 className="text-sm font-semibold">{card.title}</h3>
-                </div>
-                <ul className="space-y-2">
-                  {card.items.map((item, j) => (
-                    <li key={j} className="text-xs text-[#8a8a8f] flex items-start gap-2">
-                      <span className="text-[#4da5fc] mt-0.5">--</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
         {/* How It Works */}
         <motion.section {...fadeUp} className="mb-20">
           <div className="text-center mb-12">
@@ -196,37 +149,8 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="text-xs text-[#6a6a6f]">
-              Database automatically updated twice weekly via GitHub Actions with latest judgments and precedents.
+              Database automatically updated twice weekly with the latest judgments and precedents.
             </p>
-          </div>
-        </motion.section>
-
-        {/* Open Source */}
-        <motion.section {...fadeUp} className="mb-20">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-3">Open Source</h2>
-            <p className="text-[#8a8a8f] text-sm mb-8 max-w-lg mx-auto">
-              CaseCut is built for the Indian legal community. The entire project 
-              is open source and available on GitHub.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] text-white transition-all duration-200"
-              >
-                <Github className="size-4" />
-                View on GitHub
-              </a>
-              <a
-                href="mailto:contact@casecut.ai"
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] text-white transition-all duration-200"
-              >
-                <Mail className="size-4" />
-                Contact Us
-              </a>
-            </div>
           </div>
         </motion.section>
 

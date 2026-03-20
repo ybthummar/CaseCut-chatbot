@@ -9,7 +9,7 @@ import {
   SendHorizontal, Menu, LogOut, User, Plus, MessageSquare,
   ChevronDown, Scale, Briefcase, GraduationCap, Loader2,
   BookOpen, X, ThumbsUp, ThumbsDown, Filter, Sparkles,
-  Home, Trash2, FileText, Upload, Shield, AlertTriangle,
+  Home, Trash2, FileText, Upload, Building2, AlertTriangle,
   CheckCircle, Info,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -68,7 +68,7 @@ export default function ChatPage() {
     { id: 'lawyer', name: 'Lawyer', icon: <Briefcase className="size-4" />, description: 'Detailed legal analysis' },
     { id: 'judge', name: 'Judge', icon: <Scale className="size-4" />, description: 'Judicial perspective' },
     { id: 'student', name: 'Student', icon: <GraduationCap className="size-4" />, description: 'Educational explanations' },
-    { id: 'strategy', name: 'Strategy', icon: <Shield className="size-4" />, description: 'Strategic legal advice' },
+    { id: 'firm', name: 'Firm', icon: <Building2 className="size-4" />, description: 'Client-ready legal intelligence' },
     { id: 'summary', name: 'Summary', icon: <FileText className="size-4" />, description: 'Concise executive summary' },
   ]
 
@@ -113,8 +113,13 @@ export default function ChatPage() {
     setPdfUploading(true)
     try {
       const parsed = await uploadPDFToBackend(file, user?.uid || 'anonymous')
-      setPdfForChat(parsed)
+      if (!parsed?.full_text || parsed.full_text.trim().length < 50) {
+        throw new Error('Could not extract enough text from the uploaded file.')
+      }
+
       startNewChat()
+      setPdfForChat(parsed)
+      setInput('Find the most relevant precedents from this uploaded document and explain why they apply.')
     } catch (err) {
       console.error('PDF upload error:', err)
       alert(`Upload failed: ${err.message}`)
@@ -139,6 +144,10 @@ export default function ChatPage() {
   }
 
   const handleLogout = async () => {
+    if (!user) {
+      navigate('/login')
+      return
+    }
     await logout()
     navigate('/')
   }
@@ -257,7 +266,7 @@ export default function ChatPage() {
             <div className="p-3 border-t border-white/[0.06] space-y-1">
               <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[#a0a0a5]">
                 <User className="size-3.5" />
-                <span className="text-xs truncate flex-1">{user?.email}</span>
+                <span className="text-xs truncate flex-1">{user?.email || 'Guest User'}</span>
               </div>
               <button
                 onClick={() => navigate('/')}
@@ -271,7 +280,7 @@ export default function ChatPage() {
                 className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[#a0a0a5] hover:bg-red-500/10 hover:text-red-400 transition-all duration-150"
               >
                 <LogOut className="size-3.5" />
-                <span className="text-xs">Log out</span>
+                <span className="text-xs">{user ? 'Log out' : 'Log in'}</span>
               </button>
             </div>
           </motion.aside>
@@ -337,85 +346,8 @@ export default function ChatPage() {
             )}
           </div>
 
-          {/* Right: + tools · role selector · user avatar */}
+          {/* Right: user avatar */}
           <div className="flex items-center gap-1.5">
-            {/* + Tools dropdown */}
-            <ToolsDropdown
-              onUploadPdf={handlePdfUpload}
-              onOpenSummarizer={() => setSummarizerOpen(true)}
-              topic={topic}
-              setTopic={setTopic}
-              topics={topics}
-              pdfUploading={pdfUploading}
-            />
-
-            {/* Divider */}
-            <div className="h-5 w-px bg-white/[0.08] mx-1" />
-
-            {/* Role selector */}
-            <div className="relative">
-              <button
-                onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-                className={`
-                  flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium
-                  transition-all duration-200
-                  ${roleDropdownOpen
-                    ? 'bg-white/10 text-white ring-1 ring-white/20'
-                    : 'text-[#8a8a8f] hover:text-white hover:bg-white/5'
-                  }
-                `}
-              >
-                {selectedRole.icon}
-                <span className="hidden sm:inline">{selectedRole.name}</span>
-                <ChevronDown className={`size-3 transition-transform duration-200 ${roleDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              <AnimatePresence>
-                {roleDropdownOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setRoleDropdownOpen(false)} />
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      className="absolute right-0 top-full mt-2 z-50 w-[240px] origin-top-right bg-[#1a1a1e]/98 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden"
-                    >
-                      <div className="p-2">
-                        <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#5a5a5f]">
-                          AI Perspective
-                        </div>
-                        {roles.map((r) => (
-                          <button
-                            key={r.id}
-                            onClick={() => { setRole(r.id); setRoleDropdownOpen(false) }}
-                            className={`
-                              w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-150
-                              ${role === r.id
-                                ? 'bg-white/10 text-white'
-                                : 'text-[#a0a0a5] hover:bg-white/5 hover:text-white'
-                              }
-                            `}
-                          >
-                            <div className="flex-shrink-0 size-8 rounded-lg bg-white/[0.04] ring-1 ring-white/[0.06] flex items-center justify-center">
-                              {r.icon}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-[13px] font-medium block leading-tight">{r.name}</span>
-                              <span className="text-[11px] text-[#6a6a6f] leading-tight">{r.description}</span>
-                            </div>
-                            {role === r.id && (
-                              <span className="text-[10px] text-blue-400">✓</span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-
             {/* User avatar */}
             <button
               className="size-8 rounded-xl bg-gradient-to-br from-[#1488fc] to-[#7c5df0] flex items-center justify-center text-white text-xs font-bold ring-1 ring-white/10 hover:ring-white/25 transition-all duration-200"
@@ -650,10 +582,18 @@ export default function ChatPage() {
             {pdfDocument && (
               <div className="flex items-center gap-2 mb-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
                 <FileText className="size-4 text-blue-400 shrink-0" />
-                <span className="text-xs text-blue-300 truncate flex-1">
-                  Chatting with: <span className="font-medium">{pdfDocument.filename}</span>
-                  {pdfDocument.page_count && ` (${pdfDocument.page_count} pages)`}
-                </span>
+                <div className="text-xs text-blue-300 flex-1 min-w-0">
+                  <p className="truncate">
+                    Chatting with: <span className="font-medium">{pdfDocument.filename}</span>
+                    {pdfDocument.page_count && ` (${pdfDocument.page_count} pages)`}
+                    {pdfDocument.text_length && ` • ${pdfDocument.text_length.toLocaleString()} chars extracted`}
+                  </p>
+                  {pdfDocument.text_preview && (
+                    <p className="text-[10px] text-blue-300/80 truncate mt-0.5">
+                      Preview: {pdfDocument.text_preview}
+                    </p>
+                  )}
+                </div>
                 <button
                   onClick={clearPdf}
                   className="text-blue-400/60 hover:text-blue-300 transition-colors p-0.5"
@@ -663,28 +603,106 @@ export default function ChatPage() {
                 </button>
               </div>
             )}
-            <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)]">
+            <div className="relative rounded-2xl bg-[#1e1e22] ring-1 ring-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_2px_20px_rgba(0,0,0,0.4)] px-4 py-2.5 sm:px-5 sm:py-3">
               <textarea
                 ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={pdfDocument ? `Ask about "${pdfDocument.filename}"…` : "Ask about bail, IPC sections, precedents…"}
+                placeholder={pdfDocument ? `Ask about "${pdfDocument.filename}"…` : "Ask about bail, IPC sections, precedents..."}
                 disabled={loading}
-                className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] px-5 pt-4 pb-2 focus:outline-none min-h-[56px] max-h-[200px]"
-                style={{ height: '56px' }}
+                className="w-full resize-none bg-transparent text-[15px] text-white placeholder-[#5a5a5f] focus:outline-none min-h-[46px] max-h-[200px] pt-0.5 pb-1"
+                style={{ height: '48px' }}
               />
-              <div className="flex items-center justify-between px-3 pb-3">
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-[#5a5a5f]">
+
+              <div className="mt-1.5 flex items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="shrink-0 relative">
+                    <ToolsDropdown
+                      onUploadPdf={handlePdfUpload}
+                      onOpenSummarizer={() => setSummarizerOpen(true)}
+                      topic={topic}
+                      setTopic={setTopic}
+                      topics={topics}
+                      pdfUploading={pdfUploading}
+                      placement="bottom"
+                    />
+                  </div>
+
+                  <div className="shrink-0 relative">
+                    <button
+                      onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+                      className={`
+                        h-8 flex items-center gap-1.5 px-2.5 rounded-xl text-xs font-medium
+                        transition-all duration-200
+                        ${roleDropdownOpen
+                          ? 'bg-white/10 text-white ring-1 ring-white/20'
+                          : 'text-[#8a8a8f] hover:text-white hover:bg-white/5 border border-white/[0.08]'
+                        }
+                      `}
+                      title="Select AI role"
+                    >
+                      {selectedRole.icon}
+                      <span className="hidden md:inline">{selectedRole.name}</span>
+                      <ChevronDown className={`size-3 transition-transform duration-200 ${roleDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {roleDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setRoleDropdownOpen(false)} />
+                          <motion.div
+                            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                            transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            className="absolute left-0 bottom-full mb-2 z-50 w-[240px] origin-bottom-left bg-[#1a1a1e]/98 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden"
+                          >
+                            <div className="p-2">
+                              <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#5a5a5f]">
+                                AI Perspective
+                              </div>
+                              {roles.map((r) => (
+                                <button
+                                  key={r.id}
+                                  onClick={() => { setRole(r.id); setRoleDropdownOpen(false) }}
+                                  className={`
+                                    w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-150
+                                    ${role === r.id
+                                      ? 'bg-white/10 text-white'
+                                      : 'text-[#a0a0a5] hover:bg-white/5 hover:text-white'
+                                    }
+                                  `}
+                                >
+                                  <div className="flex-shrink-0 size-8 rounded-lg bg-white/[0.04] ring-1 ring-white/[0.06] flex items-center justify-center">
+                                    {r.icon}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <span className="text-[13px] font-medium block leading-tight">{r.name}</span>
+                                    <span className="text-[11px] text-[#6a6a6f] leading-tight">{r.description}</span>
+                                  </div>
+                                  {role === r.id && (
+                                    <span className="text-[10px] text-blue-400">✓</span>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium text-[#5a5a5f] bg-white/[0.02] border border-white/[0.05]">
                     {pdfDocument ? <FileText className="size-3.5 text-blue-400" /> : <BookOpen className="size-3.5" />}
                     <span>{pdfDocument ? 'PDF Chat' : 'Indian Law'}</span>
                   </div>
                 </div>
+
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || loading}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
+                  className="h-9 shrink-0 flex items-center gap-2 px-4 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
                 >
                   <span className="hidden sm:inline">{pdfDocument ? 'Ask' : 'Search'}</span>
                   <SendHorizontal className="size-4" />
@@ -700,6 +718,7 @@ export default function ChatPage() {
         isOpen={summarizerOpen}
         onClose={() => setSummarizerOpen(false)}
         userId={user?.uid}
+        activeRole={role}
       />
     </div>
   )

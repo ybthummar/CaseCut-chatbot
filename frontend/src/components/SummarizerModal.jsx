@@ -5,12 +5,13 @@ import {
   ChevronDown, Sparkles,
 } from 'lucide-react'
 import { getModelsByCapability } from '../config/models'
-import { uploadPDF, saveSummaryMetadata } from '../services/storageService'
-import { summarizeText as apiSummarizeText, summarizeFile as apiSummarizeFile } from '../api/summarizeApi'
+import { saveSummaryMetadata } from '../services/storageService'
+import { summarizeText as apiSummarizeText } from '../api/summarizeApi'
+import { uploadPDFToBackend } from '../api/chatApi'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-export default function SummarizerModal({ isOpen, onClose, userId }) {
+export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 'lawyer' }) {
   const summarizeModels = getModelsByCapability('summarize')
   const [selectedModel, setSelectedModel] = useState(summarizeModels[0]?.id || '')
   const [mode, setMode] = useState('text')           // 'text' | 'pdf'
@@ -22,7 +23,10 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
   const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false)
+  const [task, setTask] = useState('summarize')
   const fileInputRef = useRef(null)
+
+  const roleMode = activeRole
 
   // ── Generate summary ────────────────────────────────────────────
   const handleGenerate = async () => {
@@ -36,26 +40,37 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
 
       if (mode === 'pdf') {
         if (!file) throw new Error('Please select a PDF file')
-        fileUrl = await uploadPDF(userId, file, setUploadProgress)
-        // Route through backend — backend calls HuggingFace if needed
-        const result = await apiSummarizeFile(fileUrl, selectedModel, 'summary')
+        setUploadProgress(20)
+        const parsed = await uploadPDFToBackend(file, userId || 'guest')
+        const extractedText = parsed?.full_text || ''
+        if (extractedText.trim().length < 50) {
+          throw new Error('Could not extract enough text from the uploaded PDF')
+        }
+        setUploadProgress(80)
+        // Summarize extracted text through backend to avoid browser->Firebase CORS upload issues
+        const result = await apiSummarizeText(extractedText, selectedModel, roleMode, task)
+        setUploadProgress(100)
         resultSummary = result.summary
       } else {
         if (!text.trim()) throw new Error('Please enter text to summarize')
         // Route through backend — backend handles all providers
-        const result = await apiSummarizeText(text, selectedModel, 'summary')
+        const result = await apiSummarizeText(text, selectedModel, roleMode, task)
         resultSummary = result.summary
       }
 
       setSummary(resultSummary)
 
       // Persist metadata
-      await saveSummaryMetadata(userId, {
-        fileName: file?.name || 'Text input',
-        fileUrl,
-        modelUsed: selectedModel,
-        summaryText: resultSummary,
-      })
+      try {
+        await saveSummaryMetadata(userId || 'guest', {
+          fileName: file?.name || 'Text input',
+          fileUrl,
+          modelUsed: selectedModel,
+          summaryText: resultSummary,
+        })
+      } catch (persistErr) {
+        console.warn('Summary metadata save failed:', persistErr)
+      }
     } catch (err) {
       setError(err.message || 'Summarization failed')
       console.error('Summarization error:', err)
@@ -132,6 +147,7 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
               <div>
                 <h2 className="text-lg font-semibold text-white">Document Summarizer</h2>
                 <p className="text-xs text-[#6a6a6f]">Summarize text or PDF documents with AI</p>
+                <p className="text-[11px] text-[#4da5fc] mt-0.5">Role mode: {roleMode}</p>
               </div>
             </div>
             <button
@@ -228,6 +244,45 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
               </div>
             </div>
 
+            {/* Task intent */}
+            <div>
+              <label className="text-xs font-semibold text-[#8a8a8f] uppercase tracking-wider mb-2 block">
+                Document Task
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  onClick={() => setTask('summarize')}
+                  className={`py-2 rounded-xl text-xs font-medium transition-all ${
+                    task === 'summarize'
+                      ? 'bg-[#1488fc] text-white'
+                      : 'bg-[#141416] text-[#6a6a6f] border border-white/[0.08] hover:text-white'
+                  }`}
+                >
+                  Summarization
+                </button>
+                <button
+                  onClick={() => setTask('case_prediction')}
+                  className={`py-2 rounded-xl text-xs font-medium transition-all ${
+                    task === 'case_prediction'
+                      ? 'bg-[#1488fc] text-white'
+                      : 'bg-[#141416] text-[#6a6a6f] border border-white/[0.08] hover:text-white'
+                  }`}
+                >
+                  Case Prediction
+                </button>
+                <button
+                  onClick={() => setTask('ipc_detection')}
+                  className={`py-2 rounded-xl text-xs font-medium transition-all ${
+                    task === 'ipc_detection'
+                      ? 'bg-[#1488fc] text-white'
+                      : 'bg-[#141416] text-[#6a6a6f] border border-white/[0.08] hover:text-white'
+                  }`}
+                >
+                  IPC Detection
+                </button>
+              </div>
+            </div>
+
             {/* Input Area */}
             {mode === 'text' ? (
               <textarea
@@ -310,7 +365,7 @@ export default function SummarizerModal({ isOpen, onClose, userId }) {
               ) : (
                 <>
                   <Sparkles className="size-4" />
-                  Generate Summary
+                  Generate Output
                 </>
               )}
             </button>

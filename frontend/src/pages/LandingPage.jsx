@@ -64,7 +64,7 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white">
+    <div className="min-h-screen bg-[#0f0f0f] text-white pt-14">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,6 +74,9 @@ export default function LandingPage() {
               <span className="text-lg font-bold">CaseCut AI</span>
             </div>
             <nav className="hidden md:flex items-center gap-6">
+              <Link to="/learning" className="text-xs text-[#8a8a8f] hover:text-white transition-colors">
+                Learning Hub
+              </Link>
               <Link to="/about" className="text-xs text-[#8a8a8f] hover:text-white transition-colors">
                 About
               </Link>
@@ -92,16 +95,16 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100vh-56px)] flex items-center justify-center overflow-hidden px-4 py-16 sm:py-20 lg:py-24">
         <RayBackground />
         
-        <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center max-w-3xl mx-auto -mt-8 sm:-mt-4">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
             <span
               className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm overflow-hidden cursor-default"
@@ -120,7 +123,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl sm:text-6xl font-bold tracking-tight mb-4"
+            className="text-4xl sm:text-6xl font-bold tracking-tight mb-5 sm:mb-6"
           >
             Research Indian law{' '}
             <span className="bg-gradient-to-b from-[#4da5fc] via-[#4da5fc] to-white bg-clip-text text-transparent italic">
@@ -132,7 +135,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-base sm:text-lg text-[#8a8a8f] mb-10 max-w-xl mx-auto"
+            className="text-base sm:text-lg text-[#8a8a8f] mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed"
           >
             CaseCut AI is your free legal assistant tailored for Judges, Lawyers, and Law Students.
           </motion.p>
@@ -141,13 +144,13 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 justify-center"
+            className="flex flex-col sm:flex-row gap-3 justify-center pt-1"
           >
             <button
-              onClick={() => navigate('/signup')}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 active:scale-95 shadow-[0_0_30px_rgba(20,136,252,0.4)]"
+              onClick={() => navigate('/chat')}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-[#2f9bff] to-[#1488fc] hover:brightness-110 text-white transition-all duration-200 active:scale-95 shadow-[0_0_30px_rgba(20,136,252,0.5)]"
             >
-              Start Researching
+              Start Chat
               <ArrowRight className="size-4" />
             </button>
             <button
@@ -160,8 +163,55 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* About Us Section */}
+      <section className="py-20 sm:py-24 px-4 bg-[#101217]">
+        <div className="max-w-5xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-8 items-stretch">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#151823] p-8">
+            <p className="text-[11px] uppercase tracking-wider text-[#7f9dc7] mb-3">About CaseCut</p>
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight mb-4">
+              Built to make legal understanding faster, fairer, and more accessible.
+            </h2>
+            <p className="text-sm sm:text-base text-[#a7aab5] leading-relaxed mb-4">
+              CaseCut exists to reduce the time and stress people face while navigating legal information. Our mission is to help
+              every learner, practitioner, and decision-maker move from confusion to clarity with confidence.
+            </p>
+            <p className="text-sm sm:text-base text-[#a7aab5] leading-relaxed">
+              Our vision is a legal ecosystem where insight is no longer gated by time, jargon, or access. Whether you are preparing
+              for class, advising a client, or reviewing a complex matter, CaseCut is designed to support real human decisions with
+              clear and practical guidance.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-[#17253b] via-[#141a27] to-[#111318] p-8 flex flex-col justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-[#8ab8f4] mb-3">Impact We Aim For</p>
+              <ul className="space-y-3 text-sm text-[#d2d6e0]">
+                <li>Faster legal research and document understanding for daily workflows</li>
+                <li>Clear learning pathways from beginner to advanced legal practice</li>
+                <li>Better-informed legal decisions through role-aware insights</li>
+              </ul>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button
+                onClick={() => navigate('/chat')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all"
+              >
+                Start Chat
+                <ArrowRight className="size-4" />
+              </button>
+              <button
+                onClick={() => navigate('/learning')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border border-white/[0.12] bg-white/[0.03] hover:bg-white/[0.08]"
+              >
+                Explore Learning Hub
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="py-24 px-4 bg-[#0f0f0f]">
+      <section className="py-20 sm:py-24 px-4 bg-[#0f0f0f]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -198,7 +248,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4">
+      <section className="py-20 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="relative text-center py-16 px-8 rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1488fc]/20 via-[#7c5df0]/10 to-transparent" />
@@ -211,10 +261,10 @@ export default function LandingPage() {
                 Join thousands of legal professionals using CaseCut
               </p>
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/chat')}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 active:scale-[0.98] shadow-[0_0_30px_rgba(20,136,252,0.3)]"
               >
-                Get started for free
+                Start Now
                 <ArrowRight className="size-4" />
               </button>
             </div>
@@ -234,7 +284,6 @@ export default function LandingPage() {
           </p>
           <div className="flex justify-center gap-6 text-xs text-[#5a5a5f]">
             <Link to="/about" className="hover:text-white transition-colors">About</Link>
-            <a href="https://github.com" className="hover:text-white transition-colors">GitHub</a>
           </div>
           <p className="mt-6 text-[10px] text-[#3a3a3f]">
             2026 CaseCut. Built for the Indian Legal Community.

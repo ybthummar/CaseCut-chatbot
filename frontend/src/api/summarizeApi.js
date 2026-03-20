@@ -11,10 +11,10 @@ import { apiRequest } from './client';
  * Summarize raw text.
  * @returns {{ summary, model_id, mode, provider }}
  */
-export async function summarizeText(text, modelId = 'casecut-legal', mode = 'lawyer') {
+export async function summarizeText(text, modelId = 'casecut-legal', mode = 'lawyer', intent = 'summarize') {
   const response = await apiRequest('/summarize', {
     method: 'POST',
-    body: { text, model_id: modelId, mode },
+    body: { text, model_id: modelId, mode, intent },
   });
   return response.data;
 }
@@ -23,10 +23,10 @@ export async function summarizeText(text, modelId = 'casecut-legal', mode = 'law
  * Summarize a file by URL (Firebase Storage download URL).
  * @returns {{ summary, model_id, mode, provider }}
  */
-export async function summarizeFile(fileUrl, modelId = 'casecut-legal', mode = 'lawyer') {
+export async function summarizeFile(fileUrl, modelId = 'casecut-legal', mode = 'lawyer', intent = 'summarize') {
   const response = await apiRequest('/summarize', {
     method: 'POST',
-    body: { file_url: fileUrl, model_id: modelId, mode },
+    body: { file_url: fileUrl, model_id: modelId, mode, intent },
   });
   return response.data;
 }
