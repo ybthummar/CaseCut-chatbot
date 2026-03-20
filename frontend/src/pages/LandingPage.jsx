@@ -64,7 +64,7 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white">
+    <div className="min-h-screen bg-[#0f0f0f] text-white pt-14">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,12 +84,6 @@ export default function LandingPage() {
                 Log in
               </Link>
               <button
-                onClick={() => navigate('/chat')}
-                className="px-4 py-1.5 rounded-full text-xs font-medium border border-white/[0.12] bg-white/[0.03] hover:bg-white/[0.08] text-white transition-all duration-200"
-              >
-                Try CaseCut
-              </button>
-              <button
                 onClick={() => navigate('/signup')}
                 className="px-4 py-1.5 rounded-full text-xs font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 active:scale-95 shadow-[0_0_20px_rgba(20,136,252,0.3)]"
               >
@@ -101,16 +95,16 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100vh-56px)] flex items-center justify-center overflow-hidden px-4 py-16 sm:py-20 lg:py-24">
         <RayBackground />
         
-        <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
+        <div className="relative z-10 text-center max-w-3xl mx-auto -mt-8 sm:-mt-4">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
             <span
               className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm overflow-hidden cursor-default"
@@ -129,7 +123,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl sm:text-6xl font-bold tracking-tight mb-4"
+            className="text-4xl sm:text-6xl font-bold tracking-tight mb-5 sm:mb-6"
           >
             Research Indian law{' '}
             <span className="bg-gradient-to-b from-[#4da5fc] via-[#4da5fc] to-white bg-clip-text text-transparent italic">
@@ -141,7 +135,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-base sm:text-lg text-[#8a8a8f] mb-10 max-w-xl mx-auto"
+            className="text-base sm:text-lg text-[#8a8a8f] mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed"
           >
             CaseCut AI is your free legal assistant tailored for Judges, Lawyers, and Law Students.
           </motion.p>
@@ -150,20 +144,13 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 justify-center"
+            className="flex flex-col sm:flex-row gap-3 justify-center pt-1"
           >
             <button
               onClick={() => navigate('/chat')}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-[#2f9bff] to-[#1488fc] hover:brightness-110 text-white transition-all duration-200 active:scale-95 shadow-[0_0_30px_rgba(20,136,252,0.5)]"
             >
-              Try CaseCut
-              <ArrowRight className="size-4" />
-            </button>
-            <button
-              onClick={() => navigate('/signup')}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 active:scale-95 shadow-[0_0_30px_rgba(20,136,252,0.4)]"
-            >
-              Start Researching
+              Start Chat
               <ArrowRight className="size-4" />
             </button>
             <button
@@ -177,7 +164,7 @@ export default function LandingPage() {
       </section>
 
       {/* About Us Section */}
-      <section className="py-24 px-4 bg-[#101217]">
+      <section className="py-20 sm:py-24 px-4 bg-[#101217]">
         <div className="max-w-5xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-8 items-stretch">
           <div className="rounded-2xl border border-white/[0.08] bg-[#151823] p-8">
             <p className="text-[11px] uppercase tracking-wider text-[#7f9dc7] mb-3">About CaseCut</p>
@@ -209,7 +196,7 @@ export default function LandingPage() {
                 onClick={() => navigate('/chat')}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all"
               >
-                Try CaseCut
+                Start Chat
                 <ArrowRight className="size-4" />
               </button>
               <button
@@ -224,7 +211,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-4 bg-[#0f0f0f]">
+      <section className="py-20 sm:py-24 px-4 bg-[#0f0f0f]">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -261,7 +248,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4">
+      <section className="py-20 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="relative text-center py-16 px-8 rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1488fc]/20 via-[#7c5df0]/10 to-transparent" />
@@ -277,7 +264,7 @@ export default function LandingPage() {
                 onClick={() => navigate('/chat')}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-[#1488fc] hover:bg-[#1a94ff] text-white transition-all duration-200 active:scale-[0.98] shadow-[0_0_30px_rgba(20,136,252,0.3)]"
               >
-                Try CaseCut now
+                Start Now
                 <ArrowRight className="size-4" />
               </button>
             </div>
@@ -297,7 +284,6 @@ export default function LandingPage() {
           </p>
           <div className="flex justify-center gap-6 text-xs text-[#5a5a5f]">
             <Link to="/about" className="hover:text-white transition-colors">About</Link>
-            <a href="https://github.com" className="hover:text-white transition-colors">GitHub</a>
           </div>
           <p className="mt-6 text-[10px] text-[#3a3a3f]">
             2026 CaseCut. Built for the Indian Legal Community.

@@ -5,8 +5,9 @@ import {
   ChevronDown, Sparkles,
 } from 'lucide-react'
 import { getModelsByCapability } from '../config/models'
-import { uploadPDF, saveSummaryMetadata } from '../services/storageService'
-import { summarizeText as apiSummarizeText, summarizeFile as apiSummarizeFile } from '../api/summarizeApi'
+import { saveSummaryMetadata } from '../services/storageService'
+import { summarizeText as apiSummarizeText } from '../api/summarizeApi'
+import { uploadPDFToBackend } from '../api/chatApi'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -39,9 +40,16 @@ export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 
 
       if (mode === 'pdf') {
         if (!file) throw new Error('Please select a PDF file')
-        fileUrl = await uploadPDF(userId || 'guest', file, setUploadProgress)
-        // Route through backend — backend calls HuggingFace if needed
-        const result = await apiSummarizeFile(fileUrl, selectedModel, roleMode, task)
+        setUploadProgress(20)
+        const parsed = await uploadPDFToBackend(file, userId || 'guest')
+        const extractedText = parsed?.full_text || ''
+        if (extractedText.trim().length < 50) {
+          throw new Error('Could not extract enough text from the uploaded PDF')
+        }
+        setUploadProgress(80)
+        // Summarize extracted text through backend to avoid browser->Firebase CORS upload issues
+        const result = await apiSummarizeText(extractedText, selectedModel, roleMode, task)
+        setUploadProgress(100)
         resultSummary = result.summary
       } else {
         if (!text.trim()) throw new Error('Please enter text to summarize')
