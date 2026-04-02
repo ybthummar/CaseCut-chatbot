@@ -3,6 +3,7 @@ import { Zap, Scale, MessageCircle, BookOpen, Search, FileText, ArrowRight, X, L
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import ThemeToggle from '../ThemeToggle';
 import { Avatar, AvatarImage, AvatarFallback } from './interfaces-avatar';
 import {
   DropdownMenu,
@@ -135,6 +136,8 @@ const MinimalHero = () => {
             </div>
 
             <div className="flex items-center gap-2">
+            <ThemeToggle />
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
