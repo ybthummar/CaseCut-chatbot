@@ -223,7 +223,7 @@ def _generate_summary(prompt: str) -> tuple[str, str]:
         resp = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=800,
+            max_tokens=2500,
             temperature=0.3,
         )
         return resp.choices[0].message.content, "groq"

@@ -8,6 +8,9 @@ import SignupPage from './pages/SignupPage';
 import AboutPage from './pages/AboutPage';
 import ChatPage from './pages/ChatPage.jsx';
 import LearningHubPage from './pages/LearningHubPage.jsx';
+import SummarizerPage from './pages/SummarizerPage.jsx';
+import PrecedentPage from './pages/PrecedentPage.jsx';
+import { ThemeProvider } from './contexts/ThemeContext';
 import './index.css';
 
 // Protected Route Component
@@ -25,30 +28,34 @@ function PublicRoute({ children }) {
 function Main() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/learning" element={<LearningHubPage />} />
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <PublicRoute>
-                <SignupPage />
-              </PublicRoute>
-            }
-          />
-          <Route path="/chat" element={<ChatPage />} />
-        </Routes>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/learning" element={<LearningHubPage />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute>
+                  <SignupPage />
+                </PublicRoute>
+              }
+            />
+            <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+            <Route path="/summarizer" element={<ProtectedRoute><SummarizerPage /></ProtectedRoute>} />
+            <Route path="/precedents" element={<ProtectedRoute><PrecedentPage /></ProtectedRoute>} />
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }

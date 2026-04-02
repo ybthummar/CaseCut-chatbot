@@ -17,7 +17,7 @@ from app.models.embeddings import process_and_upload  # noqa: E402
 def main():
     raw_dir = os.path.join(BACKEND_DIR, "data", "raw")
     if not os.path.isdir(raw_dir):
-        print("⚠️  data/raw/ not found — nothing to index.")
+        print("[WARN] data/raw/ not found - nothing to index.")
         return
 
     files = [
@@ -26,12 +26,12 @@ def main():
         if f.endswith((".txt", ".pdf")) and not f.startswith(".")
     ]
     if not files:
-        print("📂 No new files in data/raw/")
+        print("[INFO] No new files in data/raw/")
         return
 
-    print(f"📥 Found {len(files)} file(s) in data/raw/")
-    process_and_upload(raw_dir)
-    print("🏁 Re-indexing complete.")
+    print(f"[INFO] Found {len(files)} file(s) in data/raw/")
+    summary = process_and_upload(raw_dir, skip_existing=True)
+    print(f"[DONE] Re-indexing complete. Summary: {summary}")
 
 
 if __name__ == "__main__":

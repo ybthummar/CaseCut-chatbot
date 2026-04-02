@@ -1,13 +1,13 @@
 """
-CaseCut Legal RAG API — v5.0 (Production-Ready)
+CaseCut Legal RAG API - v5.0 (Production-Ready)
 
 Architecture:
-  app/services/   – business logic  (llm, qdrant, rag, summarizer)
-  app/routers/    – HTTP endpoints  (chat, summarize, pdf, feedback)
-  app/schemas/    – response models
-  app/middleware/  – error handling
-  app/core/       – config, prompts, history
-  app/models/     – embeddings, ranker
+  app/services/   - business logic  (llm, qdrant, rag, summarizer)
+  app/routers/    - HTTP endpoints  (chat, summarize, pdf, feedback)
+  app/schemas/    - response models
+  app/middleware/ - error handling
+  app/core/       - config, prompts, history
+  app/models/     - embeddings, ranker
 """
 
 from dotenv import load_dotenv
@@ -19,13 +19,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import chat, summarize, pdf, feedback, learning
+from app.routers import chat, summarize, pdf, feedback, learning, evaluation, books
 from app.middleware.error_handler import ErrorHandlerMiddleware
 
 logger = logging.getLogger("casecut")
 
 
-# ── Startup / Shutdown lifecycle ─────────────────────────────────────
+# Startup / Shutdown lifecycle
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,57 +36,59 @@ async def lifespan(app: FastAPI):
 
 
 def _print_startup_banner():
-    """Print rich startup banner with service status checks."""
+    """Print startup banner with service status checks."""
     from app.core.config import qdrant_client, embedder, COLLECTION
 
     banner = """
-╔══════════════════════════════════════════════════════════╗
-║           🏛️  CaseCut Backend Started Successfully       ║
-╚══════════════════════════════════════════════════════════╝
+===========================================================
+           CaseCut Backend Started Successfully
+===========================================================
 """
     print(banner)
 
-    # — Qdrant —
+    # Qdrant
     try:
         collections = qdrant_client.get_collections()
         names = [c.name for c in collections.collections]
         if COLLECTION in names:
             info = qdrant_client.get_collection(COLLECTION)
-            logger.info("✅ Qdrant       │ Connected │ '%s' │ %d vectors", COLLECTION, info.points_count)
+            logger.info("Qdrant       | Connected | '%s' | %d vectors", COLLECTION, info.points_count)
         else:
-            logger.warning("⚠️  Qdrant       │ Connected │ '%s' NOT FOUND", COLLECTION)
+            logger.warning("Qdrant       | Connected | '%s' NOT FOUND", COLLECTION)
     except Exception as e:
-        logger.error("❌ Qdrant       │ Connection FAILED │ %s", e)
+        logger.error("Qdrant       | Connection FAILED | %s", e)
 
-    # — LLM —
+    # LLM
+    openai_ok = bool(os.getenv("OPENAI_API_KEY"))
     groq_ok = bool(os.getenv("GROQ_API_KEY"))
     gemini_ok = bool(os.getenv("GEMINI_API_KEY"))
     logger.info(
-        "✅ LLM          │ Groq: %s │ Gemini: %s │ Timeout: %ss",
-        "configured" if groq_ok else "⚠️  MISSING",
-        "configured" if gemini_ok else "⚠️  MISSING",
+        "LLM          | OpenAI: %s | Groq: %s | Gemini: %s | Timeout: %ss",
+        "configured" if openai_ok else "MISSING",
+        "configured" if groq_ok else "MISSING",
+        "configured" if gemini_ok else "MISSING",
         os.getenv("LLM_TIMEOUT", "30"),
     )
 
-    # — Embedder —
+    # Embedder
     dim = embedder.get_sentence_embedding_dimension()
-    logger.info("✅ Embedder     │ all-MiniLM-L6-v2 │ dim=%d", dim)
+    logger.info("Embedder     | all-MiniLM-L6-v2 | dim=%d", dim)
 
-    # — HuggingFace —
+    # HuggingFace
     hf_ok = bool(os.getenv("HF_API_TOKEN"))
-    logger.info("ℹ️  HuggingFace  │ Token: %s", "configured" if hf_ok else "not set (HF models won't work)")
+    logger.info("HuggingFace  | Token: %s", "configured" if hf_ok else "not set (HF models won't work)")
 
-    logger.info("🚀 API ready    │ http://0.0.0.0:%s │ v5.0", os.getenv("PORT", "8000"))
+    logger.info("API ready    | http://0.0.0.0:%s | v5.0", os.getenv("PORT", "8000"))
 
 
-# ── App ──────────────────────────────────────────────────────────────
+# App
 
 app = FastAPI(title="CaseCut Legal RAG API", version="5.0", lifespan=lifespan)
 
 # Global error handler middleware (catches unhandled exceptions)
 app.add_middleware(ErrorHandlerMiddleware)
 
-# CORS — restricted to known origins
+# CORS - restricted to known origins
 ALLOWED_ORIGINS = os.getenv(
     "CORS_ORIGINS",
     "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
@@ -100,16 +102,18 @@ app.add_middleware(
 )
 
 
-# ── Register routers ────────────────────────────────────────────────
+# Register routers
 
 app.include_router(chat.router)
 app.include_router(summarize.router)
 app.include_router(pdf.router)
 app.include_router(feedback.router)
 app.include_router(learning.router)
+app.include_router(evaluation.router)
+app.include_router(books.router)
 
 
-# ── Lightweight inline endpoints ─────────────────────────────────────
+# Lightweight inline endpoints
 
 TOPICS = [
     {"id": "all", "name": "All Topics"},
@@ -143,6 +147,7 @@ def health():
     except Exception:
         services["qdrant"] = "error"
 
+    services["openai"] = "configured" if os.getenv("OPENAI_API_KEY") else "missing"
     services["groq"] = "configured" if os.getenv("GROQ_API_KEY") else "missing"
     services["gemini"] = "configured" if os.getenv("GEMINI_API_KEY") else "missing"
     services["embedder"] = "loaded"
@@ -156,7 +161,7 @@ def health():
     }
 
 
-# ── Entrypoint ───────────────────────────────────────────────────────
+# Entrypoint
 
 if __name__ == "__main__":
     import uvicorn

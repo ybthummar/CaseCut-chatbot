@@ -55,5 +55,38 @@
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
   }
+}
+
+:root {
+  --theme-a: #0f111d;
+  --theme-b: #1d0d2e;
+  --theme-c: #31204f;
+}
+
+[data-theme-mode='midnight'] {
+  --theme-a: #0d1117;
+  --theme-b: #1a102b;
+  --theme-c: #2b1d44;
+}
+
+[data-theme-mode='ocean'] {
+  --theme-a: #08141d;
+  --theme-b: #04213a;
+  --theme-c: #0f3c5c;
+}
+
+[data-theme-mode='courtroom'] {
+  --theme-a: #17130d;
+  --theme-b: #2a2318;
+  --theme-c: #5b3f1f;
+}
+
+.app-theme-bg {
+  background:
+    radial-gradient(1000px 520px at 10% -5%, color-mix(in srgb, var(--theme-c) 50%, transparent), transparent 55%),
+    radial-gradient(880px 420px at 95% -5%, color-mix(in srgb, var(--theme-b) 65%, transparent), transparent 60%),
+    linear-gradient(155deg, var(--theme-a), var(--theme-b) 52%, var(--theme-c));
 }

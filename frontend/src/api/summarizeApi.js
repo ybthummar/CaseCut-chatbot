@@ -1,32 +1,43 @@
 /**
- * Summarize API — wraps the /summarize endpoint.
+ * Summarize API - wraps the /summarize endpoint.
  *
- * ALL summarization (local LLM + HuggingFace) is routed
- * through the backend.  Frontend never calls HF directly.
+ * All summarization requests are routed through backend.
  */
 
-import { apiRequest } from './client';
+import { apiRequest } from './client'
 
 /**
  * Summarize raw text.
- * @returns {{ summary, model_id, mode, provider }}
+ * @returns {{ summary, model_id, mode, provider, summary_size }}
  */
-export async function summarizeText(text, modelId = 'casecut-legal', mode = 'lawyer', intent = 'summarize') {
+export async function summarizeText(
+  text,
+  modelId = 'casecut-legal',
+  mode = 'lawyer',
+  intent = 'summarize',
+  summarySize = 'large'
+) {
   const response = await apiRequest('/summarize', {
     method: 'POST',
-    body: { text, model_id: modelId, mode, intent },
-  });
-  return response.data;
+    body: { text, model_id: modelId, mode, intent, summary_size: summarySize },
+  })
+  return response.data
 }
 
 /**
- * Summarize a file by URL (Firebase Storage download URL).
- * @returns {{ summary, model_id, mode, provider }}
+ * Summarize a file by URL.
+ * @returns {{ summary, model_id, mode, provider, summary_size }}
  */
-export async function summarizeFile(fileUrl, modelId = 'casecut-legal', mode = 'lawyer', intent = 'summarize') {
+export async function summarizeFile(
+  fileUrl,
+  modelId = 'casecut-legal',
+  mode = 'lawyer',
+  intent = 'summarize',
+  summarySize = 'large'
+) {
   const response = await apiRequest('/summarize', {
     method: 'POST',
-    body: { file_url: fileUrl, model_id: modelId, mode, intent },
-  });
-  return response.data;
+    body: { file_url: fileUrl, model_id: modelId, mode, intent, summary_size: summarySize },
+  })
+  return response.data
 }

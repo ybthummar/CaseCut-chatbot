@@ -5,6 +5,19 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Theme accent colors used dynamically via meta.accent
+    { pattern: /^bg-(purple|blue|amber)-(100|500|600)$/ },
+    { pattern: /^from-(purple|blue|amber)-(100|300|500)$/ },
+    { pattern: /^via-(purple|blue|amber|pink|cyan|orange)-(50|500)$/ },
+    { pattern: /^to-(purple|blue|amber)-(100|300)$/ },
+    { pattern: /^text-(purple|blue|amber)-(500|600)$/ },
+    // Theme gradient classes (all 4 themes)
+    'from-gray-950', 'via-gray-900', 'to-gray-950',
+    'from-blue-100', 'via-cyan-50', 'to-blue-100',
+    'from-amber-50', 'via-orange-50', 'to-amber-50',
+    'from-purple-100', 'via-pink-50', 'to-purple-100',
+  ],
   theme: {
     container: {
       center: true,
@@ -14,6 +27,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

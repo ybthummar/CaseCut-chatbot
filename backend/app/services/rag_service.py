@@ -83,6 +83,7 @@ def run_query(
     role: str = "lawyer",
     topic: str = "all",
     k: int = 5,
+    language: str = "english",
     conversation_history: list[dict] | None = None,
 ) -> dict:
     """
@@ -92,7 +93,7 @@ def run_query(
         {cases, summary, source, ranked, total_retrieved, llm_time_ms, confidence}
     """
     clean_query = sanitize_query(query)
-    logger.info("RAG start  │ role=%s │ topic=%s │ k=%d │ '%s'", role, topic, k, clean_query[:80])
+    logger.info("RAG start  │ role=%s │ topic=%s │ lang=%s │ k=%d │ '%s'", role, topic, language, k, clean_query[:80])
 
     # 1 — Embed query
     q_vector = qdrant_service.embed_query(clean_query)
@@ -106,7 +107,7 @@ def run_query(
     if not results:
         return {
             "cases": [],
-            "summary": "⚠️ No matching cases found in the legal database. Try a different query or topic filter.",
+            "summary": "No matching cases found in the legal database. Try a different query or topic filter.",
             "source": "none",
             "ranked": False,
             "total_retrieved": 0,
@@ -199,8 +200,21 @@ def run_query(
     # 8 — Generate role-aware summary with conversation history
     intent = _infer_intent(clean_query)
     profile = build_response_profile(role, intent)
-    prompt = build_rag_prompt(role, clean_query, context, conversation_history, profile)
+    requested_language = (language or "english").strip().lower()
+    generation_language = "english" if requested_language not in {"english", "any"} else requested_language
+
+    prompt = build_rag_prompt(
+        role,
+        clean_query,
+        context,
+        generation_language,
+        conversation_history,
+        profile,
+    )
     summary, source, duration = llm_service.generate(prompt)
+    summary, rewritten = llm_service.enforce_output_language(summary, requested_language)
+    if rewritten:
+        source = f"{source}+langfix"
 
     logger.info("RAG done   │ source=%s │ cases=%d │ confidence=%s │ reranker=%s │ %dms",
                 source, len(response_cases), confidence["level"],
@@ -224,6 +238,7 @@ def chat_with_pdf(
     query: str,
     document_text: str,
     role: str = "lawyer",
+    language: str = "english",
     conversation_history: list[dict] | None = None,
 ) -> dict:
     """
@@ -240,7 +255,7 @@ def chat_with_pdf(
     import numpy as np
 
     clean_query = sanitize_query(query)
-    logger.info("PDF Chat   │ role=%s │ doc_len=%d │ '%s'", role, len(document_text), clean_query[:80])
+    logger.info("PDF Chat   │ role=%s │ lang=%s │ doc_len=%d │ '%s'", role, language, len(document_text), clean_query[:80])
 
     # 1 — Chunk the document
     chunks = chunk_text(document_text, chunk_size=500, overlap=100)
@@ -280,7 +295,7 @@ def chat_with_pdf(
 
     if not top_chunks:
         return {
-            "answer": "⚠️ The requested information was not found in this document. Try rephrasing your question.",
+            "answer": "The requested information was not found in this document. Try rephrasing your question.",
             "source": "none",
             "llm_time_ms": 0,
             "citations": [],
@@ -300,8 +315,21 @@ def chat_with_pdf(
     # 7 — Generate answer
     intent = _infer_intent(clean_query)
     profile = build_response_profile(role, intent)
-    prompt = build_pdf_chat_prompt(role, clean_query, doc_context, conversation_history, profile)
+    requested_language = (language or "english").strip().lower()
+    generation_language = "english" if requested_language not in {"english", "any"} else requested_language
+
+    prompt = build_pdf_chat_prompt(
+        role,
+        clean_query,
+        doc_context,
+        generation_language,
+        conversation_history,
+        profile,
+    )
     answer, source, duration = llm_service.generate(prompt)
+    answer, rewritten = llm_service.enforce_output_language(answer, requested_language)
+    if rewritten:
+        source = f"{source}+langfix"
 
     logger.info("PDF Chat done │ source=%s │ chunks=%d │ confidence=%s │ %dms",
                 source, len(top_chunks), confidence["level"], duration)

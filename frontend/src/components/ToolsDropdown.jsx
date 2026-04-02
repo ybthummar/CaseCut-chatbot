@@ -1,7 +1,7 @@
 /**
  * ToolsDropdown — ChatGPT-style "+" tools menu for the header.
  *
- * Consolidates PDF upload, summarizer, topic filter, and future tools
+ * Consolidates PDF upload, topic filter, and future tools
  * into a single clean dropdown panel with icons, titles, and descriptions.
  */
 
@@ -10,9 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus,
   FileText,
-  Sparkles,
   Scale,
-  Search,
   BarChart3,
   FileDiff,
   Filter,
@@ -33,15 +31,6 @@ const TOOLS = [
     accentRing: 'group-hover:ring-emerald-500/20',
   },
   {
-    id: 'summarize',
-    icon: <Sparkles className="size-5" />,
-    title: 'Summarize Document',
-    description: 'Generate concise summaries',
-    color: 'text-purple-400',
-    bgHover: 'hover:bg-purple-500/8',
-    accentRing: 'group-hover:ring-purple-500/20',
-  },
-  {
     id: 'legal-research',
     icon: <Scale className="size-5" />,
     title: 'Legal Research Mode',
@@ -49,15 +38,6 @@ const TOOLS = [
     color: 'text-blue-400',
     bgHover: 'hover:bg-blue-500/8',
     accentRing: 'group-hover:ring-blue-500/20',
-  },
-  {
-    id: 'case-search',
-    icon: <Search className="size-5" />,
-    title: 'Case Law Search',
-    description: 'Search precedents and judgments',
-    color: 'text-amber-400',
-    bgHover: 'hover:bg-amber-500/8',
-    accentRing: 'group-hover:ring-amber-500/20',
   },
 ]
 
@@ -82,7 +62,6 @@ const FUTURE_TOOLS = [
 
 export default function ToolsDropdown({
   onUploadPdf,
-  onOpenSummarizer,
   topic,
   setTopic,
   topics,
@@ -126,17 +105,9 @@ export default function ToolsDropdown({
         fileInputRef.current?.click()
         setOpen(false)
         break
-      case 'summarize':
-        onOpenSummarizer()
-        setOpen(false)
-        break
       case 'legal-research':
         // Toggle topic submenu
         setShowTopics(!showTopics)
-        break
-      case 'case-search':
-        // Focus the search input — just close menu and let user type
-        setOpen(false)
         break
       default:
         break

@@ -206,7 +206,7 @@ INTENT_OUTPUT_PROFILES = {
     "compare": "Respond in a side-by-side comparison format using a table or clearly separated bullets.",
     "steps": "Respond as an ordered action plan with practical next steps.",
     "explain": "Explain concepts progressively: plain language first, then legal detail.",
-    "default": "Balance clarity and depth. Keep response practical and clearly structured.",
+    "default": "Provide a detailed, well-structured response with thorough analysis. Aim for 400-600 words with clear sections and practical insights.",
 }
 
 
@@ -218,6 +218,38 @@ ROLE_LENGTH_HINT = {
     "summary": "Keep output compact and highly scannable.",
     "strategy": "Include scenario planning and trade-offs where relevant.",
 }
+
+
+LANGUAGE_OUTPUT_RULES = {
+    "english": "Respond only in English.",
+    "hindi": "Respond only in Hindi using Devanagari script.",
+    "bengali": "Respond only in Bengali using Bengali script.",
+    "tamil": "Respond only in Tamil using Tamil script.",
+    "telugu": "Respond only in Telugu using Telugu script.",
+    "marathi": "Respond only in Marathi using Devanagari script.",
+    "gujarati": "Respond only in Gujarati using Gujarati script.",
+    "kannada": "Respond only in Kannada using Kannada script.",
+    "malayalam": "Respond only in Malayalam using Malayalam script.",
+    "punjabi": "Respond only in Punjabi using Gurmukhi script.",
+    "urdu": "Respond only in Urdu using Perso-Arabic Urdu script.",
+    "any": "Match the user's language when clear; otherwise respond in English.",
+}
+
+
+def build_language_instruction(language: str | None = None) -> str:
+    """Build language output instruction for the model."""
+    if not language:
+        return (
+            LANGUAGE_OUTPUT_RULES["english"]
+            + " Keep the same depth, section count, and approximate length you would provide in English for this query."
+        )
+
+    normalized = language.strip().lower()
+    base_rule = LANGUAGE_OUTPUT_RULES.get(normalized, LANGUAGE_OUTPUT_RULES["english"])
+    return (
+        base_rule
+        + " Keep the same depth, section count, and approximate length you would provide in English for this query."
+    )
 
 
 def build_response_profile(role: str, intent: str | None = None) -> str:
@@ -237,6 +269,7 @@ def build_rag_prompt(
     role: str,
     query: str,
     context_block: str,
+    language: str | None = None,
     conversation_history: list[dict] | None = None,
     response_profile: str | None = None,
 ) -> str:
@@ -255,6 +288,7 @@ def build_rag_prompt(
     system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
     output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
     profile_block = response_profile or build_response_profile(role)
+    language_block = build_language_instruction(language)
 
     # Build conversation context if available
     history_block = ""
@@ -275,6 +309,14 @@ def build_rag_prompt(
 
 {output}
 {profile_block}
+LANGUAGE REQUIREMENT:
+{language_block}
+
+RESPONSE LENGTH REQUIREMENT:
+Provide a thorough, comprehensive, and detailed response. Aim for 400-800 words minimum.
+Cover all relevant aspects of the query with proper analysis, explanations, and citations.
+Do NOT give brief or superficial answers. Each section should have substantive content.
+If the context provides enough information, expand on legal reasoning, implications, and practical takeaways.
 {history_block}
 Based on the following retrieved legal cases, respond to the user's query.
 
@@ -283,13 +325,14 @@ CASES:
 
 USER QUERY: {query}
 
-Provide a clear, structured response with citations."""
+Provide a clear, structured, and detailed response with citations."""
 
 
 def build_pdf_chat_prompt(
     role: str,
     query: str,
     document_context: str,
+    language: str | None = None,
     conversation_history: list[dict] | None = None,
     response_profile: str | None = None,
 ) -> str:
@@ -308,6 +351,7 @@ def build_pdf_chat_prompt(
     system = ROLE_SYSTEM_PROMPTS.get(role, ROLE_SYSTEM_PROMPTS["lawyer"])
     output = ROLE_OUTPUT_INSTRUCTIONS.get(role, ROLE_OUTPUT_INSTRUCTIONS["lawyer"])
     profile_block = response_profile or build_response_profile(role)
+    language_block = build_language_instruction(language)
 
     history_block = ""
     if conversation_history:
@@ -325,6 +369,8 @@ def build_pdf_chat_prompt(
 
 {output}
 {profile_block}
+LANGUAGE REQUIREMENT:
+{language_block}
 {history_block}
 The user has uploaded a legal document. Answer their question using ONLY the document content below.
 

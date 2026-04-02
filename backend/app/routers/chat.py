@@ -29,6 +29,7 @@ class MessageTurn(BaseModel):
 class ChatRequest(BaseModel):
     query: str
     role: str = "lawyer"
+    language: str = "english"
     topic: str = "all"
     k: int = 5
     conversation_history: Optional[list[MessageTurn]] = None
@@ -38,6 +39,7 @@ class PDFChatRequest(BaseModel):
     query: str
     document_text: str
     role: str = "lawyer"
+    language: str = "english"
     conversation_history: Optional[list[MessageTurn]] = None
 
 
@@ -45,8 +47,8 @@ class PDFChatRequest(BaseModel):
 async def chat(req: ChatRequest):
     """Full RAG pipeline: embed → retrieve → rank → summarise."""
     logger.info(
-        "📥 /query  │ role=%s │ topic=%s │ k=%d │ history=%d │ '%s'",
-        req.role, req.topic, req.k,
+        "📥 /query  │ role=%s │ lang=%s │ topic=%s │ k=%d │ history=%d │ '%s'",
+        req.role, req.language, req.topic, req.k,
         len(req.conversation_history or []),
         req.query[:100],
     )
@@ -61,6 +63,7 @@ async def chat(req: ChatRequest):
             rag_service.run_query,
             query=req.query,
             role=req.role,
+            language=req.language,
             topic=req.topic,
             k=req.k,
             conversation_history=history,
@@ -88,8 +91,8 @@ async def chat(req: ChatRequest):
 async def pdf_chat(req: PDFChatRequest):
     """Chat with an uploaded PDF document using RAG over its content."""
     logger.info(
-        "📥 /pdf-chat │ role=%s │ doc_len=%d │ '%s'",
-        req.role, len(req.document_text), req.query[:100],
+        "📥 /pdf-chat │ role=%s │ lang=%s │ doc_len=%d │ '%s'",
+        req.role, req.language, len(req.document_text), req.query[:100],
     )
 
     if not req.document_text or len(req.document_text.strip()) < 50:
@@ -108,6 +111,7 @@ async def pdf_chat(req: PDFChatRequest):
             query=req.query,
             document_text=req.document_text,
             role=req.role,
+            language=req.language,
             conversation_history=history,
         )
 
@@ -126,4 +130,75 @@ async def pdf_chat(req: PDFChatRequest):
         return JSONResponse(
             status_code=500,
             content=fail(str(e), type(e).__name__, "Check backend logs for full traceback."),
+        )
+
+
+# ── Voice Agent endpoint ─────────────────────────────────────────
+
+class VoiceChatRequest(BaseModel):
+    message: str
+    language: str = "english"
+    conversation_memory: Optional[list[MessageTurn]] = None
+
+
+@router.post("/voice-chat")
+async def voice_chat(req: VoiceChatRequest):
+    """
+    Conversational voice agent endpoint.
+
+    Accepts spoken user message + conversation memory, returns a concise
+    spoken-friendly response (no markdown, no tables, no URLs).
+    """
+    from app.services.llm_service import generate
+
+    logger.info(
+        "🎙️ /voice-chat │ lang=%s │ memory=%d │ '%s'",
+        req.language,
+        len(req.conversation_memory or []),
+        req.message[:100],
+    )
+
+    try:
+        # Build conversation context from memory
+        memory_text = ""
+        if req.conversation_memory:
+            recent = req.conversation_memory[-10:]  # keep last 10 turns
+            memory_text = "\n".join(
+                f"{'User' if t.role == 'user' else 'Assistant'}: {t.text}"
+                for t in recent
+            )
+
+        prompt = (
+            "You are CaseCut AI, a friendly and knowledgeable Indian legal assistant "
+            "having a real-time voice conversation. Respond naturally as if speaking — "
+            "use conversational tone, short sentences, and avoid markdown, bullet points, "
+            "tables, URLs, or any formatting. Keep answers concise (2-4 sentences for simple "
+            "questions, up to 6-8 for complex ones). If the user asks a legal question, "
+            "cite relevant IPC sections or case names verbally. "
+            f"Respond in {req.language}.\n\n"
+        )
+
+        if memory_text:
+            prompt += f"Previous conversation:\n{memory_text}\n\n"
+
+        prompt += f"User says: {req.message}\n\nAssistant:"
+
+        text, source, duration_ms = await asyncio.to_thread(generate, prompt)
+
+        logger.info(
+            "📤 /voice-chat │ source=%s │ %dms │ resp_len=%d",
+            source, duration_ms, len(text),
+        )
+
+        return ok({
+            "response": text,
+            "source": source,
+            "llm_time_ms": duration_ms,
+        })
+
+    except Exception as e:
+        logger.error("❌ /voice-chat FAILED │ %s", traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content=fail(str(e), type(e).__name__, "Voice agent error."),
         )

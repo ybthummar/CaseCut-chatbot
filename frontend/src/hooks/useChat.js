@@ -85,7 +85,7 @@ export function useChat(user) {
 
   // ── Send a message (creates chat if needed) ────────────────────────
   const sendMessage = useCallback(
-    async (text, role, topic) => {
+    async (text, role, topic, language = 'english') => {
       if (!text.trim()) return;
       setLoading(true);
 
@@ -137,6 +137,7 @@ export function useChat(user) {
             text,
             pdfDocument.full_text,
             role,
+            language,
             history,
           );
 
@@ -159,7 +160,7 @@ export function useChat(user) {
 
         } else {
           // ── Standard RAG mode ─────────────────────────────────
-          data = await apiSendQuery(text, role, topic, 5, history);
+          data = await apiSendQuery(text, role, language, topic, 5, history);
 
           const assistantMsg = {
             role: 'assistant',

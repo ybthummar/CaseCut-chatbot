@@ -13,10 +13,38 @@
 
 export const models = [
   {
-    id: 'casecut-legal',
-    name: 'CaseCut Legal AI',
+    id: 'fine_tuned_t5_summarizer',
+    name: 'fine_tuned_t5_summarizer',
     provider: 'local',
-    description: 'Custom legal research & summarization',
+    description: 'backend/Model/fine_tuned_t5_summarizer',
+    capabilities: ['summarize'],
+  },
+  {
+    id: 'legal-summarizer-bart',
+    name: 'legal-summarizer-bart',
+    provider: 'local',
+    description: 'backend/Model/legal-summarizer-bart',
+    capabilities: ['summarize'],
+  },
+  {
+    id: 'Pegasus',
+    name: 'Pegasus',
+    provider: 'local',
+    description: 'backend/Model/Pegasus',
+    capabilities: ['summarize'],
+  },
+  {
+    id: 'LED',
+    name: 'LED',
+    provider: 'local',
+    description: 'backend/Model/LED',
+    capabilities: ['summarize'],
+  },
+  {
+    id: 'casecut-legal',
+    name: 'CaseCut Hybrid (Recommended)',
+    provider: 'local',
+    description: 'Local model first, then API refinement for long legal summaries',
     capabilities: ['chat', 'summarize'],
   },
   {

@@ -31,6 +31,9 @@ backend/data/raw/*.txt
 backend/data/embeddings/
 backend/data/processed/
 backend/data/feedback.jsonl
+backend/Model/
+backend/model/
+backend/scrape_log_*.txt
 # IDE
 .vscode/
 .idea/

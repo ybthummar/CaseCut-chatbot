@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, BookOpen, Brain, Building2, GraduationCap, Scale, Briefcase, Newspaper, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, Brain, Building2, GraduationCap, Scale, Briefcase, Newspaper, Sparkles, Search, Library, Loader2, BookMarked, ExternalLink } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from '../contexts/ThemeContext'
+import FloatingNav from '../components/FloatingNav'
+import BookCard from '../components/BookCard'
 import logo from '../../assets/Logo.svg'
 
 const roleOptions = [
@@ -52,14 +56,85 @@ const personalizedPlans = {
 }
 
 export default function LearningHubPage() {
+  const { meta } = useTheme();
   const navigate = useNavigate()
   const [selectedRole, setSelectedRole] = useState('student')
   const [news, setNews] = useState([])
   const [loadingNews, setLoadingNews] = useState(true)
+  const [activeTab, setActiveTab] = useState('learn') // 'learn' | 'books' | 'news'
+
+  // Book search state
+  const [bookQuery, setBookQuery] = useState('')
+  const [books, setBooks] = useState([])
+  const [ipcBooks, setIpcBooks] = useState([])
+  const [topicBooks, setTopicBooks] = useState([])
+  const [loadingBooks, setLoadingBooks] = useState(false)
+  const [bookSearchDone, setBookSearchDone] = useState(false)
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+  const searchBooks = useCallback(async (query) => {
+    if (!query || query.trim().length < 2) return
+    setLoadingBooks(true)
+    setBookSearchDone(false)
+    setBooks([])
+    setIpcBooks([])
+    setTopicBooks([])
+
+    try {
+      // Use smart endpoint for context-aware results
+      const res = await fetch(`${API_URL}/learning/books/smart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: query.trim(),
+          topic: selectedRole === 'student' ? 'all' : 'all',
+          max_results: 6,
+        }),
+      })
+      const data = await res.json()
+      if (data?.success && data.data?.books) {
+        setBooks(data.data.books.query_books || [])
+        setIpcBooks(data.data.books.ipc_books || [])
+        setTopicBooks(data.data.books.topic_books || [])
+      }
+    } catch (err) {
+      console.error('Book search failed:', err)
+      // Fallback to direct search
+      try {
+        const res = await fetch(`${API_URL}/learning/books?q=${encodeURIComponent(query.trim())}&max=6`)
+        const data = await res.json()
+        if (data?.success && data.data?.books) {
+          setBooks(data.data.books)
+        }
+      } catch (fallbackErr) {
+        console.error('Book fallback search also failed:', fallbackErr)
+      }
+    } finally {
+      setLoadingBooks(false)
+      setBookSearchDone(true)
+    }
+  }, [API_URL, selectedRole])
+
+  const handleBookSearch = (e) => {
+    e.preventDefault()
+    searchBooks(bookQuery)
+  }
+
+  // Quick book suggestion topics
+  const quickTopics = [
+    { label: 'IPC Overview', query: 'Indian Penal Code commentary' },
+    { label: 'Criminal Law', query: 'Indian criminal law practice' },
+    { label: 'Constitutional', query: 'Indian constitutional law' },
+    { label: 'Contract Law', query: 'Indian contract act' },
+    { label: 'Cyber Crime', query: 'Indian cyber crime IT Act' },
+    { label: 'Family Law', query: 'Indian family law' },
+    { label: 'Evidence Act', query: 'Indian Evidence Act' },
+    { label: 'CrPC / BNSS', query: 'Code of Criminal Procedure India' },
+  ]
 
   useEffect(() => {
     let mounted = true
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     async function loadNews() {
       try {
@@ -83,121 +158,422 @@ export default function LearningHubPage() {
 
   const suggestions = useMemo(() => personalizedPlans[selectedRole] || personalizedPlans.student, [selectedRole])
 
-  return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white">
-      <header className="sticky top-0 z-40 bg-[#0f0f0f]/85 backdrop-blur-xl border-b border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <img src={logo} alt="CaseCut" className="h-7 w-7" />
-            <span className="text-sm font-semibold tracking-wide">CaseCut Learning Hub</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link to="/" className="text-xs text-[#8a8a8f] hover:text-white transition-colors">Home</Link>
-            <button
-              onClick={() => navigate('/chat')}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium bg-[#1488fc] hover:bg-[#1a94ff] transition-colors"
-            >
-              Try CaseCut
-              <ArrowRight className="size-3.5" />
-            </button>
-          </div>
-        </div>
-      </header>
+  const tabItems = [
+    { id: 'learn', label: 'Learning Tracks', icon: <GraduationCap className="size-4" /> },
+    { id: 'books', label: 'Law Books', icon: <Library className="size-4" /> },
+    { id: 'news', label: 'Legal News', icon: <Newspaper className="size-4" /> },
+  ]
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-        <section className="rounded-2xl border border-white/[0.07] bg-gradient-to-br from-[#1b1c24] via-[#15161d] to-[#111218] p-6 sm:p-8">
+  return (
+    <div className={`min-h-screen bg-gradient-to-br ${meta.gradient} ${meta.textPrimary}`}>
+      <FloatingNav />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {/* Hero Section */}
+        <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6 sm:p-8">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium bg-white/[0.05] text-[#9abef0] mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium bg-purple-100 text-purple-700 mb-4">
               <Brain className="size-3.5" />
               AI-First Learning
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Learn Indian Law with Personalized AI Guidance</h1>
-            <p className="text-[#9b9ca2] text-sm sm:text-base leading-relaxed">
-              Explore curated legal learning journeys from beginner to advanced. Get role-aware recommendations,
-              daily legal developments, and practical study directions designed for students, lawyers, judges, and firms.
+            <h1 className="text-4xl sm:text-5xl font-thin tracking-tight mb-3 text-gray-900">
+              Learn Indian Law with Personalized AI Guidance
+            </h1>
+            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+              Explore curated learning journeys, search legal reference books, and get daily developments — all powered by AI.
             </p>
           </div>
         </section>
 
-        <section className="grid lg:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-white/[0.07] bg-[#14151c] p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="size-4 text-[#4da5fc]" />
-              <h2 className="text-lg font-semibold">Learning Tracks</h2>
-            </div>
-            <div className="space-y-3">
-              {learningTracks.map((track) => (
-                <div key={track.level} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <p className="text-xs uppercase tracking-wider text-[#6f7382] mb-1">{track.level}</p>
-                  <p className="text-sm text-[#e5e5e9] mb-1">{track.focus}</p>
-                  <p className="text-xs text-[#9b9ca2]">Outcome: {track.outcomes}</p>
+        {/* Tab Navigation */}
+        <div className="flex gap-2">
+          {tabItems.map((tab) => (
+            <motion.button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
+                activeTab === tab.id
+                  ? 'bg-black text-white border-black shadow-lg'
+                  : 'bg-white/60 border-white/40 text-gray-600 hover:bg-white/80 hover:text-gray-900'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <AnimatePresence mode="wait">
+          {/* ─── Learn Tab ─── */}
+          {activeTab === 'learn' && (
+            <motion.div
+              key="learn"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-6"
+            >
+              <section className="grid lg:grid-cols-2 gap-6">
+                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BookOpen className="size-4 text-purple-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Learning Tracks</h2>
+                  </div>
+                  <div className="space-y-3">
+                    {learningTracks.map((track) => (
+                      <div key={track.level} className="rounded-2xl bg-white/50 border border-white/40 p-4 hover:shadow-md transition-shadow">
+                        <p className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-1">{track.level}</p>
+                        <p className="text-sm text-gray-800 mb-1">{track.focus}</p>
+                        <p className="text-xs text-gray-600">Outcome: {track.outcomes}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="rounded-2xl border border-white/[0.07] bg-[#14151c] p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="size-4 text-emerald-400" />
-              <h2 className="text-lg font-semibold">AI Personalized Suggestions</h2>
-            </div>
+                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="size-4 text-emerald-500" />
+                    <h2 className="text-lg font-semibold text-gray-900">AI Personalized Suggestions</h2>
+                  </div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {roleOptions.map((role) => (
-                <button
-                  key={role.id}
-                  onClick={() => setSelectedRole(role.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-colors ${
-                    selectedRole === role.id
-                      ? 'bg-[#1488fc]/20 border-[#1488fc]/40 text-[#9cccff]'
-                      : 'bg-white/[0.02] border-white/[0.08] text-[#b1b3bc] hover:text-white'
-                  }`}
-                >
-                  {role.icon}
-                  {role.name}
-                </button>
-              ))}
-            </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {roleOptions.map((role) => (
+                      <button
+                        key={role.id}
+                        onClick={() => setSelectedRole(role.id)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-all ${
+                          selectedRole === role.id
+                            ? 'bg-black text-white border-black'
+                            : 'bg-white/60 border-gray-200 text-gray-700 hover:bg-white/80'
+                        }`}
+                      >
+                        {role.icon}
+                        {role.name}
+                      </button>
+                    ))}
+                  </div>
 
-            <div className="space-y-2">
-              {suggestions.map((item) => (
-                <div key={item} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-[#d8d9de]">
-                  {item}
+                  <div className="space-y-2">
+                    {suggestions.map((item) => (
+                      <div key={item} className="rounded-xl bg-white/50 border border-white/40 px-3 py-2.5 text-sm text-gray-800">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+              </section>
 
-        <section className="rounded-2xl border border-white/[0.07] bg-[#14151c] p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Newspaper className="size-4 text-amber-400" />
-            <h2 className="text-lg font-semibold">Daily Indian Legal News</h2>
-          </div>
-
-          {loadingNews ? (
-            <p className="text-sm text-[#9b9ca2]">Loading latest legal updates...</p>
-          ) : news.length === 0 ? (
-            <p className="text-sm text-[#9b9ca2]">No news available right now. Please check again shortly.</p>
-          ) : (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
-              {news.map((item, idx) => (
-                <a
-                  key={`${item.url}_${idx}`}
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 hover:border-white/[0.14] transition-colors"
-                >
-                  <p className="text-[11px] text-[#7f8391] mb-2">{item.source}</p>
-                  <p className="text-sm leading-relaxed text-[#ececf0] mb-2">{item.title}</p>
-                  <p className="text-[11px] text-[#6f7382]">{item.published_at || 'Today'}</p>
-                </a>
-              ))}
-            </div>
+              {/* Recommended Books inline — shows role-aware picks */}
+              <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <BookMarked className="size-4 text-purple-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Recommended Books for You</h2>
+                  </div>
+                  <motion.button
+                    onClick={() => setActiveTab('books')}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="text-xs text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                  >
+                    Browse all <ArrowRight className="size-3" />
+                  </motion.button>
+                </div>
+                <p className="text-xs text-gray-500 mb-3">
+                  Based on your role: <span className="font-semibold text-gray-700 capitalize">{selectedRole}</span>
+                </p>
+                <RoleBookRecommendations role={selectedRole} apiUrl={API_URL} />
+              </section>
+            </motion.div>
           )}
+
+          {/* ─── Books Tab ─── */}
+          {activeTab === 'books' && (
+            <motion.div
+              key="books"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
+              className="space-y-6"
+            >
+              {/* Book Search */}
+              <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Library className="size-4 text-purple-600" />
+                  <h2 className="text-lg font-semibold text-gray-900">Search Legal Books</h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Search Google Books for Indian legal literature — textbooks, commentaries, and reference works.
+                  Results are context-aware: searching IPC topics will also recommend section-specific books.
+                </p>
+
+                <form onSubmit={handleBookSearch} className="flex gap-2 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={bookQuery}
+                      onChange={(e) => setBookQuery(e.target.value)}
+                      placeholder="e.g. IPC 420 fraud, bail law, constitutional rights..."
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-all"
+                    />
+                  </div>
+                  <motion.button
+                    type="submit"
+                    disabled={loadingBooks || bookQuery.trim().length < 2}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    {loadingBooks ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}
+                    Search
+                  </motion.button>
+                </form>
+
+                {/* Quick topic pills */}
+                <div className="flex flex-wrap gap-2">
+                  {quickTopics.map((topic) => (
+                    <motion.button
+                      key={topic.label}
+                      onClick={() => { setBookQuery(topic.query); searchBooks(topic.query) }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-3 py-1.5 rounded-full text-xs border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
+                    >
+                      {topic.label}
+                    </motion.button>
+                  ))}
+                </div>
+              </section>
+
+              {/* Book Results */}
+              {loadingBooks && (
+                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-8 text-center">
+                  <Loader2 className="size-6 animate-spin text-purple-500 mx-auto mb-3" />
+                  <p className="text-sm text-gray-600">Searching legal books...</p>
+                </div>
+              )}
+
+              {!loadingBooks && bookSearchDone && (
+                <div className="space-y-6">
+                  {books.length > 0 && (
+                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <BookOpen className="size-4 text-purple-600" />
+                        <h3 className="text-base font-semibold text-gray-900">Search Results</h3>
+                        <span className="text-xs text-gray-400 ml-auto">{books.length} books found</span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {books.map((book, i) => (
+                          <BookCard key={book.id || i} book={book} index={i} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {ipcBooks.length > 0 && (
+                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Scale className="size-4 text-emerald-600" />
+                        <h3 className="text-base font-semibold text-gray-900">IPC Section Books</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-4">
+                        Books related to IPC sections detected in your query
+                      </p>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {ipcBooks.map((book, i) => (
+                          <BookCard key={book.id || i} book={book} index={i} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {topicBooks.length > 0 && (
+                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Briefcase className="size-4 text-amber-600" />
+                        <h3 className="text-base font-semibold text-gray-900">Topic Recommendations</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-4">
+                        Additional books matching this legal topic area
+                      </p>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {topicBooks.map((book, i) => (
+                          <BookCard key={book.id || i} book={book} index={i} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {books.length === 0 && ipcBooks.length === 0 && topicBooks.length === 0 && (
+                    <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-8 text-center">
+                      <BookOpen className="size-8 text-gray-300 mx-auto mb-3" />
+                      <p className="text-sm text-gray-500">No books found. Try a different query or pick a topic above.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* How it works */}
+              {!bookSearchDone && !loadingBooks && (
+                <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                  <h3 className="text-base font-semibold text-gray-900 mb-4">How Book Search Works</h3>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="rounded-2xl bg-purple-50 border border-purple-100 p-4 text-center">
+                      <Search className="size-5 text-purple-500 mx-auto mb-2" />
+                      <p className="text-xs font-medium text-gray-900 mb-1">Query Analysis</p>
+                      <p className="text-xs text-gray-500">Your search is analyzed for IPC sections, legal topics, and key terms</p>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+                      <Scale className="size-5 text-emerald-500 mx-auto mb-2" />
+                      <p className="text-xs font-medium text-gray-900 mb-1">Context Matching</p>
+                      <p className="text-xs text-gray-500">If IPC sections are detected, section-specific reference books are added</p>
+                    </div>
+                    <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-center">
+                      <BookMarked className="size-5 text-amber-500 mx-auto mb-2" />
+                      <p className="text-xs font-medium text-gray-900 mb-1">Smart Results</p>
+                      <p className="text-xs text-gray-500">Results grouped into query matches, IPC books, and topic recommendations</p>
+                    </div>
+                  </div>
+                </section>
+              )}
+            </motion.div>
+          )}
+
+          {/* ─── News Tab ─── */}
+          {activeTab === 'news' && (
+            <motion.div
+              key="news"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
+            >
+              <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Newspaper className="size-4 text-amber-500" />
+                  <h2 className="text-lg font-semibold text-gray-900">Daily Indian Legal News</h2>
+                </div>
+
+                {loadingNews ? (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Loader2 className="size-4 animate-spin" />
+                    Loading latest legal updates...
+                  </div>
+                ) : news.length === 0 ? (
+                  <p className="text-sm text-gray-600">No news available right now. Please check again shortly.</p>
+                ) : (
+                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {news.map((item, idx) => (
+                      <a
+                        key={`${item.url}_${idx}`}
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-2xl bg-white/50 border border-white/40 p-4 hover:shadow-md transition-all hover:bg-white/70"
+                      >
+                        <p className="text-[11px] text-gray-400 font-medium mb-2">{item.source}</p>
+                        <p className="text-sm leading-relaxed text-gray-800 mb-2">{item.title}</p>
+                        <p className="text-[11px] text-gray-400">{item.published_at || 'Today'}</p>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* CTA */}
+        <section className="rounded-3xl bg-white/40 backdrop-blur-md border border-white/40 shadow-lg p-8 sm:p-12 text-center">
+          <h2 className="text-3xl font-semibold text-gray-900 mb-3">Ready to start learning?</h2>
+          <p className="text-sm text-gray-700 max-w-xl mx-auto mb-6 leading-relaxed">
+            Ask CaseCut any legal question and get citation-backed answers instantly.
+          </p>
+          <motion.button
+            onClick={() => navigate('/chat')}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-2 bg-black text-white rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-gray-800 transition-all duration-200"
+          >
+            Try CaseCut
+            <ArrowRight className="size-4" />
+          </motion.button>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200/50 py-8 px-4 mt-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <img src={logo} alt="CaseCut" className="h-5 w-5" />
+            <span className="text-xs font-semibold text-gray-900">CaseCut AI</span>
+          </div>
+          <p className="text-xs text-gray-500">
+            © {new Date().getFullYear()} CaseCut. Built for the Indian Legal Community.
+          </p>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+/** Role-aware book recommendations — fetches books based on user role */
+function RoleBookRecommendations({ role, apiUrl }) {
+  const [roleBooks, setRoleBooks] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const roleQueries = {
+    student: 'Indian law textbook beginner',
+    lawyer: 'Indian legal practice advocacy',
+    judge: 'Indian judicial precedent analysis',
+    firm: 'Indian corporate law compliance',
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+
+    const query = roleQueries[role] || roleQueries.student
+    fetch(`${apiUrl}/learning/books?q=${encodeURIComponent(query)}&max=4`)
+      .then(res => res.json())
+      .then(data => {
+        if (cancelled) return
+        setRoleBooks(data?.data?.books || [])
+      })
+      .catch(() => {
+        if (!cancelled) setRoleBooks([])
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
+  }, [role, apiUrl])
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-gray-500 py-4">
+        <Loader2 className="size-4 animate-spin" />
+        Loading book suggestions...
+      </div>
+    )
+  }
+
+  if (roleBooks.length === 0) {
+    return <p className="text-sm text-gray-500 py-2">No recommendations available.</p>
+  }
+
+  return (
+    <div className="grid sm:grid-cols-2 gap-3">
+      {roleBooks.map((book, i) => (
+        <BookCard key={book.id || i} book={book} index={i} />
+      ))}
     </div>
   )
 }

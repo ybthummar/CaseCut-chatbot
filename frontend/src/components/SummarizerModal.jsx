@@ -13,6 +13,7 @@ import remarkGfm from 'remark-gfm'
 
 export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 'lawyer' }) {
   const summarizeModels = getModelsByCapability('summarize')
+  const summarySize = 'large'
   const [selectedModel, setSelectedModel] = useState(summarizeModels[0]?.id || '')
   const [mode, setMode] = useState('text')           // 'text' | 'pdf'
   const [text, setText] = useState('')
@@ -27,6 +28,12 @@ export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 
   const fileInputRef = useRef(null)
 
   const roleMode = activeRole
+  const isPdfFile = (candidate) =>
+    !!candidate &&
+    (
+      candidate.type === 'application/pdf' ||
+      candidate.name?.toLowerCase().endsWith('.pdf')
+    )
 
   // ── Generate summary ────────────────────────────────────────────
   const handleGenerate = async () => {
@@ -48,13 +55,25 @@ export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 
         }
         setUploadProgress(80)
         // Summarize extracted text through backend to avoid browser->Firebase CORS upload issues
-        const result = await apiSummarizeText(extractedText, selectedModel, roleMode, task)
+        const result = await apiSummarizeText(
+          extractedText,
+          selectedModel,
+          roleMode,
+          task,
+          summarySize,
+        )
         setUploadProgress(100)
         resultSummary = result.summary
       } else {
         if (!text.trim()) throw new Error('Please enter text to summarize')
         // Route through backend — backend handles all providers
-        const result = await apiSummarizeText(text, selectedModel, roleMode, task)
+        const result = await apiSummarizeText(
+          text,
+          selectedModel,
+          roleMode,
+          task,
+          summarySize,
+        )
         resultSummary = result.summary
       }
 
@@ -90,7 +109,7 @@ export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 
   // ── File handling ───────────────────────────────────────────────
   const handleFileChange = (e) => {
     const selected = e.target.files?.[0]
-    if (selected && selected.type === 'application/pdf') {
+    if (isPdfFile(selected)) {
       setFile(selected)
       setError(null)
     } else {
@@ -101,7 +120,7 @@ export default function SummarizerModal({ isOpen, onClose, userId, activeRole = 
   const handleDrop = (e) => {
     e.preventDefault()
     const dropped = e.dataTransfer.files?.[0]
-    if (dropped && dropped.type === 'application/pdf') {
+    if (isPdfFile(dropped)) {
       setFile(dropped)
       setError(null)
     } else {
