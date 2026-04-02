@@ -3,6 +3,7 @@ import { Zap, Scale, MessageCircle, BookOpen, Search, FileText, ArrowRight, X, L
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import ThemeToggle from '../ThemeToggle';
 import { Avatar, AvatarImage, AvatarFallback } from './interfaces-avatar';
 import {
@@ -18,7 +19,9 @@ const MinimalHero = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const { user } = useAuth();
+  const { theme, meta } = useTheme();
   const navigate = useNavigate();
+  const isDark = theme === 'midnight';
 
   const cardConfigs = [
     {
@@ -70,7 +73,7 @@ const MinimalHero = () => {
   const currentConfig = cardConfigs[currentCard];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 w-full overflow-hidden max-w-screen to-purple-100 relative">
+    <div className={`min-h-screen bg-gradient-to-br ${meta.gradient} w-full overflow-hidden max-w-screen relative`}>
       {/* Login Popup for Guests */}
       {showLoginPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -118,26 +121,25 @@ const MinimalHero = () => {
 
       {/* Floating Navigation */}
       <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-4xl">
-        <nav className="bg-white/80 backdrop-blur-md rounded-2xl px-4 sm:px-6 py-3 shadow-lg border border-white/20">
+        <nav className={`${meta.navBg} backdrop-blur-md rounded-2xl px-4 sm:px-6 py-3 shadow-lg border ${meta.border}`}>
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
               <img src={logo} alt="CaseCut" className="h-7 w-7" />
-              <span className="text-lg font-medium text-gray-900">CaseCut AI</span>
+              <span className={`text-lg font-medium ${meta.textPrimary}`}>CaseCut AI</span>
             </Link>
 
             <div className="hidden md:flex items-center space-x-6">
-              <motion.a whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Features</motion.a>
+              <motion.a whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} href="#features" className={`text-sm font-medium ${meta.textSecondary} hover:${meta.textPrimary} transition-colors`}>Features</motion.a>
               <Link to="/about">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">About</motion.span>
+                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} className={`text-sm font-medium ${meta.textSecondary} hover:${meta.textPrimary} transition-colors`}>About</motion.span>
               </Link>
               <Link to="/learning">
-                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Learning Hub</motion.span>
+                <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} className={`text-sm font-medium ${meta.textSecondary} hover:${meta.textPrimary} transition-colors`}>Learning Hub</motion.span>
               </Link>
             </div>
 
             <div className="flex items-center gap-2">
-            <ThemeToggle />
-
+            <ThemeToggle variant={isDark ? 'dark' : 'auto'} />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -195,7 +197,7 @@ const MinimalHero = () => {
                 whileHover={{ scale: 1.06 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/login')}
-                className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all duration-200 flex items-center space-x-1.5 text-sm font-medium flex-shrink-0"
+                className={`${isDark ? 'bg-white text-gray-900 hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 text-sm font-medium flex-shrink-0`}
               >
                 <span>Login</span>
                 <ArrowRight className="w-3 h-3" />
@@ -210,11 +212,11 @@ const MinimalHero = () => {
       <div className="flex flex-col items-center justify-center px-6 pt-40 pb-16 max-w-7xl mx-auto">
         {/* Main Heading */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-thin text-gray-900 leading-tight mb-6 tracking-tight">
+          <h1 className={`text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-thin ${meta.textPrimary} leading-tight mb-6 tracking-tight`}>
             Legal Research, <br />
             Reimagined with AI
           </h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
+          <p className={`text-lg ${meta.textSecondary} max-w-2xl mx-auto leading-relaxed`}>
             AI-powered Indian case law analysis. Get citation-backed answers, summaries, and precedents in seconds.
           </p>
         </div>
@@ -224,7 +226,7 @@ const MinimalHero = () => {
           whileHover={{ scale: 1.08, boxShadow: '0 20px 40px rgba(0,0,0,0.15)' }}
           whileTap={{ scale: 0.95 }}
           onClick={handleGetStarted}
-          className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-all duration-300 mb-16 flex items-center space-x-2 text-base font-semibold group"
+          className={`${isDark ? 'bg-white text-gray-900 hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} px-6 py-3 rounded-lg transition-all duration-300 mb-16 flex items-center space-x-2 text-base font-semibold group`}
         >
           <span>Get started free</span>
           <Zap className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -413,7 +415,9 @@ const MinimalHero = () => {
                 key={index}
                 onClick={() => setCurrentCard(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  currentCard === index ? 'bg-gray-800 scale-125' : 'bg-gray-400 hover:bg-gray-600'
+                  currentCard === index
+                    ? (isDark ? 'bg-white scale-125' : 'bg-gray-800 scale-125')
+                    : (isDark ? 'bg-gray-500 hover:bg-gray-300' : 'bg-gray-400 hover:bg-gray-600')
                 }`}
               />
             ))}

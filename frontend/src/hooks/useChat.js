@@ -145,7 +145,7 @@ export function useChat(user) {
             role: 'assistant',
             text: data.answer || 'No answer returned.',
             cases: data.citations || [],
-            model: `casecut-legal (${data.source || 'unknown'})`,
+            model: `casecut-legal (${data.source || 'PDF'})`,
             confidence: data.confidence || null,
             isPdfChat: true,
           };
@@ -166,7 +166,7 @@ export function useChat(user) {
             role: 'assistant',
             text: data.summary || 'No summary returned.',
             cases: data.cases || [],
-            model: `casecut-legal (${data.source || 'unknown'})`,
+            model: `casecut-legal (${data.source || 'RAG'})`,
             confidence: data.confidence || null,
           };
 

@@ -736,17 +736,51 @@ export default function ChatPage() {
                           <BookOpen className="size-3" />
                           Supporting Sources ({msg.cases.length})
                         </div>
-                        {msg.cases.map((c, j) => (
+                        {msg.cases.map((c, j) => {
+                          // Build a meaningful citation title with fallbacks
+                          const courtClean = c.court?.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+                          const dateClean = c.date?.trim();
+                          const hasIpc = c.ipc_sections?.length > 0;
+                          const hasTopics = c.topics?.length > 0;
+
+                          let citationTitle = '';
+                          if (c.approximate_page != null) {
+                            // PDF chat mode
+                            citationTitle = null; // handled separately below
+                          } else if (courtClean || dateClean) {
+                            citationTitle = [
+                              courtClean,
+                              dateClean && `${dateClean}`,
+                              hasIpc && `IPC ${c.ipc_sections.slice(0, 3).join(', ')}`,
+                            ].filter(Boolean).join(' — ');
+                          } else if (hasTopics) {
+                            citationTitle = `${c.topics.slice(0, 3).map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')}`;
+                          } else if (c.doc_id) {
+                            citationTitle = `Case Document #${c.doc_id.slice(0, 8)}`;
+                          } else if (c.file) {
+                            citationTitle = c.file.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+                          } else {
+                            citationTitle = `Source ${j + 1}`;
+                          }
+
+                          const relevanceScore = c.rank_score > 0
+                            ? c.rank_score
+                            : c.similarity > 0
+                              ? c.similarity
+                              : null;
+
+                          return (
                           <details key={j} className="text-xs group rounded-lg border border-white/[0.04] hover:border-white/[0.08] transition-colors">
                             <summary className="cursor-pointer text-[#4da5fc] hover:text-[#6ab8ff] transition-colors font-normal tracking-wide px-2.5 py-2 flex items-center gap-2">
                               <span className="flex-shrink-0 size-5 rounded-md bg-[#1488fc]/15 text-[#4da5fc] text-[10px] font-semibold flex items-center justify-center">{j + 1}</span>
-                              {c.approximate_page ? (
+                              {c.approximate_page != null ? (
                                 <span>Section ~Page {c.approximate_page}, Chunk {c.chunk_index + 1} <span className="text-emerald-400 ml-1">(Relevance: {(c.similarity * 100).toFixed(0)}%)</span></span>
                               ) : (
-                                <span>
-                                  {c.court && `${c.court}`}
-                                  {c.date && ` — ${c.date}`}
-                                  {c.ipc_sections?.length > 0 && ` — IPC ${c.ipc_sections.slice(0, 3).join(', ')}`}
+                                <span className="flex items-center gap-1.5 flex-wrap">
+                                  <span>{citationTitle}</span>
+                                  {relevanceScore && (
+                                    <span className="text-emerald-400 text-[10px]">({(relevanceScore * 100).toFixed(0)}% match)</span>
+                                  )}
                                 </span>
                               )}
                             </summary>
@@ -758,6 +792,11 @@ export default function ChatPage() {
                                 {c.outcome && c.outcome !== 'unknown' && (
                                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
                                     Outcome: {c.outcome}
+                                  </span>
+                                )}
+                                {hasTopics && (
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400">
+                                    {c.topics.slice(0, 3).map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')}
                                   </span>
                                 )}
                                 {c.file && (
@@ -783,7 +822,8 @@ export default function ChatPage() {
                               </div>
                             </div>
                           </details>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
 
