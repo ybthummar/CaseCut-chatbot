@@ -336,7 +336,7 @@ export function VoiceChat({
           </motion.p>
 
           {isListening && (
-            <p className="text-xs text-gray-500 font-mono">{formatTime(duration)}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-300 font-mono">{formatTime(duration)}</p>
           )}
 
           {volume > 0 && (isListening || isSpeaking) && (
@@ -360,7 +360,7 @@ export function VoiceChat({
 
         {/* AI indicator */}
         <motion.div
-          className="flex items-center space-x-2 text-xs text-gray-400"
+          className="flex items-center space-x-2 text-xs text-gray-400 dark:text-gray-300"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         >

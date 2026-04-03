@@ -8,7 +8,7 @@ It provides:
 - Precedent-focused retrieval
 - Per-feature history in UI
 - Strict RAG answer evaluator endpoint
-- Multi-provider LLM orchestration (OpenAI, Groq, Gemini, HF)
+- Multi-provider LLM orchestration (OpenAI, Groq, Gemini)
 
 ## What The Project Does
 
@@ -24,7 +24,7 @@ CaseCut is built for practical legal research and drafting support:
 - FastAPI
 - Qdrant (vector database)
 - sentence-transformers embeddings (`all-MiniLM-L6-v2`)
-- Optional providers: OpenAI / Groq / Gemini / HuggingFace
+- Optional providers: OpenAI / Groq / Gemini
 - PyMuPDF for PDF extraction
 
 ### Frontend
@@ -134,7 +134,6 @@ Fill at minimum:
 - one LLM provider key (`OPENAI_API_KEY` or `GROQ_API_KEY` or `GEMINI_API_KEY`)
 
 Optional:
-- `HF_API_TOKEN`
 - `CORS_ORIGINS`
 
 ### 2) Frontend env

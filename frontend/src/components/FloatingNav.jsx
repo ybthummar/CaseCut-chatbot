@@ -1,7 +1,8 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowRight, LogOut, MessageCircle, Settings, User, FileText, Scale } from 'lucide-react';
+import { ArrowRight, LogOut, MessageCircle, Settings, User, FileText, Scale, Mic } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/interfaces-avatar';
 import ThemeToggle from './ThemeToggle';
 import {
@@ -18,8 +19,10 @@ const MotionLink = motion(Link);
 
 export default function FloatingNav() {
   const { user, logout } = useAuth();
+  const { theme, meta } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const isDark = theme === 'midnight';
 
   const handleLogout = async () => {
     try {
@@ -37,8 +40,8 @@ export default function FloatingNav() {
       whileTap={{ scale: 0.97 }}
       className={`text-sm font-medium transition-colors ${
         location.pathname === to
-          ? 'text-gray-900'
-          : 'text-gray-600 hover:text-gray-900'
+          ? meta.textPrimary
+          : `${meta.textSecondary}`
       }`}
     >
       {label}
@@ -46,12 +49,12 @@ export default function FloatingNav() {
   );
 
   return (
-    <div className="sticky top-0 z-50 flex justify-center px-4 pt-6 pb-2 bg-gradient-to-b from-purple-100/90 to-transparent">
-      <nav className="bg-white/80 backdrop-blur-md rounded-2xl px-4 sm:px-6 py-3 shadow-lg border border-white/20 w-full max-w-4xl">
+    <div className={`sticky top-0 z-50 flex justify-center px-4 pt-6 pb-2 bg-gradient-to-b ${isDark ? 'from-gray-950/90' : 'from-purple-100/90'} to-transparent`}>
+      <nav className={`${meta.navBg} backdrop-blur-md rounded-2xl px-4 sm:px-6 py-3 shadow-lg border ${meta.border} w-full max-w-4xl`}>
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img src={logo} alt="CaseCut" className="h-7 w-7" />
-            <span className="text-lg font-semibold text-gray-900">CaseCut AI</span>
+            <span className={`text-lg font-semibold ${meta.textPrimary}`}>CaseCut AI</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
@@ -61,7 +64,7 @@ export default function FloatingNav() {
           </div>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <ThemeToggle variant={isDark ? 'dark' : 'auto'} />
 
           {user ? (
             <DropdownMenu>
@@ -69,7 +72,7 @@ export default function FloatingNav() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 rounded-full p-0.5 ring-2 ring-transparent hover:ring-purple-300 transition-all duration-200 cursor-pointer focus:outline-none"
+                  className={`flex items-center gap-2 rounded-full p-0.5 ring-2 ring-transparent ${isDark ? 'hover:ring-purple-500/50' : 'hover:ring-purple-300'} transition-all duration-200 cursor-pointer focus:outline-none`}
                 >
                   <Avatar className="size-8">
                     {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || user.email} />}
@@ -90,26 +93,30 @@ export default function FloatingNav() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{user.displayName || 'User'}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      <p className="text-sm font-semibold truncate">{user.displayName || 'User'}</p>
+                      <p className="text-xs opacity-60 truncate">{user.email}</p>
                     </div>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/chat')} className="text-gray-700">
-                  <MessageCircle className="size-4 text-gray-500" />
+                <DropdownMenuItem onClick={() => navigate('/chat')}>
+                  <MessageCircle className="size-4 opacity-60" />
                   <span className="font-medium">Legal Chat</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/summarizer')} className="text-gray-700">
-                  <FileText className="size-4 text-gray-500" />
+                <DropdownMenuItem onClick={() => navigate('/summarizer')}>
+                  <FileText className="size-4 opacity-60" />
                   <span className="font-medium">Summarizer</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/precedents')} className="text-gray-700">
-                  <Scale className="size-4 text-gray-500" />
+                <DropdownMenuItem onClick={() => navigate('/precedents')}>
+                  <Scale className="size-4 opacity-60" />
                   <span className="font-medium">Precedent Finder</span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/voice')}>
+                  <Mic className="size-4 opacity-60" />
+                  <span className="font-medium">Voice Assistant</span>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:bg-red-50">
+                <DropdownMenuItem onClick={handleLogout} className="text-red-500">
                   <LogOut className="size-4" />
                   <span className="font-medium">Log out</span>
                 </DropdownMenuItem>
@@ -120,7 +127,7 @@ export default function FloatingNav() {
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/login')}
-              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all duration-200 flex items-center space-x-1.5 text-sm font-medium flex-shrink-0"
+              className={`${isDark ? 'bg-white text-gray-900 hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-1.5 text-sm font-medium flex-shrink-0`}
             >
               <span>Login</span>
               <ArrowRight className="w-3 h-3" />

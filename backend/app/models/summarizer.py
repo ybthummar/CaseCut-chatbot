@@ -1,8 +1,7 @@
 """
 Local summarizer model wrapper.
 
-This module tries local seq2seq summarizer models first (from backend/Model),
-then falls back to a HuggingFace model name if configured.
+This module loads local seq2seq summarizer models from backend/Model.
 """
 
 from __future__ import annotations

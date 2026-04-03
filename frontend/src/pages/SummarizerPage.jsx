@@ -36,7 +36,8 @@ const isPdfFile = (candidate) =>
 
 export default function SummarizerPage() {
   const { user } = useAuth();
-  const { meta } = useTheme();
+  const { theme, meta } = useTheme();
+  const isDark = theme === 'midnight';
   const summarizeModels = getModelsByCapability('summarize');
   const [selectedModel, setSelectedModel] = useState(summarizeModels[0]?.id || '');
   const [mode, setMode] = useState('text');
@@ -133,14 +134,14 @@ export default function SummarizerPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
-        <div className="mb-6 rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+        <div className={`mb-6 rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
           <div className="flex items-center gap-3 mb-1">
-            <div className="p-2 bg-purple-100 rounded-xl">
+            <div className={`p-2 ${isDark ? 'bg-purple-900/40' : 'bg-purple-100'} rounded-xl`}>
               <FileText className="size-5 text-purple-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Legal Document Summarizer</h1>
-              <p className="text-sm text-gray-600 mt-0.5">AI-powered summarization with extractive & abstractive models</p>
+              <h1 className={`text-2xl font-bold ${meta.textPrimary}`}>Legal Document Summarizer</h1>
+              <p className={`text-sm ${meta.textSecondary} mt-0.5`}>AI-powered summarization with extractive & abstractive models</p>
             </div>
           </div>
         </div>
@@ -151,27 +152,27 @@ export default function SummarizerPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             className={`rounded-2xl p-4 border shadow-md transition-all cursor-pointer ${
               task === 'summarize'
-                ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-200'
-                : 'bg-white/60 border-white/40 hover:bg-white/80'
+                ? isDark ? 'bg-purple-900/30 border-purple-500/40 ring-2 ring-purple-500/20' : 'bg-purple-50 border-purple-300 ring-2 ring-purple-200'
+                : isDark ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white/60 border-white/40 hover:bg-white/80'
             }`}
             onClick={() => setTask('summarize')}
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-purple-100 rounded-lg">
+              <div className={`p-1.5 ${isDark ? 'bg-purple-900/40' : 'bg-purple-100'} rounded-lg`}>
                 <FileSearch className="size-4 text-purple-600" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900">Summarization</h3>
+              <h3 className={`text-sm font-bold ${meta.textPrimary}`}>Summarization</h3>
               {task === 'summarize' && <Check className="size-4 text-purple-600 ml-auto" />}
             </div>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className={`text-xs ${meta.textSecondary} leading-relaxed`}>
               <strong>Extractive</strong> picks the most important original sentences using SBERT embeddings.
               <strong> Abstractive</strong> generates new text using T5/BART/Pegasus models.
               Best for getting quick overviews of judgments and FIRs.
             </p>
             <div className="mt-2 flex gap-1">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">SBERT</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">T5</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium">BART</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-purple-900/40 text-purple-300' : 'bg-purple-100 text-purple-700'}`}>SBERT</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>T5</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-emerald-900/40 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>BART</span>
             </div>
           </motion.div>
 
@@ -179,25 +180,25 @@ export default function SummarizerPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             className={`rounded-2xl p-4 border shadow-md transition-all cursor-pointer ${
               task === 'case_prediction'
-                ? 'bg-blue-50 border-blue-300 ring-2 ring-blue-200'
-                : 'bg-white/60 border-white/40 hover:bg-white/80'
+                ? isDark ? 'bg-blue-900/30 border-blue-500/40 ring-2 ring-blue-500/20' : 'bg-blue-50 border-blue-300 ring-2 ring-blue-200'
+                : isDark ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white/60 border-white/40 hover:bg-white/80'
             }`}
             onClick={() => setTask('case_prediction')}
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-blue-100 rounded-lg">
+              <div className={`p-1.5 ${isDark ? 'bg-blue-900/40' : 'bg-blue-100'} rounded-lg`}>
                 <Eye className="size-4 text-blue-600" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900">Case Prediction</h3>
+              <h3 className={`text-sm font-bold ${meta.textPrimary}`}>Case Prediction</h3>
               {task === 'case_prediction' && <Check className="size-4 text-blue-600 ml-auto" />}
             </div>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className={`text-xs ${meta.textSecondary} leading-relaxed`}>
               AI analyzes the case facts, charges, and legal precedents to predict likely outcomes.
               Uses pattern matching from similar historical judgments to estimate conviction, acquittal, or bail probabilities.
             </p>
             <div className="mt-2 flex gap-1">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">AI Analysis</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">Precedent</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>AI Analysis</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>Precedent</span>
             </div>
           </motion.div>
 
@@ -205,32 +206,32 @@ export default function SummarizerPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             className={`rounded-2xl p-4 border shadow-md transition-all cursor-pointer ${
               task === 'ipc_detection'
-                ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-200'
-                : 'bg-white/60 border-white/40 hover:bg-white/80'
+                ? isDark ? 'bg-emerald-900/30 border-emerald-500/40 ring-2 ring-emerald-500/20' : 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-200'
+                : isDark ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white/60 border-white/40 hover:bg-white/80'
             }`}
             onClick={() => setTask('ipc_detection')}
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-emerald-100 rounded-lg">
+              <div className={`p-1.5 ${isDark ? 'bg-emerald-900/40' : 'bg-emerald-100'} rounded-lg`}>
                 <BookOpen className="size-4 text-emerald-600" />
               </div>
-              <h3 className="text-sm font-bold text-gray-900">IPC Detection</h3>
+              <h3 className={`text-sm font-bold ${meta.textPrimary}`}>IPC Detection</h3>
               {task === 'ipc_detection' && <Check className="size-4 text-emerald-600 ml-auto" />}
             </div>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className={`text-xs ${meta.textSecondary} leading-relaxed`}>
               Automatically identifies all IPC (Indian Penal Code) sections mentioned in the document.
               Extracts section numbers, titles, and associated punishments for quick legal reference.
             </p>
             <div className="mt-2 flex gap-1">
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium">IPC Sections</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">Auto-detect</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-emerald-900/40 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>IPC Sections</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDark ? 'bg-red-900/40 text-red-300' : 'bg-red-100 text-red-700'}`}>Auto-detect</span>
             </div>
           </motion.div>
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           {/* Main Panel */}
-          <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-5">
+          <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-5`}>
             <div className="mb-4 grid gap-3 sm:grid-cols-2">
               <div>
                 <AnimatedSelect
@@ -243,17 +244,17 @@ export default function SummarizerPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700 mb-1 block">Input Mode</label>
-                <div className="grid grid-cols-2 rounded-xl border border-gray-200 bg-white/50 p-1">
+                <label className={`text-xs font-semibold ${meta.textSecondary} mb-1 block`}>Input Mode</label>
+                <div className={`grid grid-cols-2 rounded-xl border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-200 bg-white/50'} p-1`}>
                   <button
                     onClick={() => setMode('text')}
-                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${mode === 'text' ? 'bg-black text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${mode === 'text' ? (isDark ? 'bg-white text-gray-900' : 'bg-black text-white') : meta.textSecondary}`}
                   >
                     Text Input
                   </button>
                   <button
                     onClick={() => setMode('pdf')}
-                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${mode === 'pdf' ? 'bg-black text-white' : 'text-gray-600 hover:text-gray-900'}`}
+                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${mode === 'pdf' ? (isDark ? 'bg-white text-gray-900' : 'bg-black text-white') : meta.textSecondary}`}
                   >
                     PDF Upload
                   </button>
@@ -266,7 +267,7 @@ export default function SummarizerPage() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Paste judgment text, legal argument, or FIR details..."
-                className="h-48 w-full rounded-2xl border border-gray-200 bg-white/80 p-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300/50"
+                className={`h-48 w-full rounded-2xl border ${isDark ? 'border-white/10 bg-white/5 text-white' : 'border-gray-200 bg-white/80 text-gray-900'} p-4 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300/50`}
               />
             ) : (
               <div
@@ -276,7 +277,7 @@ export default function SummarizerPage() {
                   onFilePick(e.dataTransfer.files?.[0]);
                 }}
                 onClick={() => fileInputRef.current?.click()}
-                className="cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 bg-white/40 p-6 text-center hover:bg-white/60 transition-colors"
+                className={`cursor-pointer rounded-2xl border-2 border-dashed ${isDark ? 'border-white/20 bg-white/5 hover:bg-white/10' : 'border-gray-300 bg-white/40 hover:bg-white/60'} p-6 text-center transition-colors`}
               >
                 <input
                   ref={fileInputRef}
@@ -285,12 +286,12 @@ export default function SummarizerPage() {
                   className="hidden"
                   onChange={(e) => onFilePick(e.target.files?.[0])}
                 />
-                <Upload className="mx-auto mb-3 size-7 text-gray-400" />
-                <p className="text-sm font-medium text-gray-700">Drop a PDF here or click to choose</p>
-                <p className="mt-1 text-xs text-gray-600">Optimized preview card appears after upload.</p>
+                <Upload className={`mx-auto mb-3 size-7 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+                <p className={`text-sm font-medium ${meta.textSecondary}`}>Drop a PDF here or click to choose</p>
+                <p className={`mt-1 text-xs ${meta.textSecondary}`}>Optimized preview card appears after upload.</p>
 
                 {file && (
-                  <div className="mx-auto mt-4 flex max-w-lg items-center gap-3 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-left">
+                  <div className={`mx-auto mt-4 flex max-w-lg items-center gap-3 rounded-xl border ${isDark ? 'border-emerald-500/30 bg-emerald-900/20' : 'border-emerald-300 bg-emerald-50'} p-3 text-left`}>
                     <FileText className="size-5 text-emerald-600" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-emerald-800">{file.name}</p>
@@ -307,7 +308,7 @@ export default function SummarizerPage() {
                   <span>Preparing summary</span>
                   <span>{uploadProgress}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-gray-200">
+                <div className={`h-2 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
                   <div className="h-2 rounded-full bg-emerald-400 transition-all" style={{ width: `${uploadProgress}%` }} />
                 </div>
               </div>
@@ -321,7 +322,7 @@ export default function SummarizerPage() {
                 disabled={loading}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-60 transition-all"
+                className={`inline-flex items-center gap-2 rounded-lg ${isDark ? 'bg-white text-gray-900 hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'} px-4 py-2 text-sm font-semibold disabled:opacity-60 transition-all`}
               >
                 {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
                 {loading ? 'Generating...' : 'Generate Summary'}
@@ -329,7 +330,7 @@ export default function SummarizerPage() {
               {summary && (
                 <button
                   onClick={copySummary}
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white/60 px-3 py-2 text-xs text-gray-700 hover:bg-white/80 transition-all"
+                  className={`inline-flex items-center gap-2 rounded-lg border ${isDark ? 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10' : 'border-gray-200 bg-white/60 text-gray-700 hover:bg-white/80'} px-3 py-2 text-xs transition-all`}
                 >
                   {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
                   {copied ? 'Copied' : 'Copy'}
@@ -338,7 +339,7 @@ export default function SummarizerPage() {
             </div>
 
             {summary && (
-              <div className="mt-5 rounded-2xl bg-white/50 border border-white/40 p-4">
+              <div className={`mt-5 rounded-2xl ${isDark ? 'bg-white/5 border-white/10' : 'bg-white/50 border-white/40'} border p-4`}>
                 <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-3 text-purple-500" />
@@ -346,10 +347,10 @@ export default function SummarizerPage() {
                   </div>
                   <span>{selectedModelObj?.name || selectedModel}</span>
                 </div>
-                <div className="prose prose-sm max-w-none text-gray-800">
+                <div className={`prose prose-sm max-w-none ${isDark ? 'prose-invert text-gray-200' : 'text-gray-800'}`}>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{summary}</ReactMarkdown>
                 </div>
-                <div className="mt-3 pt-2 border-t border-gray-200/50 flex items-center gap-1.5">
+                <div className={`mt-3 pt-2 border-t ${isDark ? 'border-white/10' : 'border-gray-200/50'} flex items-center gap-1.5`}>
                   <svg className="size-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                     <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
@@ -361,12 +362,12 @@ export default function SummarizerPage() {
           </section>
 
           {/* History Sidebar */}
-          <aside className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-4">
+          <aside className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-4`}>
             <button
               onClick={() => setHistoryOpen((v) => !v)}
-              className="mb-3 flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white/60 px-3 py-2 hover:bg-white/80 transition-colors"
+              className={`mb-3 flex w-full items-center justify-between rounded-xl border ${isDark ? 'border-white/10 bg-white/5 hover:bg-white/10' : 'border-gray-200 bg-white/60 hover:bg-white/80'} px-3 py-2 transition-colors`}
             >
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-gray-900">
+              <span className={`inline-flex items-center gap-2 text-sm font-medium ${meta.textPrimary}`}>
                 <History className="size-4" />
                 Summary History
               </span>
@@ -377,15 +378,15 @@ export default function SummarizerPage() {
               {historyOpen && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
                   {history.length === 0 && (
-                    <p className="rounded-xl bg-white/50 border border-white/40 p-3 text-xs text-gray-600">No history yet. Your recent summaries will appear here.</p>
+                    <p className={`rounded-xl ${isDark ? 'bg-white/5 border-white/10' : 'bg-white/50 border-white/40'} border p-3 text-xs ${meta.textSecondary}`}>No history yet. Your recent summaries will appear here.</p>
                   )}
                   {history.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setSummary(item.summary || '')}
-                      className="w-full rounded-xl bg-white/50 border border-white/40 p-3 text-left hover:bg-white/70 hover:shadow-md transition-all"
+                      className={`w-full rounded-xl ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white/50 border-white/40 hover:bg-white/70'} border p-3 text-left hover:shadow-md transition-all`}
                     >
-                      <p className="truncate text-xs font-semibold text-gray-900">{item.sourceLabel}</p>
+                      <p className={`truncate text-xs font-semibold ${meta.textPrimary}`}>{item.sourceLabel}</p>
                       <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-500">
                         <Bot className="size-3" />
                         <span>{item.model}</span>
@@ -404,11 +405,11 @@ export default function SummarizerPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200/50 py-8 px-4 mt-8">
+      <footer className={`border-t ${isDark ? 'border-white/10' : 'border-gray-200/50'} py-8 px-4 mt-8`}>
         <div className="max-w-5xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
             <img src={logo} alt="CaseCut" className="h-5 w-5" />
-            <span className="text-xs font-semibold text-gray-900">CaseCut AI</span>
+            <span className={`text-xs font-semibold ${meta.textPrimary}`}>CaseCut AI</span>
           </div>
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <svg className="size-3 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

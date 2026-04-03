@@ -10,6 +10,7 @@ import ChatPage from './pages/ChatPage.jsx';
 import LearningHubPage from './pages/LearningHubPage.jsx';
 import SummarizerPage from './pages/SummarizerPage.jsx';
 import PrecedentPage from './pages/PrecedentPage.jsx';
+import VoiceAssistantPage from './pages/VoiceAssistantPage.jsx';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './index.css';
 
@@ -51,6 +52,7 @@ function Main() {
               }
             />
             <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+            <Route path="/voice" element={<ProtectedRoute><VoiceAssistantPage /></ProtectedRoute>} />
             <Route path="/summarizer" element={<ProtectedRoute><SummarizerPage /></ProtectedRoute>} />
             <Route path="/precedents" element={<ProtectedRoute><PrecedentPage /></ProtectedRoute>} />
           </Routes>

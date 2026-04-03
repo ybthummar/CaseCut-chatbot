@@ -732,7 +732,7 @@ export default function ChatPage() {
                     {/* Case citations — with numbered source cards */}
                     {msg.cases && msg.cases.length > 0 && (
                       <div className="mt-4 pt-3 border-t border-white/[0.08] space-y-2">
-                        <div className="text-xs font-medium text-[#8a8a8f] uppercase tracking-wider flex items-center gap-2">
+                        <div className="text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider flex items-center gap-2">
                           <BookOpen className="size-3" />
                           Supporting Sources ({msg.cases.length})
                         </div>
@@ -1303,7 +1303,7 @@ export default function ChatPage() {
               <span className="text-lg font-semibold text-white">CaseCut AI Voice Agent</span>
             </div>
 
-            <p className="text-xs text-[#5a5a5f] mb-6 max-w-sm text-center">
+            <p className={`text-xs mb-6 max-w-sm text-center ${isDark ? 'text-white/80' : 'text-gray-700'}`}>
               Real-time conversation — speak naturally, interrupt anytime. The agent remembers your conversation.
             </p>
 
@@ -1361,7 +1361,7 @@ export default function ChatPage() {
                   exit={{ opacity: 0, y: -5 }}
                   className="mt-4 flex flex-col items-center gap-3"
                 >
-                  <div className="flex items-center gap-2 text-yellow-400 text-sm">
+                  <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
                     <Loader2 className="size-4 animate-spin" />
                     <span>Agent is thinking...</span>
                   </div>
@@ -1391,17 +1391,17 @@ export default function ChatPage() {
             {/* Conversation memory indicator */}
             {voiceMemory.length > 0 && (
               <div className="mt-4 max-w-sm w-full max-h-32 overflow-y-auto px-2">
-                <p className="text-[10px] text-[#5a5a5f] text-center mb-2 uppercase tracking-wider">
+                <p className={`text-[10px] ${meta.voiceCaption} text-center mb-2 uppercase tracking-wider font-semibold`}>
                   Conversation Memory ({voiceMemory.length} turns)
                 </p>
                 <div className="space-y-1">
                   {voiceMemory.slice(-6).map((turn, i) => (
                     <div
                       key={i}
-                      className={`text-[11px] px-3 py-1.5 rounded-lg ${
+                      className={`text-[11px] px-3 py-1.5 rounded-lg font-medium ${
                         turn.role === 'user'
-                          ? 'bg-white/5 text-white/60 text-right'
-                          : 'bg-[#1488fc]/10 text-[#4da5fc] text-left'
+                          ? `${meta.memoryUserBg} ${meta.memoryUserText}`
+                          : `${meta.memoryAssistantBg} ${meta.memoryAssistantText}`
                       }`}
                     >
                       <span className="truncate block">{turn.text.slice(0, 80)}{turn.text.length > 80 ? '…' : ''}</span>

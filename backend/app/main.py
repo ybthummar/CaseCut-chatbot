@@ -74,10 +74,6 @@ def _print_startup_banner():
     dim = embedder.get_sentence_embedding_dimension()
     logger.info("Embedder     | all-MiniLM-L6-v2 | dim=%d", dim)
 
-    # HuggingFace
-    hf_ok = bool(os.getenv("HF_API_TOKEN"))
-    logger.info("HuggingFace  | Token: %s", "configured" if hf_ok else "not set (HF models won't work)")
-
     logger.info("API ready    | http://0.0.0.0:%s | v5.0", os.getenv("PORT", "8000"))
 
 
@@ -151,7 +147,6 @@ def health():
     services["groq"] = "configured" if os.getenv("GROQ_API_KEY") else "missing"
     services["gemini"] = "configured" if os.getenv("GEMINI_API_KEY") else "missing"
     services["embedder"] = "loaded"
-    services["huggingface"] = "configured" if os.getenv("HF_API_TOKEN") else "not_set"
 
     all_ok = all(v not in ("error", "missing") for v in services.values())
     return {

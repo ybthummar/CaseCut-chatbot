@@ -5,10 +5,9 @@
  * Shape:
  *   id          – unique slug used in API calls and Firestore
  *   name        – human-readable label
- *   provider    – 'local' | 'huggingface' (extend as needed)
+ *   provider    – 'local' (extend as needed)
  *   description – one-liner shown in the UI
  *   capabilities – array of feature flags: 'chat' | 'summarize'
- *   hfModel     – (HuggingFace only) model repo path
  */
 
 export const models = [
@@ -46,27 +45,6 @@ export const models = [
     provider: 'local',
     description: 'Local model first, then API refinement for long legal summaries',
     capabilities: ['chat', 'summarize'],
-  },
-  {
-    id: 'hf-bart-large-cnn',
-    name: 'BART Large CNN',
-    provider: 'huggingface',
-    description: 'Facebook — abstractive summarization',
-    capabilities: ['summarize'],
-  },
-  {
-    id: 'hf-legal-led',
-    name: 'Legal LED',
-    provider: 'huggingface',
-    description: 'Long-document legal summarization',
-    capabilities: ['summarize'],
-  },
-  {
-    id: 'hf-falconsai',
-    name: 'FalconSAI Summarizer',
-    provider: 'huggingface',
-    description: 'Lightweight text summarization',
-    capabilities: ['summarize'],
   },
 ];
 

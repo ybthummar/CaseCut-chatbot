@@ -57,6 +57,7 @@ const personalizedPlans = {
 
 export default function LearningHubPage() {
   const { meta } = useTheme();
+  const isDark = meta.isDark;
   const navigate = useNavigate()
   const [selectedRole, setSelectedRole] = useState('student')
   const [news, setNews] = useState([])
@@ -170,16 +171,16 @@ export default function LearningHubPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* Hero Section */}
-        <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6 sm:p-8">
+        <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6 sm:p-8`}>
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium bg-purple-100 text-purple-700 mb-4">
               <Brain className="size-3.5" />
               AI-First Learning
             </div>
-            <h1 className="text-4xl sm:text-5xl font-thin tracking-tight mb-3 text-gray-900">
+            <h1 className={`text-4xl sm:text-5xl font-thin tracking-tight mb-3 ${meta.textPrimary}`}>
               Learn Indian Law with Personalized AI Guidance
             </h1>
-            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+            <p className={`text-sm sm:text-base leading-relaxed ${meta.textSecondary}`}>
               Explore curated learning journeys, search legal reference books, and get daily developments — all powered by AI.
             </p>
           </div>
@@ -196,7 +197,7 @@ export default function LearningHubPage() {
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
                 activeTab === tab.id
                   ? 'bg-black text-white border-black shadow-lg'
-                  : 'bg-white/60 border-white/40 text-gray-600 hover:bg-white/80 hover:text-gray-900'
+                  : `${meta.cardBg} border ${meta.border} ${meta.textSecondary} hover:${meta.cardBg} hover:${meta.textPrimary}`
               }`}
             >
               {tab.icon}
@@ -218,26 +219,26 @@ export default function LearningHubPage() {
               className="space-y-6"
             >
               <section className="grid lg:grid-cols-2 gap-6">
-                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                <div className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                   <div className="flex items-center gap-2 mb-4">
                     <BookOpen className="size-4 text-purple-600" />
-                    <h2 className="text-lg font-semibold text-gray-900">Learning Tracks</h2>
+                    <h2 className={`text-lg font-semibold ${meta.textPrimary}`}>Learning Tracks</h2>
                   </div>
                   <div className="space-y-3">
                     {learningTracks.map((track) => (
-                      <div key={track.level} className="rounded-2xl bg-white/50 border border-white/40 p-4 hover:shadow-md transition-shadow">
-                        <p className="text-xs uppercase tracking-wider text-gray-400 font-medium mb-1">{track.level}</p>
-                        <p className="text-sm text-gray-800 mb-1">{track.focus}</p>
-                        <p className="text-xs text-gray-600">Outcome: {track.outcomes}</p>
+                      <div key={track.level} className={`rounded-2xl ${meta.cardBg} border ${meta.border} p-4 hover:shadow-md transition-shadow`}>
+                        <p className={`text-xs uppercase tracking-wider ${isDark ? 'text-gray-500' : 'text-gray-400'} font-medium mb-1`}>{track.level}</p>
+                        <p className={`text-sm ${meta.textPrimary} mb-1`}>{track.focus}</p>
+                        <p className={`text-xs ${meta.textSecondary}`}>Outcome: {track.outcomes}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                <div className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                   <div className="flex items-center gap-2 mb-4">
                     <Sparkles className="size-4 text-emerald-500" />
-                    <h2 className="text-lg font-semibold text-gray-900">AI Personalized Suggestions</h2>
+                    <h2 className={`text-lg font-semibold ${meta.textPrimary}`}>AI Personalized Suggestions</h2>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -248,7 +249,7 @@ export default function LearningHubPage() {
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-all ${
                           selectedRole === role.id
                             ? 'bg-black text-white border-black'
-                            : 'bg-white/60 border-gray-200 text-gray-700 hover:bg-white/80'
+                            : `${meta.cardBg} border ${meta.border} ${meta.textSecondary} hover:${meta.cardBg} hover:${meta.textPrimary}`
                         }`}
                       >
                         {role.icon}
@@ -259,7 +260,7 @@ export default function LearningHubPage() {
 
                   <div className="space-y-2">
                     {suggestions.map((item) => (
-                      <div key={item} className="rounded-xl bg-white/50 border border-white/40 px-3 py-2.5 text-sm text-gray-800">
+                      <div key={item} className={`rounded-xl ${meta.cardBg} border ${meta.border} px-3 py-2.5 text-sm ${meta.textPrimary}`}>
                         {item}
                       </div>
                     ))}
@@ -272,7 +273,7 @@ export default function LearningHubPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <BookMarked className="size-4 text-purple-600" />
-                    <h2 className="text-lg font-semibold text-gray-900">Recommended Books for You</h2>
+                    <h2 className={`text-lg font-semibold ${meta.textPrimary}`}>Recommended Books for You</h2>
                   </div>
                   <motion.button
                     onClick={() => setActiveTab('books')}
@@ -283,8 +284,8 @@ export default function LearningHubPage() {
                     Browse all <ArrowRight className="size-3" />
                   </motion.button>
                 </div>
-                <p className="text-xs text-gray-500 mb-3">
-                  Based on your role: <span className="font-semibold text-gray-700 capitalize">{selectedRole}</span>
+                <p className={`text-xs ${meta.textSecondary} mb-3`}>
+                  Based on your role: <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-700'} capitalize`}>{selectedRole}</span>
                 </p>
                 <RoleBookRecommendations role={selectedRole} apiUrl={API_URL} />
               </section>
@@ -302,25 +303,25 @@ export default function LearningHubPage() {
               className="space-y-6"
             >
               {/* Book Search */}
-              <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+              <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                 <div className="flex items-center gap-2 mb-4">
                   <Library className="size-4 text-purple-600" />
-                  <h2 className="text-lg font-semibold text-gray-900">Search Legal Books</h2>
+                    <h2 className={`text-lg font-semibold ${meta.textPrimary}`}>Search Legal Books</h2>
                 </div>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className={`text-sm ${meta.textSecondary} mb-4`}>
                   Search Google Books for Indian legal literature — textbooks, commentaries, and reference works.
                   Results are context-aware: searching IPC topics will also recommend section-specific books.
                 </p>
 
                 <form onSubmit={handleBookSearch} className="flex gap-2 mb-4">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+                    <Search className={`absolute left-3 top-1/2 -translate-y-1/2 size-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                     <input
                       type="text"
                       value={bookQuery}
                       onChange={(e) => setBookQuery(e.target.value)}
                       placeholder="e.g. IPC 420 fraud, bail law, constitutional rights..."
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white/70 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-all"
+                      className={`w-full pl-10 pr-4 py-2.5 rounded-xl border transition-all ${isDark ? 'bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400' : 'bg-white/70 border-gray-200 text-gray-900 placeholder:text-gray-400'} text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400`}
                     />
                   </div>
                   <motion.button
@@ -353,20 +354,20 @@ export default function LearningHubPage() {
 
               {/* Book Results */}
               {loadingBooks && (
-                <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-8 text-center">
+                <div className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-8 text-center`}>
                   <Loader2 className="size-6 animate-spin text-purple-500 mx-auto mb-3" />
-                  <p className="text-sm text-gray-600">Searching legal books...</p>
+                  <p className={`text-sm ${meta.textSecondary}`}>Searching legal books...</p>
                 </div>
               )}
 
               {!loadingBooks && bookSearchDone && (
                 <div className="space-y-6">
                   {books.length > 0 && (
-                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                    <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                       <div className="flex items-center gap-2 mb-4">
                         <BookOpen className="size-4 text-purple-600" />
-                        <h3 className="text-base font-semibold text-gray-900">Search Results</h3>
-                        <span className="text-xs text-gray-400 ml-auto">{books.length} books found</span>
+                        <h3 className={`text-base font-semibold ${meta.textPrimary}`}>Search Results</h3>
+                        <span className={`text-xs ${meta.textSecondary} ml-auto`}>{books.length} books found</span>
                       </div>
                       <div className="grid sm:grid-cols-2 gap-3">
                         {books.map((book, i) => (
@@ -377,12 +378,12 @@ export default function LearningHubPage() {
                   )}
 
                   {ipcBooks.length > 0 && (
-                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                    <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                       <div className="flex items-center gap-2 mb-1">
                         <Scale className="size-4 text-emerald-600" />
-                        <h3 className="text-base font-semibold text-gray-900">IPC Section Books</h3>
+                        <h3 className={`text-base font-semibold ${meta.textPrimary}`}>IPC Section Books</h3>
                       </div>
-                      <p className="text-xs text-gray-500 mb-4">
+                      <p className={`text-xs ${meta.textSecondary} mb-4`}>
                         Books related to IPC sections detected in your query
                       </p>
                       <div className="grid sm:grid-cols-2 gap-3">
@@ -394,12 +395,12 @@ export default function LearningHubPage() {
                   )}
 
                   {topicBooks.length > 0 && (
-                    <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+                    <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                       <div className="flex items-center gap-2 mb-1">
                         <Briefcase className="size-4 text-amber-600" />
-                        <h3 className="text-base font-semibold text-gray-900">Topic Recommendations</h3>
+                        <h3 className={`text-base font-semibold ${meta.textPrimary}`}>Topic Recommendations</h3>
                       </div>
-                      <p className="text-xs text-gray-500 mb-4">
+                      <p className={`text-xs ${meta.textSecondary} mb-4`}>
                         Additional books matching this legal topic area
                       </p>
                       <div className="grid sm:grid-cols-2 gap-3">
@@ -411,9 +412,9 @@ export default function LearningHubPage() {
                   )}
 
                   {books.length === 0 && ipcBooks.length === 0 && topicBooks.length === 0 && (
-                    <div className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-8 text-center">
-                      <BookOpen className="size-8 text-gray-300 mx-auto mb-3" />
-                      <p className="text-sm text-gray-500">No books found. Try a different query or pick a topic above.</p>
+                    <div className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-8 text-center`}>
+                      <BookOpen className={`size-8 ${isDark ? 'text-gray-500' : 'text-gray-300'} mx-auto mb-3`} />
+                      <p className={`text-sm ${meta.textSecondary}`}>No books found. Try a different query or pick a topic above.</p>
                     </div>
                   )}
                 </div>
@@ -421,23 +422,23 @@ export default function LearningHubPage() {
 
               {/* How it works */}
               {!bookSearchDone && !loadingBooks && (
-                <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
-                  <h3 className="text-base font-semibold text-gray-900 mb-4">How Book Search Works</h3>
+                <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
+                  <h3 className={`text-base font-semibold ${meta.textPrimary} mb-4`}>How Book Search Works</h3>
                   <div className="grid sm:grid-cols-3 gap-4">
-                    <div className="rounded-2xl bg-purple-50 border border-purple-100 p-4 text-center">
+                    <div className={`rounded-2xl ${isDark ? 'bg-purple-900/30 border-purple-700/30' : 'bg-purple-50 border-purple-100'} border p-4 text-center`}>
                       <Search className="size-5 text-purple-500 mx-auto mb-2" />
-                      <p className="text-xs font-medium text-gray-900 mb-1">Query Analysis</p>
-                      <p className="text-xs text-gray-500">Your search is analyzed for IPC sections, legal topics, and key terms</p>
+                      <p className={`text-xs font-medium ${meta.textPrimary} mb-1`}>Query Analysis</p>
+                      <p className={`text-xs ${meta.textSecondary}`}>Your search is analyzed for IPC sections, legal topics, and key terms</p>
                     </div>
-                    <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-center">
+                    <div className={`rounded-2xl ${isDark ? 'bg-emerald-900/30 border-emerald-700/30' : 'bg-emerald-50 border-emerald-100'} border p-4 text-center`}>
                       <Scale className="size-5 text-emerald-500 mx-auto mb-2" />
-                      <p className="text-xs font-medium text-gray-900 mb-1">Context Matching</p>
-                      <p className="text-xs text-gray-500">If IPC sections are detected, section-specific reference books are added</p>
+                      <p className={`text-xs font-medium ${meta.textPrimary} mb-1`}>Context Matching</p>
+                      <p className={`text-xs ${meta.textSecondary}`}>If IPC sections are detected, section-specific reference books are added</p>
                     </div>
-                    <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-center">
+                    <div className={`rounded-2xl ${isDark ? 'bg-amber-900/30 border-amber-700/30' : 'bg-amber-50 border-amber-100'} border p-4 text-center`}>
                       <BookMarked className="size-5 text-amber-500 mx-auto mb-2" />
-                      <p className="text-xs font-medium text-gray-900 mb-1">Smart Results</p>
-                      <p className="text-xs text-gray-500">Results grouped into query matches, IPC books, and topic recommendations</p>
+                      <p className={`text-xs font-medium ${meta.textPrimary} mb-1`}>Smart Results</p>
+                      <p className={`text-xs ${meta.textSecondary}`}>Results grouped into query matches, IPC books, and topic recommendations</p>
                     </div>
                   </div>
                 </section>
@@ -454,19 +455,19 @@ export default function LearningHubPage() {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25 }}
             >
-              <section className="rounded-3xl bg-white/60 backdrop-blur-md border border-white/40 shadow-lg p-6">
+              <section className={`rounded-3xl ${meta.cardBg} backdrop-blur-md border ${meta.border} shadow-lg p-6`}>
                 <div className="flex items-center gap-2 mb-4">
                   <Newspaper className="size-4 text-amber-500" />
-                  <h2 className="text-lg font-semibold text-gray-900">Daily Indian Legal News</h2>
+                  <h2 className={`text-lg font-semibold ${meta.textPrimary}`}>Daily Indian Legal News</h2>
                 </div>
 
                 {loadingNews ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className={`flex items-center gap-2 text-sm ${meta.textSecondary}`}>
                     <Loader2 className="size-4 animate-spin" />
                     Loading latest legal updates...
                   </div>
                 ) : news.length === 0 ? (
-                  <p className="text-sm text-gray-600">No news available right now. Please check again shortly.</p>
+                  <p className={`text-sm ${meta.textSecondary}`}>No news available right now. Please check again shortly.</p>
                 ) : (
                   <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
                     {news.map((item, idx) => (
@@ -475,11 +476,11 @@ export default function LearningHubPage() {
                         href={item.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-2xl bg-white/50 border border-white/40 p-4 hover:shadow-md transition-all hover:bg-white/70"
+                        className={`rounded-2xl ${meta.cardBg} border ${meta.border} p-4 hover:shadow-md transition-all ${isDark ? 'hover:bg-gray-700/80' : 'hover:bg-white/70'}`}
                       >
-                        <p className="text-[11px] text-gray-400 font-medium mb-2">{item.source}</p>
-                        <p className="text-sm leading-relaxed text-gray-800 mb-2">{item.title}</p>
-                        <p className="text-[11px] text-gray-400">{item.published_at || 'Today'}</p>
+                        <p className={`text-[11px] ${isDark ? 'text-gray-500' : 'text-gray-400'} font-medium mb-2`}>{item.source}</p>
+                        <p className={`text-sm leading-relaxed ${meta.textPrimary} mb-2`}>{item.title}</p>
+                        <p className={`text-[11px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{item.published_at || 'Today'}</p>
                       </a>
                     ))}
                   </div>

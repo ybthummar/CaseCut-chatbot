@@ -55,7 +55,7 @@ function chunkText(text, maxLen = 200) {
  * @param {string}   opts.language   - current language key
  * @param {Function} opts.onError    - called with error string
  */
-export function useVoiceAgent({ language = 'english', onError } = {}) {
+export function useVoiceAgent({ language = 'english', onError, onUserSpeech, onAgentResponse } = {}) {
   // 'idle' | 'listening' | 'processing' | 'speaking'
   const [status, setStatus] = useState('idle')
   const [liveTranscript, setLiveTranscript] = useState('')
@@ -73,10 +73,14 @@ export function useVoiceAgent({ language = 'english', onError } = {}) {
   const speakCancelRef  = useRef(false)
   const abortControllerRef = useRef(null)
   const languageRef     = useRef(language)
+  const onUserSpeechRef = useRef(onUserSpeech)
+  const onAgentResponseRef = useRef(onAgentResponse)
 
   useEffect(() => { statusRef.current = status }, [status])
   useEffect(() => { onErrorRef.current = onError }, [onError])
   useEffect(() => { languageRef.current = language }, [language])
+  useEffect(() => { onUserSpeechRef.current = onUserSpeech }, [onUserSpeech])
+  useEffect(() => { onAgentResponseRef.current = onAgentResponse }, [onAgentResponse])
 
   // ── Safe restart recognition after a short delay ──────────────
   const safeRestart = useCallback((recognition, delay = 150) => {
@@ -156,6 +160,9 @@ export function useVoiceAgent({ language = 'english', onError } = {}) {
       return updated.slice(-20) // keep last 20 turns
     })
 
+    // Notify listener of user speech (for persistence)
+    try { onUserSpeechRef.current?.(userText.trim()) } catch {}
+
     setStatus('processing')
 
     // Cancel any previous in-flight request
@@ -180,6 +187,9 @@ export function useVoiceAgent({ language = 'english', onError } = {}) {
         const updated = [...prev, { role: 'assistant', text: agentResponse }]
         return updated.slice(-20)
       })
+
+      // Notify listener of agent response (for persistence)
+      try { onAgentResponseRef.current?.(agentResponse) } catch {}
 
       // Speak the response, then auto-listen again
       speakText(agentResponse, () => {

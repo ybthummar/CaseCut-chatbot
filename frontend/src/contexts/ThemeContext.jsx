@@ -12,9 +12,16 @@ const THEME_META = {
     navBg: 'bg-white/80',
     cardBg: 'bg-white/60',
     textPrimary: 'text-gray-900',
-    textSecondary: 'text-gray-600',
+    textSecondary: 'text-gray-700',
     border: 'border-white/40',
     accent: 'purple',
+    isDark: false,
+    voiceCaption: 'text-gray-800',
+    voiceAnnotation: 'text-gray-700',
+    memoryUserText: 'text-gray-900',
+    memoryAssistantText: 'text-blue-900',
+    memoryUserBg: 'bg-blue-100',
+    memoryAssistantBg: 'bg-blue-50',
   },
   midnight: {
     label: 'Midnight',
@@ -23,9 +30,16 @@ const THEME_META = {
     navBg: 'bg-gray-900/80',
     cardBg: 'bg-gray-800/60',
     textPrimary: 'text-white',
-    textSecondary: 'text-gray-400',
+    textSecondary: 'text-gray-300',
     border: 'border-white/10',
     accent: 'blue',
+    isDark: true,
+    voiceCaption: 'text-white/90',
+    voiceAnnotation: 'text-gray-300',
+    memoryUserText: 'text-white',
+    memoryAssistantText: 'text-blue-200',
+    memoryUserBg: 'bg-white/15',
+    memoryAssistantBg: 'bg-blue-500/30',
   },
   ocean: {
     label: 'Ocean',
@@ -34,9 +48,16 @@ const THEME_META = {
     navBg: 'bg-white/80',
     cardBg: 'bg-white/60',
     textPrimary: 'text-gray-900',
-    textSecondary: 'text-gray-600',
+    textSecondary: 'text-gray-700',
     border: 'border-white/40',
     accent: 'blue',
+    isDark: false,
+    voiceCaption: 'text-gray-800',
+    voiceAnnotation: 'text-gray-700',
+    memoryUserText: 'text-gray-900',
+    memoryAssistantText: 'text-blue-900',
+    memoryUserBg: 'bg-blue-100',
+    memoryAssistantBg: 'bg-blue-50',
   },
   courtroom: {
     label: 'Courtroom',
@@ -45,9 +66,16 @@ const THEME_META = {
     navBg: 'bg-white/80',
     cardBg: 'bg-white/60',
     textPrimary: 'text-gray-900',
-    textSecondary: 'text-gray-600',
+    textSecondary: 'text-gray-700',
     border: 'border-white/40',
     accent: 'amber',
+    isDark: false,
+    voiceCaption: 'text-gray-800',
+    voiceAnnotation: 'text-gray-700',
+    memoryUserText: 'text-gray-900',
+    memoryAssistantText: 'text-amber-900',
+    memoryUserBg: 'bg-amber-100',
+    memoryAssistantBg: 'bg-amber-50',
   },
 };
 
@@ -59,6 +87,12 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme-mode', theme);
+    // Apply dark class for midnight theme
+    if (theme === 'midnight') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     localStorage.setItem('casecut_theme', theme);
   }, [theme]);
 

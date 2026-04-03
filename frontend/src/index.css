@@ -15,7 +15,7 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 20.2% 45.1%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
@@ -46,6 +46,27 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+  }
+
+  /* Theme-specific overrides for better contrast */
+  [data-theme-mode="lavender"] {
+    --primary: 262 83% 58%;
+    --accent: 262 83% 58%;
+  }
+
+  [data-theme-mode="ocean"] {
+    --primary: 199 89% 48%;
+    --accent: 199 89% 48%;
+  }
+
+  [data-theme-mode="courtroom"] {
+    --primary: 45 93% 47%;
+    --accent: 45 93% 47%;
+  }
+
+  [data-theme-mode="midnight"] {
+    --primary: 217 91% 60%;
+    --accent: 217 91% 60%;
   }
 }
 
@@ -89,4 +110,22 @@
     radial-gradient(1000px 520px at 10% -5%, color-mix(in srgb, var(--theme-c) 50%, transparent), transparent 55%),
     radial-gradient(880px 420px at 95% -5%, color-mix(in srgb, var(--theme-b) 65%, transparent), transparent 60%),
     linear-gradient(155deg, var(--theme-a), var(--theme-b) 52%, var(--theme-c));
+}
+
+/* Midnight theme overrides for portaled dropdowns */
+[data-theme-mode='midnight'] [data-radix-popper-content-wrapper] [role='menu'] {
+  background: rgba(17, 17, 21, 0.96) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(24px);
+}
+[data-theme-mode='midnight'] [data-radix-popper-content-wrapper] [role='menuitem'] {
+  color: #d1d1d6;
+}
+[data-theme-mode='midnight'] [data-radix-popper-content-wrapper] [role='menuitem']:focus,
+[data-theme-mode='midnight'] [data-radix-popper-content-wrapper] [role='menuitem']:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff;
+}
+[data-theme-mode='midnight'] [data-radix-popper-content-wrapper] [role='separator'] {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
