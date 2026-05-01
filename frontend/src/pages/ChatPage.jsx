@@ -1064,7 +1064,7 @@ export default function ChatPage() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 8, scale: 0.96 }}
                             transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-                            className={`absolute left-0 bottom-full mb-2 z-50 w-[240px] origin-bottom-left ${isDark ? 'bg-gray-900/98' : 'bg-white/95'} backdrop-blur-2xl border ${meta.border} rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.5)] overflow-hidden`}
+                            className={`absolute left-0 bottom-full mb-2 z-50 w-[240px] origin-bottom-left ${isDark ? 'bg-gray-900' : 'bg-white'} backdrop-blur-2xl border ${meta.border} rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.5)] overflow-hidden`}
                           >
                             <div className="p-2">
                               <div className={`px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -1132,7 +1132,7 @@ export default function ChatPage() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 8, scale: 0.96 }}
                             transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-                            className={`absolute left-0 bottom-full mb-2 z-50 w-[260px] origin-bottom-left ${isDark ? 'bg-gray-900/98' : 'bg-white/95'} backdrop-blur-2xl border ${meta.border} rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.5)] overflow-hidden`}
+                            className={`absolute left-0 bottom-full mb-2 z-50 w-[260px] origin-bottom-left ${isDark ? 'bg-gray-900' : 'bg-white'} backdrop-blur-2xl border ${meta.border} rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.5)] overflow-hidden`}
                           >
                             <div className="p-2">
                               <div className={`px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>

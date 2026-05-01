@@ -163,7 +163,7 @@ export default function ToolsDropdown({
                 : 'top-full mt-2 right-0 origin-top-right'
             }`}
           >
-            <div className="bg-[#1a1a1e]/98 backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="bg-[#1a1a1e] backdrop-blur-2xl border border-white/[0.08] rounded-2xl shadow-[0_16px_70px_-12px_rgba(0,0,0,0.8)] overflow-hidden">
 
               {/* Header */}
               <div className="px-4 pt-4 pb-2 flex items-center justify-between">

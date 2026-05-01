@@ -36,8 +36,8 @@ export default function ThemeToggle({ variant = 'auto' }) {
     ? 'bg-white/10 border-white/15 text-white/80 hover:bg-white/15'
     : 'bg-black/5 border-black/10 text-gray-700 hover:bg-black/10';
   const dropBg = isDark
-    ? 'bg-gray-900/95 border-white/10'
-    : 'bg-white/95 border-gray-200/60';
+    ? 'bg-gray-900 border-white/10'
+    : 'bg-white border-gray-200/60';
   const itemText = isDark ? 'text-gray-200' : 'text-gray-700';
   const itemHover = isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100';
   const labelColor = isDark ? 'text-gray-400' : 'text-gray-500';

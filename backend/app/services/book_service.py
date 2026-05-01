@@ -66,7 +66,10 @@ def search_books(query: str, max_results: int = 6) -> list[dict[str, Any]]:
             "langRestrict": "en",
             "orderBy": "relevance",
         }
-        resp = http_requests.get(GOOGLE_BOOKS_API, params=params, timeout=10)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
+        resp = http_requests.get(GOOGLE_BOOKS_API, params=params, headers=headers, timeout=15)
         resp.raise_for_status()
         data = resp.json()
 
