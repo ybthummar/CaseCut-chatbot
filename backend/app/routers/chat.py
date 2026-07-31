@@ -101,6 +101,12 @@ async def pdf_chat(req: PDFChatRequest):
             content=fail("Document text too short. Upload a valid PDF.", "ValidationError"),
         )
 
+    if len(req.document_text) > 1_000_000:
+        return JSONResponse(
+            status_code=413,
+            content=fail("Document text too large (max 1,000,000 characters).", "PayloadTooLarge"),
+        )
+
     try:
         history = None
         if req.conversation_history:

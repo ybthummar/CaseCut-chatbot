@@ -3,16 +3,21 @@
 """
 
 import json
+import logging
 import os
+import traceback
 from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app.schemas.responses import ok, fail
 from app.services.feedback_analyzer_service import analyze_feedback
 
 router = APIRouter()
+logger = logging.getLogger("casecut")
 
 FEEDBACK_FILE = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "feedback.jsonl"
@@ -70,13 +75,17 @@ async def submit_feedback(req: FeedbackRequest):
         with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-        return {
+        return ok({
             "status": "ok",
             "message": "Feedback recorded. Thank you!",
             "analysis": analysis,
-        }
+        })
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        logger.error("❌ /feedback FAILED │ %s", traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content=fail(str(e), type(e).__name__, "Feedback recording failed."),
+        )
 
 
 @router.post("/feedback/analyze")
@@ -85,8 +94,16 @@ async def feedback_analyze(req: FeedbackAnalyzeRequest):
     Analyze one feedback sample and return strict JSON keys:
     feedback_type, issue_detected, improvement_suggestion
     """
-    return analyze_feedback(
-        ai_response=req.ai_response,
-        user_feedback=req.user_feedback,
-        user_comment=req.user_comment,
-    )
+    try:
+        res = analyze_feedback(
+            ai_response=req.ai_response,
+            user_feedback=req.user_feedback,
+            user_comment=req.user_comment,
+        )
+        return ok(res)
+    except Exception as e:
+        logger.error("❌ /feedback/analyze FAILED │ %s", traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content=fail(str(e), type(e).__name__, "Feedback analysis failed."),
+        )

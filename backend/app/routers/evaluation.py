@@ -15,6 +15,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.services.rag_eval_service import evaluate_rag_answer
 
 
+from app.schemas.responses import ok, fail
+
 router = APIRouter()
 logger = logging.getLogger("casecut")
 
@@ -32,7 +34,7 @@ async def evaluate_rag(req: RAGEvaluationRequest):
     """
     Evaluate a RAG answer using only query, retrieved context, and model answer.
 
-    Response is strict JSON (no envelope) following the requested schema.
+    Returns structured {success, data, error} envelope.
     """
     try:
         logger.info(
@@ -53,26 +55,11 @@ async def evaluate_rag(req: RAGEvaluationRequest):
             result["final_verdict"]["overall_score"],
             result["final_verdict"]["confidence"],
         )
-        return result
+        return ok(result)
 
     except Exception as e:
         logger.error("[EVAL] /evaluate-rag failed | %s", traceback.format_exc())
         return JSONResponse(
             status_code=500,
-            content={
-                "query": req.query if hasattr(req, "query") else "",
-                "scores": {
-                    "context_relevance": {"score": 0, "reason": "Evaluation failed."},
-                    "groundedness": {"score": 0, "reason": "Evaluation failed.", "unsupported_claims": []},
-                    "hallucination": {"score": 0, "reason": "Evaluation failed.", "hallucinated_parts": []},
-                    "completeness": {"score": 0, "reason": "Evaluation failed.", "missing_points": []},
-                    "accuracy": {"score": 0, "reason": "Evaluation failed.", "errors": []},
-                    "citation_quality": {"score": 0, "reason": "Evaluation failed.", "issues": []},
-                },
-                "final_verdict": {
-                    "overall_score": 0,
-                    "confidence": "LOW",
-                    "summary": f"Evaluator error: {type(e).__name__}: {e}",
-                },
-            },
+            content=fail(str(e), type(e).__name__, "Evaluation service error."),
         )

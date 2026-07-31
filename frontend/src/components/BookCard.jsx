@@ -23,7 +23,7 @@ export default function BookCard({ book, index = 0 }) {
       className={`group flex gap-3 rounded-2xl ${meta.cardBg} border ${meta.border} p-3 hover:shadow-lg hover:bg-white/70 transition-all duration-200 cursor-pointer`}
     >
       {/* Thumbnail */}
-      <div className="shrink-0 w-16 h-22 rounded-lg overflow-hidden bg-purple-100/60 flex items-center justify-center">
+      <div className="shrink-0 w-16 h-24 rounded-lg overflow-hidden bg-purple-100/60 flex items-center justify-center">
         {thumbnail ? (
           <img
             src={thumbnail}

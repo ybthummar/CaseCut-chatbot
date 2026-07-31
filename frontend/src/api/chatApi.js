@@ -20,7 +20,7 @@ import { apiRequest } from './client';
 export async function sendQuery(query, role = 'lawyer', language = 'english', topic = 'all', k = 5, conversationHistory = null) {
   const body = { query, role, language, topic, k };
   if (conversationHistory && conversationHistory.length > 0) {
-    body.conversation_history = conversationHistory.slice(-6).map(m => ({
+    body.conversation_history = conversationHistory.slice(-10).map(m => ({
       role: m.role,
       text: m.text,
     }));
@@ -44,7 +44,7 @@ export async function sendQuery(query, role = 'lawyer', language = 'english', to
 export async function chatWithPDF(query, documentText, role = 'lawyer', language = 'english', conversationHistory = null) {
   const body = { query, document_text: documentText, role, language };
   if (conversationHistory && conversationHistory.length > 0) {
-    body.conversation_history = conversationHistory.slice(-6).map(m => ({
+    body.conversation_history = conversationHistory.slice(-10).map(m => ({
       role: m.role,
       text: m.text,
     }));
@@ -111,13 +111,13 @@ export async function sendFeedback(query, rating, role = 'lawyer', options = {})
 
 /**
  * Evaluate a generated answer against retrieved RAG context.
- * Returns strict JSON from /evaluate-rag.
+ * Returns inner data payload from envelope.
  * @param {string} query
  * @param {Array} retrievedContext
  * @param {string} modelAnswer
  */
 export async function evaluateRagAnswer(query, retrievedContext = [], modelAnswer = '') {
-  return apiRequest('/evaluate-rag', {
+  const response = await apiRequest('/evaluate-rag', {
     method: 'POST',
     body: {
       query,
@@ -125,6 +125,7 @@ export async function evaluateRagAnswer(query, retrievedContext = [], modelAnswe
       model_answer: modelAnswer,
     },
   });
+  return response.data;
 }
 
 /**

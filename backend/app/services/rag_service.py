@@ -118,8 +118,10 @@ def run_query(
     # 3 — Prepare cases + similarity scores
     cases, sim_scores = [], []
     for r in results:
+        case_sim = round(r.score, 3)
         cases.append({
             "id": r.id,
+            "similarity": case_sim,
             "payload": {
                 "text": r.payload.get("text", ""),
                 "file": r.payload.get("file", ""),
@@ -183,7 +185,7 @@ def run_query(
             "chunk_id": p.get("chunk_id", ""),
             "source_url": p.get("source_url", ""),
             "rank_score": c.get("rank_score", 0),
-            "similarity": round(sim_scores[0], 3) if sim_scores else 0,
+            "similarity": c.get("similarity", 0),
         })
 
     # 7 — Build context block with richer citations
